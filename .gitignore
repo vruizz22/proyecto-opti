@@ -1,0 +1,11 @@
+*.aux
+*.fls
+*.log
+*.out
+*.gz
+*.toc
+*.txt
+*.fdb_latexmk
+*.pdf
+*.csv
+node_modules/

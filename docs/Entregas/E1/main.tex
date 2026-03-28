@@ -52,29 +52,127 @@
 \vspace*{6cm}
 \begin{center}{}
 \vspace*{2mm}
-{\Huge\bf Informe X}\\
+{\Huge\bf Informe 1}\\
 \vspace*{4mm}
 \hrule\vspace*{1pt}\hrule
 \vspace*{4mm}
-{\LARGE\bf Nombre Proyecto}\\
+{\LARGE\bf Optimizar la ubicaci\'on de centros de acopio y el pre-posicionamiento de inventarios de emergencia para SENAPRED}\\
 \vspace*{4mm}
-{\huge\bf Grupo XX }\\
+{\huge\bf Grupo 92 }\\
 \vspace*{1mm}
 \end{center}
 
 \vspace*{30mm}
 \flushright 
 	
-Nombre integrante 1	número de alumno 1 sección alumno 1 \\
-Nombre integrante 2	número de alumno 2 sección alumno 2\\
-Nombre integrante 3	número de alumno 3 sección alumno 3\\
-Nombre integrante 4	número de alumno 4 sección alumno 4\\
-Nombre integrante 5	número de alumno 5 sección alumno 5\\
-Nombre integrante 6 número de alumno 6 sección alumno 6\\
+Fernando Javier Caroca Lagos número de alumno 1 sección alumno 1 \\
+Vicente Andres Massardo Lavanderos número de alumno 2 sección alumno 2\\
+Ignacio Alfredo Navarrete Dihmes número de alumno 3 sección alumno 3\\
+Santiago Andrés Ortiz Donoso número de alumno 4 sección alumno 4\\
+Maximiliano Enrique Quevedo Osorio número de alumno 5 sección alumno 5\\
+Renato Ariel Spröhnle Parada número de alumno 6 sección alumno 6\\
+Victor Emilio Ruiz Zarate 2320012J Sección 3\\
 
  
 \vspace*{5mm}
-{\large Fecha entrega: XX de XX de 202X\\}
+{\large Fecha entrega: 01 de Abril del 2026\\}
 
+
+\newpage
+\begin{flushleft}
+\tableofcontents
+\end{flushleft}
+
+\newpage
+\begin{flushleft}
+\pagenumbering{arabic}
+\end{flushleft}
+
+\begin{flushleft}
+\section{Descripción del Problema}
+\subsection{Contexto y beneficios de resolver el problema}
+\textbf{Contexto del problema y principales desafíos:} Chile es reconocido globalmente por su alta exposición a riesgos naturales, especialmente sismos de gran magnitud e incendios forestales. Durante la temporada estival de 2024, el país enfrentó una de las catástrofes más trágicas de su historia reciente en la Región de Valparaíso. Este siniestro consumió más de 11.300 hectáreas, dejó un saldo de 135 víctimas fatales y superó las 21.200 personas damnificadas oficialmente catastradas tras la destrucción de más de 8.100 hogares. Frente a este escenario, la gestión de desastres ha evolucionado desde una lógica reactiva hacia una planificación preventiva basada en evidencia. El desafío principal radica en aplicar técnicas de optimización y herramientas cuantitativas para apoyar decisiones complejas bajo presión. Una cadena de suministro deficiente o excesivamente centralizada retrasa la llegada de insumos esenciales, por lo que una mejor asignación de recursos puede reducir de forma importante la mortalidad, la morbilidad y los costos asociados a una emergencia \cite{MinDesarrollo}.\\
+
+\textbf{Tomador de decisiones:} El tomador de decisiones para este problema es el Servicio Nacional de Prevención y Respuesta ante Desastres (SENAPRED). Es la entidad estatal que utilizaría directamente los resultados del modelo para planificar la distribución de ayuda logística.\\
+
+\textbf{Horizonte de planificación:} El horizonte de planificación es de 1 año, enfocado en la etapa de preparación y preposición de insumos en los meses previos a la temporada de mayor riesgo de desastres.
+
+\subsection{Objetivo que persigue el tomador de decisiones}
+\textbf{Objetivo del tomador de decisiones:} El objetivo principal que persigue el tomador de decisiones es maximizar la cobertura de la población vulnerable y reducir drásticamente los tiempos de traslado de la ayuda frente a una emergencia. Al optimizar esto, se busca reducir la mortalidad, la morbilidad y los costos asociados a la respuesta del desastre.\\
+
+\textbf{Decisiones a tomar:} Para cumplir este objetivo, la organización debe decidir estratégicamente dónde ubicar instalaciones críticas temporales (centros de acopio). Además, debe determinar qué cantidad de inventarios de insumos esenciales (agua, alimentos, herramientas) se deben almacenar en dichos lugares antes de que ocurra la emergencia.\\
+
+\textbf{Restricciones involucradas:} El proceso de decisión está sujeto a restricciones de presupuesto estatal, a la capacidad máxima de almacenamiento de las instalaciones escogidas y a la accesibilidad logística de las rutas.
+
+\section{Elección del Tema, Complejidad y Posibilidad de ser Resuelto}
+\subsection{Realismo del problema y sus supuestos}
+El problema planteado es realista y entrega una solución concreta a una situación de alto riesgo existente en el país. Los supuestos del modelo están correctamente identificados y justificados desde la investigación de operaciones. Se asume que las necesidades de la población pueden estimarse mediante pronósticos de demanda, que las instalaciones candidatas poseen una capacidad de almacenaje finita medible y que los costos logísticos son proporcionales a las distancias de traslado. Esto permite transformar escenarios de emergencia inciertos en decisiones logísticas tácticas y precisas.
+
+\subsection{Valor de resolver el problema e impacto}
+Resolver este problema conlleva un impacto real en la vida de las personas que se ven afectadas por las catástrofes, ya que el modelo tiene la capacidad para generar un impacto favorable en la respuesta de la sociedad frente a catástrofes. Cuantitativamente, la solución optimizada permite un ahorro significativo del vital tiempo en la respuesta frente a emergencias y un uso mucho más eficiente de los recursos públicos. Cualitativamente, promueve la justicia social al asegurar una distribución más equitativa y oportuna de los suministros vitales a las comunidades afectadas. Tomar esta decisión apoyados por el modelo permite a SENAPRED superar una planificación intuitiva, justificando cuantitativamente que la optimización genera mayor bienestar social.
+
+\subsection{Complejidad del problema}
+El modelo planteado es lo suficientemente complejo como para que no resulte fácil resolverlo por inspección visual, utilizando lápiz y papel, ni fijando la mayoría de las variables en su cota superior. No es equivalente a un problema estándar de libro o a un ejemplo visto en clases. El problema cuenta con una cantidad de decisiones interrelacionadas que lo hacen no trivial: la decisión de habilitar o no una instalación impacta directamente en la cantidad de inventario que puede ser almacenado allí y altera las combinaciones posibles de despacho hacia las múltiples zonas de demanda. Esta interdependencia de variables impide dividir el problema en modelos equivalentes de menor dimensión.
+
+\section{Modelación del problema}
+A continuación, se presenta el modelo matemático de optimización formulado para abordar el problema de localización y pre-posicionamiento de inventario de SENAPRED. Antes de presentar las ecuaciones, se definen los conjuntos, parámetros y variables de decisión que estructuran el modelo, garantizando una distinción clara entre los datos conocidos y las decisiones a tomar.
+
+\subsection{Conjuntos}
+\begin{itemize}
+    \item $i \in I$: Conjunto de ubicaciones candidatas para habilitar instalaciones temporales o centros de acopio (bodegas).
+    \item $j \in J$: Conjunto de zonas afectadas (comunas o sectores) que presentan una demanda de ayuda durante la emergencia.
+\end{itemize}
+
+\subsection{Parámetros}
+Estos valores representan la información conocida o estimada previo a la toma de decisiones:
+\begin{itemize}
+    \item $D_j$: Demanda proyectada (en cantidad de kits de emergencia o toneladas de ayuda) requerida en la zona afectada $j$.
+    \item $C_i$: Capacidad máxima de almacenamiento de la instalación candidata $i$.
+    \item $F_i$: Costo fijo asociado a la apertura y habilitación operativa de la instalación temporal $i$.
+    \item $V$: Costo unitario variable por adquirir y mantener pre-posicionado un kit de emergencia en cualquier bodega.
+    \item $T_{ij}$: Tiempo de viaje estimado (o costo logístico de transporte) para enviar ayuda desde la instalación $i$ hacia la zona afectada $j$.
+    \item $B$: Presupuesto estatal total disponible para la fase de preparación (habilitación de bodegas y compra de inventario).
+\end{itemize}
+
+\subsection{Variables de decisión}
+Las variables han sido definidas de manera compacta para representar las decisiones estratégicas y logísticas del tomador de decisiones:
+\begin{itemize}
+    \item $y_i$: Variable binaria que toma el valor de 1 si se decide habilitar la instalación candidata $i$, y 0 en caso contrario.
+    \item $s_i$: Variable continua que indica la cantidad de inventario de emergencia a pre-posicionar (almacenar) en la instalación $i$ antes de que ocurra el siniestro.
+    \item $x_{ij}$: Variable continua que indica la cantidad de inventario que se enviará desde la instalación $i$ para abastecer a la zona afectada $j$ una vez ocurrida la emergencia.
+\end{itemize}
+
+\subsection{Restricciones}
+Las siguientes ecuaciones limitan el modelo para asegurar que las decisiones sean logísticamente viables y respeten las capacidades físicas y económicas:
+\begin{enumerate}
+    \item \textbf{Satisfacción de la Demanda:} Garantiza que toda la ayuda enviada desde las distintas instalaciones habilitadas hacia una zona afectada sea igual o mayor a la demanda proyectada de dicha zona.
+    \item \textbf{Disponibilidad de Inventario (Conservación de flujo):} Asegura que la cantidad total de inventario despachado desde una instalación específica hacia todas las zonas afectadas no supere el stock que fue físicamente pre-posicionado en esa bodega.
+    \item \textbf{Capacidad Física y Lógica de Apertura:} Esta restricción cumple un doble propósito. Primero, limita el inventario a pre-posicionar al máximo de la capacidad de la instalación. Segundo, fuerza lógicamente a que si una instalación no es habilitada ($y_i = 0$), el inventario almacenado en ella debe ser estrictamente cero.
+    \item \textbf{Límite Presupuestario de Preparación:} Asegura que el gasto total de la fase preventiva, sumando los costos fijos de habilitar las instalaciones y los costos variables de adquirir el inventario, no exceda el presupuesto estatal asignado.
+\end{enumerate}
+
+\subsection{Naturaleza de las variables}
+Define el dominio de las variables de decisión, estableciendo no negatividad para los flujos e inventarios, y el carácter binario para la apertura de instalaciones:
+\begin{itemize}
+    \item $y_i \in \{0, 1\}, \quad \forall i \in I$
+    \item $s_i \geq 0, \quad \forall i \in I$
+    \item $x_{ij} \geq 0, \quad \forall i \in I, j \in J$
+\end{itemize}
+
+\newpage
+\begin{thebibliography}{9}
+\bibitem{SENAPRED}
+SENAPRED (Servicio Nacional de Prevención y Respuesta ante Desastres). (2024). \textit{Visor Chile Preparado y Planes de Reducción del Riesgo de Desastres}. Recuperado de: \url{https://www.senapred.cl}
+
+\bibitem{CONAF}
+CONAF (Corporación Nacional Forestal). (2024). \textit{Programa de Protección Contra Incendios Forestales}. Recuperado de: \url{https://www.conaf.cl/incendios/}
+
+\bibitem{MinDesarrollo}
+Ministerio de Desarrollo Social y Familia. (2024). \textit{Plan de Reconstrucción: Incendios 02 y 03 de febrero de 2024, Región de Valparaíso}. Gobierno de Chile. Recuperado de los reportes oficiales del Comité para la Gestión del Riesgo de Desastres (COGRID) y el Sistema de Información Social de Emergencia. \url{https://www.desarrollosocialyfamilia.gob.cl/storage/docs/Plan_reconstruccion.pdf}
+
+\bibitem{Paper}
+Balcik, B., \& Beamon, B. M. (2008). \textit{Facility location in humanitarian relief}. International Journal of Logistics Research and Applications. \url{https://ideas.repec.org/a/eee/transb/v44y2010i4p521-534.html}
+\end{thebibliography}
+\end{flushleft}
 
 \end{document}

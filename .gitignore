@@ -8,4 +8,5 @@
 *.fdb_latexmk
 *.pdf
 *.csv
+!main.pdf
 node_modules/

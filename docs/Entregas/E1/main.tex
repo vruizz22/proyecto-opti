@@ -113,7 +113,7 @@ Resolver este problema puede generar valor social y operativo realmente signific
 
 A esto se suma una brecha estructural de preparaci\'on local. Con datos de SENAPRED a mayo de 2025, de las 345 comunas del pa\'is, 63 no contaban con un plan comunal de emergencia, 147 ten\'ian planes desactualizados y 207 no dispon\'ian de planes de reducci\'on del riesgo de desastres \cite{Dipres2025}. Estas cifras evidencian que la prevenci\'on sigue siendo insuficiente y que la asignaci\'on eficiente de infraestructura y stock previo puede contribuir a reducir esa vulnerabilidad institucional y territorial.\\
 
-Desde el punto de vista cuantitativo, un modelo de optimizaci\'on podr\'ia compararse con un caso base no optimizado, por ejemplo, una distribuci\'on intuitiva o centralizada de bodegas e inventario. Frente a un evento del tama\~no del incendio de Valpara\'iso 2024, una mejora incluso moderada en cobertura temprana ya ser\'ia relevante. Tomando como orden de magnitud las 3.652 familias reconocidas posteriormente en la reconstrucci\'on, una mejora de cobertura de solo $5\%$ implicar\'ia llegar oportunamente a alrededor de 180 familias adicionales en las primeras etapas de respuesta; una mejora de $10\%$ equivaldr\'ia a unas 365 familias \cite{Minvu2025}. Esa estimaci\'on es ilustrativa, pero sirve para mostrar que peque\~nos cambios porcentuales pueden traducirse en beneficios humanos concretos cuando la escala del desastre es tan alta.\\
+Desde el punto de vista cuantitativo, un modelo de optimizaci\'on podr\'ia compararse con un caso base no optimizado, por ejemplo, una distribuci\'on intuitiva o centralizada de bodegas e inventario. Frente a un evento del tama\~no del incendio de Valpara\'iso 2024, una mejora incluso moderada en cobertura temprana ya ser\'ia relevante. Tomando como orden de magnitud las 3.652 familias reconocidas posteriormente en la reconstrucci\'on, una mejora de cobertura de solo $5\%$ implicar\'ia entregar cobertura de manera oportuna a alrededor de 180 familias adicionales en las primeras etapas de respuesta; una mejora de $10\%$ equivaldr\'ia a unas 365 familias \cite{Minvu2025}. Esa estimaci\'on es ilustrativa, pero sirve para mostrar que peque\~nos cambios porcentuales pueden traducirse en beneficios humanos concretos cuando la escala del desastre es tan alta.\\
 
 Adem\'as, el problema tiene valor porque apoya directamente a una organizaci\'on concreta, SENAPRED, en una decisi\'on que hoy suele estar restringida por presupuesto, capacidad y tiempo. De esta forma, optimizar la ubicaci\'on de bodegas y el nivel de inventario puede disminuir faltantes, evitar sobrestock en lugares poco estrat\'egicos y reducir tiempos de traslado hacia sectores de mayor exposici\'on. En una regi\'on donde ya se debieron habilitar puntos extraordinarios de distribuci\'on de agua y desplegar maquinaria pesada a gran escala durante la emergencia, una preparaci\'on previa m\'as eficiente tiene un claro potencial de ahorro de tiempo, recursos y sufrimiento humano.
 
@@ -142,7 +142,6 @@ En consecuencia, el problema presentado mantiene un buen equilibrio entre realis
     \item $F_i$: Costo fijo asociado a la apertura y habilitaci\'on del punto de almacenamiento $i$.
     \item $V_k$: Costo asociado a la compra de una unidad del suministro $k$.
     \item $H_{ik}$: Costo asociado a mantener una unidad del suministro $k$ en la bodega $i$.
-    \item $P_{ij}$: Distancia lineal entre el punto de almacenamiento $i$ y la zona afectada $j$.
     \item $A_m$: Capacidad de carga del veh\'iculo $m$.
     \item $B$: Presupuesto estatal total disponible para la fase de preparaci\'on (habilitaci\'on de bodegas y compra de inventario).
     \item $T_{ijm}$: Tiempo de respuesta desde la bodega $i$ hasta la zona $j$ en el tipo de veh\'iculo $m$.
@@ -153,7 +152,7 @@ En consecuencia, el problema presentado mantiene un buen equilibrio entre realis
 \subsection{Variables de Decisi\'on}
 \begin{itemize}
     \item $y_i \in \{0, 1\}$: Variable binaria que toma el valor de 1 si se decide habilitar la instalaci\'on candidata $i$, y 0 en caso contrario.
-    \item $z_{ijm} \in \{0, 1\}$: Variable binaria que vale 1 si se asigna el veh\'iculo $m$ para cubrir la ruta entre la bodega $i$ y la zona de emergencia $j$, y 0 en el caso contrario.
+    \item $z_{ijm} \in \mathbb{Z}^+_0$: Variable entera que indica la cantidad de veh\'iculos de tipo $m$ asignados para cubrir la ruta entre la bodega $i$ y la zona de emergencia $j$.
     \item $s_{ik} \geq 0$: Variable continua que indica la cantidad del suministro $k$ a pre-posicionar (almacenar) en la instalaci\'on $i$ antes de que ocurra el siniestro.
     \item $x_{ijkm} \geq 0$: Variable continua que indica la cantidad del suministro $k$ que se tiene que trasladar desde $i$ hasta $j$ utilizando un tipo de veh\'iculo $m$.
 \end{itemize}
@@ -191,23 +190,28 @@ La funci\'on objetivo busca minimizar el tiempo total de respuesta ponderado por
     \end{equation}
 
     \item \textbf{Capacidad de transporte de ruta:}\\
-    Asegura que el volumen total de suministros enviados por una ruta espec\'ifica no exceda la capacidad total proporcionada si se habilita el veh\'iculo $m$.
+    Asegura que el volumen total de suministros enviados por una ruta espec\'ifica no exceda la capacidad total proporcionada por la cantidad de veh\'iculos de tipo $m$ habilitados en esa ruta.
     \begin{equation}
         \sum_{k \in K} E_k \cdot x_{ijkm} \leq A_m \cdot z_{ijm} \quad \forall i \in I, \forall j \in J, \forall m \in M
     \end{equation}
 
-    \item \textbf{Radio de cobertura y factibilidad de la ruta:}\\
-    Solo se env\'ian suministros desde instalaciones habilitadas ($y_i = 1$) y limita a rutas en las que el tiempo de respuesta es menor o igual al m\'aximo fijado ($TMax$).
+    \item \textbf{Vinculaci\'on de apertura y l\'imite de flota (Big-M):}\\
+    Asegura que solo transiten veh\'iculos desde los centros de acopio que efectivamente fueron habilitados. Aqu\'i, $M$ representa un n\'umero suficientemente grande (por ejemplo, el total de la flota). Para mantener la eficiencia computacional, las variables $x_{ijkm}$ y $z_{ijm}$ se crean \textbf{solo} para aquellas combinaciones $(i,j)$ donde $T_{ijm} \leq TMax$.
     \begin{equation}
-        T_{ijm} \cdot z_{ijm} \leq TMax \cdot y_i \quad \forall i \in I, \forall j \in J, \forall m \in M
+        \sum_{j \in J} \sum_{m \in M} z_{ijm} \leq M \cdot y_i \quad \forall i \in I
+    \end{equation}
+
+    \item \textbf{Disponibilidad de Flota:}\\
+    Garantiza que la cantidad de veh\'iculos despachados desde las distintas bodegas hacia las zonas afectadas no supere la cantidad de veh\'iculos disponibles de cada tipo $m$.
+    \begin{equation}
+        \sum_{i \in I} \sum_{j \in J} z_{ijm} \leq Q_m \quad \forall m \in M
     \end{equation}
 
     \item \textbf{Naturaleza de las Variables:}\\
-    Define el dominio de las variables de decisi\'on, cumpliendo la no negatividad para los flujos e inventarios, y el car\'acter binario para la apertura de instalaciones.
+    Define el dominio de las variables de decisi\'on, cumpliendo la no negatividad para los flujos e inventarios, el car\'acter entero de la flota y el car\'acter binario para la apertura de instalaciones.
     \begin{align*}
         y_i &\in \{0, 1\} \quad \forall i \in I \\
-        z_{ijm} &\in \{0, 1\} \quad \forall i \in I, \forall j \in J, \forall m \in M \\
-        s_{ik} &\geq 0 \quad \forall i \in I, \forall k \in K \\
+        z_{ijm} &\in \mathbb{Z}^+_0 \quad \forall i \in I, \forall j \in J, \forall m \in M \\
         x_{ijkm} &\geq 0 \quad \forall i \in I, \forall j \in J, \forall m \in M \text{, } \forall k \in K 
     \end{align*}
 \end{enumerate}

@@ -30,22 +30,22 @@
 \begin{document}
 
 \begin{minipage}[t]{.13\textwidth}
-	\vspace{-0.25in}
-	\begin{figure}[H]
-	\includegraphics[width=0.90\textwidth]{LogoUC.jpg}
-	\end{figure}
+\vspace{-0.25in}
+\begin{figure}[H]
+\includegraphics[width=0.90\textwidth]{LogoUC.jpg}
+\end{figure}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{.85\textwidth}
     \vspace{0pt}
     \begin{flushleft}
       \begin{tabular}{l}
-	{\sc Pontificia Universidad Cat\'olica de Chile}\\
-  	{\sc Escuela de Ingenier\'ia}\\
-  	{\sc Departamento de Ingenier\'ia Industrial y Sistemas}\\
- 	 {\sc ICS1113-Optimizaci\'on}
+{\sc Pontificia Universidad Cat\'olica de Chile}\\
+  {\sc Escuela de Ingenier\'ia}\\
+  {\sc Departamento de Ingenier\'ia Industrial y Sistemas}\\
+  {\sc ICS1113-Optimizaci\'on}
  \end{tabular}
-	\end{flushleft}
+\end{flushleft}
 \end{minipage}
 \vspace{0pt}
 \hfill
@@ -56,26 +56,26 @@
 \vspace*{4mm}
 \hrule\vspace*{1pt}\hrule
 \vspace*{4mm}
-{\LARGE\bf Optimizar la ubicaci\'on de centros de acopio y el pre-posicionamiento de inventarios de emergencia para SENAPRED}\\
+{\LARGE\bf Optimizar la ubicaci\'on de centros de acopio y pre-posicionamiento de inventarios de emergencia para SENAPRED en la Regi\'on de Valpara\'iso}\\
 \vspace*{4mm}
 {\huge\bf Grupo 92 }\\
 \vspace*{1mm}
 \end{center}
 
-\vspace*{30mm}
+\vspace*{20mm}
 \flushright 
-	
-Fernando Javier Caroca Lagos 2464370J sección alumno 1 \\
-Vicente Andres Massardo Lavanderos 24625698 sección alumno 2\\
-Ignacio Alfredo Navarrete Dihmes 24642770 sección alumno 3\\
-Santiago Andrés Ortiz Donoso 24647667 sección alumno 4\\
-Maximiliano Enrique Quevedo Osorio 24627232 5 sección alumno 5\\
-Renato Ariel Spröhnle Parada 2320009J sección alumno 6\\
+
+Fernando Javier Caroca Lagos 2464370J Sección 5 \\
+Vicente Andres Massardo Lavanderos 24625698 Sección 1\\
+Ignacio Alfredo Navarrete Dihmes 24642770 Sección 2\\
+Santiago Andrés Ortiz Donoso 24647667 Sección 1\\
+Maximiliano Enrique Quevedo Osorio 24627232 Sección 1\\
+Renato Ariel Spröhnle Parada 2320009J Sección 4\\
 Victor Emilio Ruiz Zarate 2320012J Sección 3\\
 
- 
 \vspace*{5mm}
-{\large Fecha entrega: 01 de Abril del 2026\\}
+{\large Ayudante de grupo: Stephan Beals\\}
+{\large Fecha de entrega: 01 de abril de 2026\\}
 
 
 \newpage
@@ -89,90 +89,152 @@ Victor Emilio Ruiz Zarate 2320012J Sección 3\\
 \end{flushleft}
 
 \begin{flushleft}
-\section{Descripción del Problema}
-\subsection{Contexto y beneficios de resolver el problema}
-\textbf{Contexto del problema y principales desafíos:} Chile es reconocido globalmente por su alta exposición a riesgos naturales, especialmente sismos de gran magnitud e incendios forestales. Durante la temporada estival de 2024, el país enfrentó una de las catástrofes más trágicas de su historia reciente en la Región de Valparaíso. Este siniestro consumió más de 11.300 hectáreas, dejó un saldo de 135 víctimas fatales y superó las 21.200 personas damnificadas oficialmente catastradas tras la destrucción de más de 8.100 hogares. Frente a este escenario, la gestión de desastres ha evolucionado desde una lógica reactiva hacia una planificación preventiva basada en evidencia. El desafío principal radica en aplicar técnicas de optimización y herramientas cuantitativas para apoyar decisiones complejas bajo presión. Una cadena de suministro deficiente o excesivamente centralizada retrasa la llegada de insumos esenciales, por lo que una mejor asignación de recursos puede reducir de forma importante la mortalidad, la morbilidad y los costos asociados a una emergencia \cite{MinDesarrollo}.\\
+\section{Descripci\'on del Problema}
 
-\textbf{Tomador de decisiones:} El tomador de decisiones para este problema es el Servicio Nacional de Prevención y Respuesta ante Desastres (SENAPRED). Es la entidad estatal que utilizaría directamente los resultados del modelo para planificar la distribución de ayuda logística.\\
+Chile es reconocido globalmente por su alta exposici\'on a riesgos naturales, especialmente sismos de gran magnitud e incendios forestales. Durante la temporada de verano del a\~no 2024, el pa\'is enfrent\'o una de las cat\'astrofes m\'as tr\'agicas de su historia reciente en la Regi\'on de Valpara\'iso. Este siniestro consumi\'o m\'as de 11.300 hect\'areas, dej\'o un saldo de 135 v\'ictimas fatales y super\'o las 21.200 personas damnificadas oficialmente catastradas tras la destrucci\'on de m\'as de 8.100 hogares. Debido a las cat\'astrofes ambientales que han afectado al menos cuatro veces en la \'ultima d\'ecada a la ciudad de Valpara\'iso, y cuya magnitud ha ido en aumento --comenzando con aproximadamente 220 viviendas en 2017 y llegando a m\'as de 10.000 viviendas consumidas por el fuego en 2024-- surge la necesidad, como grupo, de apoyar al SENAPRED (Servicio Nacional de Prevenci\'on y Respuesta ante Desastres) y aplicar t\'ecnicas de optimizaci\'on para apoyar y seleccionar de la mejor forma las decisiones al momento de responder a emergencias por incendios en Valpara\'iso. En este contexto, resulta de fundamental importancia mejorar la asignaci\'on de puntos de almacenamiento de insumos de emergencia, con el fin de reducir los tiempos de respuesta, aumentar la cantidad de insumos disponibles y disminuir significativamente la mortalidad, la destrucci\'on y los costos asociados a las p\'erdidas provocadas por estas emergencias.\\
 
-\textbf{Horizonte de planificación:} El horizonte de planificación es de 1 año, enfocado en la etapa de preparación y preposición de insumos en los meses previos a la temporada de mayor riesgo de desastres.
+Como se mencion\'o previamente, el tomador de decisiones con el cual se trabajar\'a en conjunto ser\'a el Servicio Nacional de Prevenci\'on y Respuesta ante Desastres (SENAPRED). Este organismo p\'ublico chileno se encarga de planificar, coordinar y supervisar las acciones destinadas a prevenir y enfrentar emergencias de todo tipo. En el contexto de los incendios, el SENAPRED cumple el rol de comando unificado, responsable de convocar al COGRID (Comit\'e Comunal, Provincial y Regional para la Gesti\'on del Riesgo de Desastres), instancia en la que se integran y organizan la CONAF, Bomberos de Chile, Carabineros, Militares y autoridades locales. Estas entidades son esenciales para llevar a cabo las decisiones que se implementar\'an mediante el modelo de optimizaci\'on.\\
 
-\subsection{Objetivo que persigue el tomador de decisiones}
-\textbf{Objetivo del tomador de decisiones:} El objetivo principal que persigue el tomador de decisiones es maximizar la cobertura de la población vulnerable y reducir drásticamente los tiempos de traslado de la ayuda frente a una emergencia. Al optimizar esto, se busca reducir la mortalidad, la morbilidad y los costos asociados a la respuesta del desastre.\\
+El horizonte de planificaci\'on es de un a\~no, debido a que el periodo en el cual ocurren con mayor frecuencia este tipo de emergencias corresponde a la temporada de verano. En esta \'epoca aumentan las temperaturas, disminuye la probabilidad de precipitaciones y se incrementan los niveles de propagaci\'on del fuego. Por ello, se considerar\'a un a\~no completo previo a dicha temporada para preparar los insumos, seleccionar los puntos de almacenamiento y distribuir los veh\'iculos disponibles para enfrentar emergencias. Por otra parte, el primer objetivo del tomador de decisiones previamente mencionado (SENAPRED) es \textbf{maximizar la cobertura territorial} de bodegas en la Regi\'on de Valpara\'iso, donde se almacenar\'an insumos esenciales para enfrentar los incendios. Con ello se busca reducir de manera significativa los tiempos de traslado de dichos insumos hacia las zonas afectadas por el fuego. El segundo objetivo consiste en \textbf{minimizar los tiempos de respuesta} de los servicios de emergencia mediante la maximizaci\'on de la cobertura, logrando as\'i llegar con mayor rapidez y eficiencia a las \'areas con mayor riesgo de p\'erdidas ocasionadas por los incendios. Para ello se consideran, desde una perspectiva geoespacial, las rutas y los tramos lineales \'optimos que permitan alcanzar dicho prop\'osito considerando el tipo de suministro que se tiene que movilizar y el veh\'iculo m\'as adecuado y eficiente para realizar el traslado. Al cumplir con estos objetivos de optimizaci\'on, se espera que, a lo largo del horizonte de planificaci\'on, se reduzcan tanto la tasa de mortalidad y destrucci\'on como los costos asociados a las p\'erdidas materiales y humanas derivadas de las deficiencias en la distribuci\'on de insumos en los puntos de almacenamiento, as\'i como de los tiempos de traslado y respuesta de los servicios de emergencia.\\
 
-\textbf{Decisiones a tomar:} Para cumplir este objetivo, la organización debe decidir estratégicamente dónde ubicar instalaciones críticas temporales (centros de acopio). Además, debe determinar qué cantidad de inventarios de insumos esenciales (agua, alimentos, herramientas) se deben almacenar en dichos lugares antes de que ocurra la emergencia.\\
+Para cumplir con los objetivos principales reci\'en mencionados, es fundamental realizar un an\'alisis geoespacial lineal que considere tanto las ubicaciones de los puntos de almacenamiento como las rutas directas hacia los posibles destinos de suministro. En este an\'alisis debe tenerse en cuenta que cada bodega posee diferentes capacidades de almacenamiento y costos asociados al mantenimiento de los insumos, los cuales ocupan distintos vol\'umenes de espacio dentro de las instalaciones. Asimismo, los veh\'iculos disponibles para la emergencia cuentan con limitaciones de capacidad para el traslado. Por lo tanto, el tomador de decisiones deber\'a evaluar todas estas variables para seleccionar qu\'e bodega utilizar, qu\'e insumos movilizar, cu\'al ser\'a la ruta \'optima y qu\'e veh\'iculo resultar\'a m\'as adecuado para lograr cumplir con los objetivos del modelo que son minimizar los tiempos de respuesta en situaciones de emergencia, maximizando la eficiencia tanto de los veh\'iculos de traslado como de los espacios de almacenamiento seleccionados. Por \'ultimo, el tomador de decisiones deber\'a considerar diversas restricciones. En primer lugar, asegurarse de que los insumos enviados a las zonas de emergencia sean mayores a los requeridos, sin superar el stock disponible. Adem\'as, se deben respetar los l\'imites de los inventarios habilitados y verificar que la cantidad de suministros no exceda la capacidad del veh\'iculo encargado de transportarlos. Otra restricci\'on importante es que el presupuesto total de preparaci\'on no supere el monto asignado. Finalmente, solo podr\'an considerarse aquellas rutas cuyo tiempo de respuesta no exceda el m\'aximo establecido.
 
-\textbf{Restricciones involucradas:} El proceso de decisión está sujeto a restricciones de presupuesto estatal, a la capacidad máxima de almacenamiento de las instalaciones escogidas y a la accesibilidad logística de las rutas.
+\section{Elecci\'on del tema y complejidad}
 
-\section{Elección del Tema, Complejidad y Posibilidad de ser Resuelto}
-\subsection{Realismo del problema y sus supuestos}
-El problema planteado es realista y entrega una solución concreta a una situación de alto riesgo existente en el país. Los supuestos del modelo están correctamente identificados y justificados desde la investigación de operaciones. Se asume que las necesidades de la población pueden estimarse mediante pronósticos de demanda, que las instalaciones candidatas poseen una capacidad de almacenaje finita medible y que los costos logísticos son proporcionales a las distancias de traslado. Esto permite transformar escenarios de emergencia inciertos en decisiones logísticas tácticas y precisas.
+\subsection{1. Realismo del problema y sus supuestos}
+El problema planteado es realista, ya que responde a una situaci\'on concreta, reciente y de alto impacto en nuestro pa\'is. Durante los a\~nos 2023-2024 se registraron 5.846 incendios forestales a nivel nacional y 71.923 hect\'areas afectadas. Dentro de esa temporada, el incendio Complejo Las Tablas – Reserva Nacional Lago Pe\~nuelas, en la Regi\'on de Valpara\'iso, afect\'o por s\'i solo 8.657 hect\'areas en zonas de interfaz urbano-forestal \cite{CONAF2024}. Adem\'as, el Plan de Reconstrucci\'on del Gobierno report\'o que los megaincendios que afectaron a la regi\'on de Valpara\'iso hab\'ian dejado 135 fallecidos, y m\'as de 21.000 personas afectadas directamente en sus hogares, reflejando la gran magnitud de este problema \cite{MinDesarrollo2024-1}.\\
 
-\subsection{Valor de resolver el problema e impacto}
-Resolver este problema conlleva un impacto real en la vida de las personas que se ven afectadas por las catástrofes, ya que el modelo tiene la capacidad para generar un impacto favorable en la respuesta de la sociedad frente a catástrofes. Cuantitativamente, la solución optimizada permite un ahorro significativo del vital tiempo en la respuesta frente a emergencias y un uso mucho más eficiente de los recursos públicos. Cualitativamente, promueve la justicia social al asegurar una distribución más equitativa y oportuna de los suministros vitales a las comunidades afectadas. Tomar esta decisión apoyados por el modelo permite a SENAPRED superar una planificación intuitiva, justificando cuantitativamente que la optimización genera mayor bienestar social.
+La relevancia del problema no termin\'o simplemente con la emergencia inicial. En septiembre de 2025, el proceso de reconstrucci\'on en la regi\'on todav\'ia registraba 3.652 familias h\'abiles y 2.675 subsidios asignados en las comunas afectadas, lo que muestra que los efectos de un incendio de gran escala permanecen por largo tiempo y que una mala preparaci\'on previa tiene consecuencias persistentes sobre hogares, infraestructura y capacidad institucional \cite{Minvu2025}.\\
 
-\subsection{Complejidad del problema}
-El modelo planteado es lo suficientemente complejo como para que no resulte fácil resolverlo por inspección visual, utilizando lápiz y papel, ni fijando la mayoría de las variables en su cota superior. No es equivalente a un problema estándar de libro o a un ejemplo visto en clases. El problema cuenta con una cantidad de decisiones interrelacionadas que lo hacen no trivial: la decisión de habilitar o no una instalación impacta directamente en la cantidad de inventario que puede ser almacenado allí y altera las combinaciones posibles de despacho hacia las múltiples zonas de demanda. Esta interdependencia de variables impide dividir el problema en modelos equivalentes de menor dimensión.
+Los supuestos del modelo tambi\'en son realistas y compatibles con un enfoque de investigaci\'on de operaciones. Se asume que existe un conjunto finito de bodegas candidatas en la Regi\'on de Valpara\'iso, cada una con una capacidad m\'axima de almacenamiento conocida; que el presupuesto disponible para preposici\'on de insumos es limitado; y que la accesibilidad puede aproximarse mediante distancias o tiempos de traslado por red vial. Asimismo, se asume que la demanda de insumos puede estimarse a partir de criterios observables, como poblaci\'on expuesta, historial de incendios y nivel de vulnerabilidad territorial. Estas simplificaciones son defendibles porque el objetivo del proyecto no es modelar el combate en tiempo real del incendio, sino la planificaci\'on preventiva previa al evento. Adem\'as, el propio Plan de Reconstrucci\'on incorpora medidas preventivas como brigadas comunitarias, provisi\'on de insumos y obras de reducci\'on de riesgo, lo que muestra que este tipo de decisiones s\'i forman parte de la pol\'itica p\'ublica real \cite{MinDesarrollo2024-2}.
 
-\section{Modelación del problema}
-A continuación, se presenta el modelo matemático de optimización formulado para abordar el problema de localización y pre-posicionamiento de inventario de SENAPRED. Antes de presentar las ecuaciones, se definen los conjuntos, parámetros y variables de decisión que estructuran el modelo, garantizando una distinción clara entre los datos conocidos y las decisiones a tomar.
+\subsection{2. Valor de resolver el problema e impacto}
+Resolver este problema puede generar valor social y operativo realmente significativo, porque permite utilizar de manera m\'as oportuna recursos escasos antes de una emergencia. La necesidad de fortalecer la prevenci\'on no es te\'orica, seg\'un antecedentes presupuestarios oficiales, en la convocatoria 2024 del Programa de Gesti\'on del Riesgo de Desastres hubo cerca de 300 postulaciones por un monto superior a \$3.000 millones, pero solo se financiaron 64 iniciativas, quedando 203 iniciativas de 106 municipios en lista de espera \cite{Dipres2025}. Es decir, existe una demanda real por mejorar la preparaci\'on territorial, pero los recursos no alcanzan para cubrir todas las necesidades.\\
+
+A esto se suma una brecha estructural de preparaci\'on local. Con datos de SENAPRED a mayo de 2025, de las 345 comunas del pa\'is, 63 no contaban con un plan comunal de emergencia, 147 ten\'ian planes desactualizados y 207 no dispon\'ian de planes de reducci\'on del riesgo de desastres \cite{Dipres2025}. Estas cifras evidencian que la prevenci\'on sigue siendo insuficiente y que la asignaci\'on eficiente de infraestructura y stock previo puede contribuir a reducir esa vulnerabilidad institucional y territorial.\\
+
+Desde el punto de vista cuantitativo, un modelo de optimizaci\'on podr\'ia compararse con un caso base no optimizado, por ejemplo, una distribuci\'on intuitiva o centralizada de bodegas e inventario. Frente a un evento del tama\~no del incendio de Valpara\'iso 2024, una mejora incluso moderada en cobertura temprana ya ser\'ia relevante. Tomando como orden de magnitud las 3.652 familias reconocidas posteriormente en la reconstrucci\'on, una mejora de cobertura de solo $5\%$ implicar\'ia llegar oportunamente a alrededor de 180 familias adicionales en las primeras etapas de respuesta; una mejora de $10\%$ equivaldr\'ia a unas 365 familias \cite{Minvu2025}. Esa estimaci\'on es ilustrativa, pero sirve para mostrar que peque\~nos cambios porcentuales pueden traducirse en beneficios humanos concretos cuando la escala del desastre es tan alta.\\
+
+Adem\'as, el problema tiene valor porque apoya directamente a una organizaci\'on concreta, SENAPRED, en una decisi\'on que hoy suele estar restringida por presupuesto, capacidad y tiempo. De esta forma, optimizar la ubicaci\'on de bodegas y el nivel de inventario puede disminuir faltantes, evitar sobrestock en lugares poco estrat\'egicos y reducir tiempos de traslado hacia sectores de mayor exposici\'on. En una regi\'on donde ya se debieron habilitar puntos extraordinarios de distribuci\'on de agua y desplegar maquinaria pesada a gran escala durante la emergencia, una preparaci\'on previa m\'as eficiente tiene un claro potencial de ahorro de tiempo, recursos y sufrimiento humano.
+
+\subsection{3. Complejidad del problema}
+El modelo propuesto es lo suficientemente complejo como para no poder resolverse por inspecci\'on visual o con l\'apiz y papel. La dificultad no est\'a solo en elegir bodegas ``cercanas'', sino en equilibrar simult\'aneamente varias decisiones interrelacionadas: abrir o no abrir una bodega, decidir cu\'anto inventario almacenar en cada instalaci\'on abierta, respetar presupuestos y capacidades, y asegurar que la red resultante entregue cobertura suficiente a zonas de alto riesgo dentro de l\'imites log\'isticos. Una decisi\'on que pareciera conveniente, como concentrar todo el stock en pocas bodegas para ahorrar costos fijos, puede empeorar la cobertura territorial o elevar excesivamente los tiempos de respuesta frente a estas crisis; en cambio, abrir demasiadas bodegas puede consumir presupuesto y dejar poco margen para almacenar insumos \'utiles. Es por esto que estos dilemas, vuelven a este modelo algo no trivial.\\
+
+Tampoco se trata de un ejemplo id\'entico a alguno t\'ipico, porque aqu\'i la localizaci\'on no se analiza de manera aislada, sino que se encuentra enlazada a un conjunto de decisiones preventivas, de inventario, bajo restricciones presupuestarias y de capacidad, en un contexto territorial espec\'ifico como Valpara\'iso. La propuesta no busca solo minimizar costos, sino sostener una capacidad preventiva cre\'ible frente a incendios de gran escala, lo que la vuelve m\'as relevante que un simple problema de localizaci\'on est\'andar.\\
+
+En consecuencia, el problema presentado mantiene un buen equilibrio entre realismo, impacto y factibilidad computacional, es lo bastante complejo para justificar un modelo de optimizaci\'on y lo bastante acotado para poder ser resuelto con herramientas lineales enteras mixtas en una instancia regional realista.
+
+\section{Modelaci\'on del problema}
 
 \subsection{Conjuntos}
 \begin{itemize}
     \item $i \in I$: Conjunto de ubicaciones candidatas para habilitar instalaciones temporales o centros de acopio (bodegas).
     \item $j \in J$: Conjunto de zonas afectadas (comunas o sectores) que presentan una demanda de ayuda durante la emergencia.
+    \item $k \in K$: Conjunto de tipos de suministros de emergencia (agua, comida, medicinas).
+    \item $m \in M$: Conjunto de tipos de veh\'iculos terrestres disponibles (autos, carros de bomberos, motos, ambulancias, etc).
 \end{itemize}
 
-\subsection{Parámetros}
-Estos valores representan la información conocida o estimada previo a la toma de decisiones:
+\subsection{Par\'ametros del Modelo}
 \begin{itemize}
-    \item $D_j$: Demanda proyectada (en cantidad de kits de emergencia o toneladas de ayuda) requerida en la zona afectada $j$.
-    \item $C_i$: Capacidad máxima de almacenamiento de la instalación candidata $i$.
-    \item $F_i$: Costo fijo asociado a la apertura y habilitación operativa de la instalación temporal $i$.
-    \item $V$: Costo unitario variable por adquirir y mantener pre-posicionado un kit de emergencia en cualquier bodega.
-    \item $T_{ij}$: Tiempo de viaje estimado (o costo logístico de transporte) para enviar ayuda desde la instalación $i$ hacia la zona afectada $j$.
-    \item $B$: Presupuesto estatal total disponible para la fase de preparación (habilitación de bodegas y compra de inventario).
+    \item $D_{jk}$: Demanda proyectada del suministro $k$ requerida en la zona afectada $j$.
+    \item $C_i$: Capacidad m\'axima de almacenamiento del punto candidato $i$.
+    \item $E_k$: Espacio que ocupa cada unidad del suministro $k$.
+    \item $F_i$: Costo fijo asociado a la apertura y habilitaci\'on del punto de almacenamiento $i$.
+    \item $V_k$: Costo asociado a la compra de una unidad del suministro $k$.
+    \item $H_{ik}$: Costo asociado a mantener una unidad del suministro $k$ en la bodega $i$.
+    \item $P_{ij}$: Distancia lineal entre el punto de almacenamiento $i$ y la zona afectada $j$.
+    \item $A_m$: Capacidad de carga del veh\'iculo $m$.
+    \item $B$: Presupuesto estatal total disponible para la fase de preparaci\'on (habilitaci\'on de bodegas y compra de inventario).
+    \item $T_{ijm}$: Tiempo de respuesta desde la bodega $i$ hasta la zona $j$ en el tipo de veh\'iculo $m$.
+    \item $Q_m$: Cantidad disponible de veh\'iculos tipo $m$.
+    \item $TMax$: Tiempo de respuesta m\'aximo para que la entrega sea considerada efectiva.
 \end{itemize}
 
-\subsection{Variables de decisión}
-Las variables han sido definidas de manera compacta para representar las decisiones estratégicas y logísticas del tomador de decisiones:
+\subsection{Variables de Decisi\'on}
 \begin{itemize}
-    \item $y_i$: Variable binaria que toma el valor de 1 si se decide habilitar la instalación candidata $i$, y 0 en caso contrario.
-    \item $s_i$: Variable continua que indica la cantidad de inventario de emergencia a pre-posicionar (almacenar) en la instalación $i$ antes de que ocurra el siniestro.
-    \item $x_{ij}$: Variable continua que indica la cantidad de inventario que se enviará desde la instalación $i$ para abastecer a la zona afectada $j$ una vez ocurrida la emergencia.
+    \item $y_i \in \{0, 1\}$: Variable binaria que toma el valor de 1 si se decide habilitar la instalaci\'on candidata $i$, y 0 en caso contrario.
+    \item $z_{ijm} \in \{0, 1\}$: Variable binaria que vale 1 si se asigna el veh\'iculo $m$ para cubrir la ruta entre la bodega $i$ y la zona de emergencia $j$, y 0 en el caso contrario.
+    \item $s_{ik} \geq 0$: Variable continua que indica la cantidad del suministro $k$ a pre-posicionar (almacenar) en la instalaci\'on $i$ antes de que ocurra el siniestro.
+    \item $x_{ijkm} \geq 0$: Variable continua que indica la cantidad del suministro $k$ que se tiene que trasladar desde $i$ hasta $j$ utilizando un tipo de veh\'iculo $m$.
 \end{itemize}
 
-\subsection{Restricciones}
-Las siguientes ecuaciones limitan el modelo para asegurar que las decisiones sean logísticamente viables y respeten las capacidades físicas y económicas:
+\subsection{Funci\'on objetivo}
+La funci\'on objetivo busca minimizar el tiempo total de respuesta ponderado por la cantidad de suministros enviados:
+\begin{equation}
+\min Z = \sum_{i \in I} \sum_{j \in J} \sum_{k \in K} \sum_{m \in M} T_{ijm} \cdot x_{ijkm}
+\end{equation}
+
+\subsection{Restricciones del Modelo}
 \begin{enumerate}
-    \item \textbf{Satisfacción de la Demanda:} Garantiza que toda la ayuda enviada desde las distintas instalaciones habilitadas hacia una zona afectada sea igual o mayor a la demanda proyectada de dicha zona.
-    \item \textbf{Disponibilidad de Inventario (Conservación de flujo):} Asegura que la cantidad total de inventario despachado desde una instalación específica hacia todas las zonas afectadas no supere el stock que fue físicamente pre-posicionado en esa bodega.
-    \item \textbf{Capacidad Física y Lógica de Apertura:} Esta restricción cumple un doble propósito. Primero, limita el inventario a pre-posicionar al máximo de la capacidad de la instalación. Segundo, fuerza lógicamente a que si una instalación no es habilitada ($y_i = 0$), el inventario almacenado en ella debe ser estrictamente cero.
-    \item \textbf{Límite Presupuestario de Preparación:} Asegura que el gasto total de la fase preventiva, sumando los costos fijos de habilitar las instalaciones y los costos variables de adquirir el inventario, no exceda el presupuesto estatal asignado.
-\end{enumerate}
+    \item \textbf{Satisfacci\'on de la Demanda:}\\
+    Garantiza que toda la ayuda enviada desde las distintas instalaciones habilitadas hacia una zona afectada sea igual o mayor a la demanda de dicha zona.
+    \begin{equation}
+        \sum_{i \in I}\sum_{m \in M} x_{ijkm} \geq D_{jk} \quad \forall j \in J, \forall k \in K
+    \end{equation}
 
-\subsection{Naturaleza de las variables}
-Define el dominio de las variables de decisión, estableciendo no negatividad para los flujos e inventarios, y el carácter binario para la apertura de instalaciones:
-\begin{itemize}
-    \item $y_i \in \{0, 1\}, \quad \forall i \in I$
-    \item $s_i \geq 0, \quad \forall i \in I$
-    \item $x_{ij} \geq 0, \quad \forall i \in I, j \in J$
-\end{itemize}
+    \item \textbf{Disponibilidad de Inventario (Conservaci\'on de flujo):}\\
+    Asegura que la cantidad total de inventario despachado desde una instalaci\'on espec\'ifica hacia todas las zonas afectadas no supere el stock que existe pre-posicionado en esa bodega.
+    \begin{equation}
+        \sum_{j \in J}\sum_{m \in M} x_{ijkm} \leq s_{ik} \quad \forall i \in I, \forall k \in K
+    \end{equation}
+
+    \item \textbf{Capacidad F\'isica y L\'ogica de Apertura:}\\
+    Limita el inventario al m\'aximo de la capacidad de instalaci\'on y adem\'as, obliga a que en el caso que $y_i = 0$ su inventario ser\'a nulo.
+    \begin{equation}
+        \sum_{k \in K} E_k \cdot s_{ik} \leq C_i \cdot y_i \quad \forall i \in I
+    \end{equation}
+
+    \item \textbf{L\'imite Presupuestario de Preparaci\'on:}\\
+    El gasto total de la fase preventiva (costos fijos operacionales y compra/mantenimiento de inventarios) no puede exceder el presupuesto dado para la regi\'on.
+    \begin{equation}
+        \sum_{i \in I} F_i \cdot y_i + \sum_{i \in I}\sum_{k \in K} (V_k + H_{ik}) \cdot s_{ik} \leq B
+    \end{equation}
+
+    \item \textbf{Capacidad de transporte de ruta:}\\
+    Asegura que el volumen total de suministros enviados por una ruta espec\'ifica no exceda la capacidad total proporcionada si se habilita el veh\'iculo $m$.
+    \begin{equation}
+        \sum_{k \in K} E_k \cdot x_{ijkm} \leq A_m \cdot z_{ijm} \quad \forall i \in I, \forall j \in J, \forall m \in M
+    \end{equation}
+
+    \item \textbf{Radio de cobertura y factibilidad de la ruta:}\\
+    Solo se env\'ian suministros desde instalaciones habilitadas ($y_i = 1$) y limita a rutas en las que el tiempo de respuesta es menor o igual al m\'aximo fijado ($TMax$).
+    \begin{equation}
+        T_{ijm} \cdot z_{ijm} \leq TMax \cdot y_i \quad \forall i \in I, \forall j \in J, \forall m \in M
+    \end{equation}
+
+    \item \textbf{Naturaleza de las Variables:}\\
+    Define el dominio de las variables de decisi\'on, cumpliendo la no negatividad para los flujos e inventarios, y el car\'acter binario para la apertura de instalaciones.
+    \begin{align*}
+        y_i &\in \{0, 1\} \quad \forall i \in I \\
+        z_{ijm} &\in \{0, 1\} \quad \forall i \in I, \forall j \in J, \forall m \in M \\
+        s_{ik} &\geq 0 \quad \forall i \in I, \forall k \in K \\
+        x_{ijkm} &\geq 0 \quad \forall i \in I, \forall j \in J, \forall m \in M \text{, } \forall k \in K 
+    \end{align*}
+\end{enumerate}
 
 \newpage
 \begin{thebibliography}{9}
+
+\bibitem{MinDesarrollo2024-1}
+Ministerio de Desarrollo Social y Familia. (2024). \textit{Plan de reconstrucci\'on}. \url{https://www.desarrollosocialyfamilia.gob.cl/storage/docs/Plan_reconstruccion.pdf}
+
+\bibitem{CONAF2024}
+Corporaci\'on Nacional Forestal. (2024, 26 de abril). \textit{CONAF entreg\'o balance de incendios temporada 2023-2024}. \url{https://www.conaf.cl/conaf-entrego-balance-de-incendios-temporada-2023-2024/}
+
+\bibitem{MinDesarrollo2024-2}
+Ministerio de Desarrollo Social y Familia. (2024, 23 de marzo). \textit{Gobierno presenta plan de reconstrucci\'on: Tiene m\'as de 170 medidas e incluye creaci\'on de una corporaci\'on}. \url{https://www.desarrollosocialyfamilia.gob.cl/noticias/gobierno-presenta-plan-de-reconstruccion-tiene-mas-de-170-medidas-e-incluye-creacion-de-una-corporac}
+
+\bibitem{Dipres2025}
+Direcci\'on de Presupuestos. (s. f.). \textit{Evaluaci\'on ex ante - Proceso formulaci\'on presupuestaria 2026: Programa de gesti\'on del riesgo de desastres}. \url{https://www.dipres.gob.cl/597/articles-383612_doc_pdf.pdf}
+
+\bibitem{Minvu2025}
+Secretar\'ia Regional Ministerial de Vivienda y Urbanismo, Regi\'on de Valpara\'iso. (2025, 2 de octubre). \textit{Reporte mensual reconstrucci\'on incendio \#2F 2024, Regi\'on de Valpara\'iso: Septiembre de 2025}. \url{https://www.minvu.gob.cl/wp-content/uploads/2025/10/Reporte-Reconstruccion-Septiembre.pdf}
+
 \bibitem{SENAPRED}
-SENAPRED (Servicio Nacional de Prevención y Respuesta ante Desastres). (2024). \textit{Visor Chile Preparado y Planes de Reducción del Riesgo de Desastres}. Recuperado de: \url{https://www.senapred.cl}
+SENAPRED (Servicio Nacional de Prevenci\'on y Respuesta ante Desastres). (2024). \textit{Visor Chile Preparado y Planes de Reducci\'on del Riesgo de Desastres}. \url{https://www.senapred.cl}
 
-\bibitem{CONAF}
-CONAF (Corporación Nacional Forestal). (2024). \textit{Programa de Protección Contra Incendios Forestales}. Recuperado de: \url{https://www.conaf.cl/incendios/}
-
-\bibitem{MinDesarrollo}
-Ministerio de Desarrollo Social y Familia. (2024). \textit{Plan de Reconstrucción: Incendios 02 y 03 de febrero de 2024, Región de Valparaíso}. Gobierno de Chile. Recuperado de los reportes oficiales del Comité para la Gestión del Riesgo de Desastres (COGRID) y el Sistema de Información Social de Emergencia. \url{https://www.desarrollosocialyfamilia.gob.cl/storage/docs/Plan_reconstruccion.pdf}
-
-\bibitem{Paper}
-Balcik, B., \& Beamon, B. M. (2008). \textit{Facility location in humanitarian relief}. International Journal of Logistics Research and Applications. \url{https://ideas.repec.org/a/eee/transb/v44y2010i4p521-534.html}
 \end{thebibliography}
+
 \end{flushleft}
 
 \end{document}

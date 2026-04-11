@@ -151,10 +151,10 @@ En consecuencia, el problema presentado mantiene un buen equilibrio entre realis
 
 \subsection{Variables de Decisi\'on}
 \begin{itemize}
-    \item $y_i \in \{0, 1\}$: Variable binaria que toma el valor de 1 si se decide habilitar la instalaci\'on candidata $i$, y 0 en caso contrario.
-    \item $z_{ijm} \in \mathbb{Z}^+_0$: Variable entera que indica la cantidad de veh\'iculos de tipo $m$ asignados para cubrir la ruta entre la bodega $i$ y la zona de emergencia $j$.
-    \item $s_{ik} \geq 0$: Variable continua que indica la cantidad del suministro $k$ a pre-posicionar (almacenar) en la instalaci\'on $i$ antes de que ocurra el siniestro.
-    \item $x_{ijkm} \geq 0$: Variable continua que indica la cantidad del suministro $k$ que se tiene que trasladar desde $i$ hasta $j$ utilizando un tipo de veh\'iculo $m$.
+    \item $y_i \in \{0, 1\}$: Variable binaria. Toma valor 1 cuando se selecciona una instalaci\'on de almacenamiento y 0 cuando no.
+    \item $s_{ik} \geq 0$: Variable continua. Indica la cantidad del suministro de emergencia $k$ que se almacenar\'a en la instalaci\'on $i$.
+    \item $x_{ijkm} \geq 0$: Variable continua. Indica la cantidad del suministro $k$ que se tiene que trasladar desde $i$ hasta $j$ utilizando el tipo de veh\'iculo $m$.
+    \item $z_{ijm} \in \{0, 1\}$: Variable binaria. Toma valor 1 cuando se asigna el veh\'iculo $m$ para cubrir la ruta entre la bodega $i$ y la zona de emergencia $j$ y 0 cuando no es seleccionado.
 \end{itemize}
 
 \subsection{Funci\'on objetivo}
@@ -195,23 +195,23 @@ La funci\'on objetivo busca minimizar el tiempo total de respuesta ponderado por
         \sum_{k \in K} E_k \cdot x_{ijkm} \leq A_m \cdot z_{ijm} \quad \forall i \in I, \forall j \in J, \forall m \in M
     \end{equation}
 
-    \item \textbf{Vinculaci\'on de apertura y l\'imite de flota (Big-M):}\\
-    Asegura que solo transiten veh\'iculos desde los centros de acopio que efectivamente fueron habilitados. Aqu\'i, $M$ representa un n\'umero suficientemente grande (por ejemplo, el total de la flota). Para mantener la eficiencia computacional, las variables $x_{ijkm}$ y $z_{ijm}$ se crean \textbf{solo} para aquellas combinaciones $(i,j)$ donde $T_{ijm} \leq TMax$.
-    \begin{equation}
-        \sum_{j \in J} \sum_{m \in M} z_{ijm} \leq M \cdot y_i \quad \forall i \in I
-    \end{equation}
-
     \item \textbf{Disponibilidad de Flota:}\\
     Garantiza que la cantidad de veh\'iculos despachados desde las distintas bodegas hacia las zonas afectadas no supere la cantidad de veh\'iculos disponibles de cada tipo $m$.
     \begin{equation}
         \sum_{i \in I} \sum_{j \in J} z_{ijm} \leq Q_m \quad \forall m \in M
     \end{equation}
 
+    \item \textbf{Radio de cobertura y factibilidad de la ruta:}\\
+    Esta restricci\'on asegura que solo se env\'e suministro desde instalaciones habilitadas ($y_i = 1$) y limita las rutas a aquellas en las que el tiempo de respuesta es menor o igual al tiempo m\'aximo presentado por el tomador de decisiones.
+    \begin{equation}
+        T_{ijm} \cdot z_{ijm} \leq TMax \cdot y_i \quad \forall i \in I, \forall j \in J, \forall m \in M
+    \end{equation}
+
     \item \textbf{Naturaleza de las Variables:}\\
-    Define el dominio de las variables de decisi\'on, cumpliendo la no negatividad para los flujos e inventarios, el car\'acter entero de la flota y el car\'acter binario para la apertura de instalaciones.
     \begin{align*}
         y_i &\in \{0, 1\} \quad \forall i \in I \\
-        z_{ijm} &\in \mathbb{Z}^+_0 \quad \forall i \in I, \forall j \in J, \forall m \in M \\
+        z_{ijm} &\in \{0, 1\} \quad \forall i \in I, \forall j \in J, \forall m \in M \\
+        s_{ik} &\geq 0 \quad \forall i \in I, \forall k \in K \\
         x_{ijkm} &\geq 0 \quad \forall i \in I, \forall j \in J, \forall m \in M \text{, } \forall k \in K 
     \end{align*}
 \end{enumerate}

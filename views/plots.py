@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import matplotlib.pyplot as plt
-import pandas as pd
 
 from core.config import InstanceConfig
 from core.solver import Solution

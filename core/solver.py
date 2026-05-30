@@ -64,6 +64,9 @@ def solve(
             "Revisar: presupuesto R13, capacidad de bodega R4, o T^max."
         )
 
+    if status_code == gp.GRB.TIME_LIMIT and model.SolCount == 0:
+        raise RuntimeError("TIME_LIMIT sin solución incumbente — no se puede extraer resultados.")
+
     if status_code not in (gp.GRB.OPTIMAL, gp.GRB.TIME_LIMIT):
         raise RuntimeError(f"Estado inesperado del solver: {status}")
 

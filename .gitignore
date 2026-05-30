@@ -22,5 +22,8 @@ __pycache__/
 # Gurobi license (no subir al repo)
 gurobi.lic
 
+# results
+results/
+
 # Excepciones explícitas
 !requirements.txt

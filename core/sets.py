@@ -83,7 +83,7 @@ def build(config: InstanceConfig, params: Parameters) -> Sets:
                         if tt + o_m <= t_max[p] and (j, t, p) in demand_jtp:
                             trip_set.add((i, j, m, t, p))
 
-    trip_keys: gp.tuplelist = gp.tuplelist(sorted(trip_set))  # type: ignore[type-arg]
+    trip_keys: TupleList = gp.tuplelist(sorted(trip_set))
 
     # flow_keys: (i,j,k,m,t,p) where trip (i,j,m,t,p) feasible AND D_{jktp} > 0
     flow_set: set[tuple[str, str, str, str, int, int]] = set()
@@ -92,11 +92,10 @@ def build(config: InstanceConfig, params: Parameters) -> Sets:
             if (j, k, t, p) in demand_pos:
                 flow_set.add((i, j, k, m, t, p))
 
-    flow_keys: gp.tuplelist = gp.tuplelist(sorted(flow_set))  # type: ignore[type-arg]
+    flow_keys: TupleList = gp.tuplelist(sorted(flow_set))
 
     # short_keys: (j,k,t,p) where D > 0
-    short_keys: gp.tuplelist = gp.tuplelist(
-        sorted(demand_pos))  # type: ignore[type-arg]
+    short_keys: TupleList = gp.tuplelist(sorted(demand_pos))
 
     return Sets(
         I=I, J=J, K=K, M=M, T=T, P=P, Kv=Kv, Kn=Kn,

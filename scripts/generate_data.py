@@ -11,6 +11,7 @@ from __future__ import annotations
 import sys
 from math import asin, cos, radians, sin, sqrt
 from pathlib import Path
+from typing import TypedDict
 
 import numpy as np
 import pandas as pd
@@ -20,10 +21,45 @@ from core.config import InstanceConfig
 
 
 # ---------------------------------------------------------------------------
+# TypedDicts for structured data
+# ---------------------------------------------------------------------------
+
+class BodegaGeo(TypedDict):
+    id_bodega: str
+    latitud: float
+    longitud: float
+    tamano: str
+
+
+class ComunaGeo(TypedDict):
+    id_comuna: str
+    latitud: float
+    longitud: float
+
+
+class InsumoData(TypedDict):
+    insumo: str
+    volumen_m3: float
+    costo_compra: int
+    costo_bodegaje: int
+    alpha_s: int
+    beta_s: int
+    es_perecible: int
+
+
+class VehiculoData(TypedDict):
+    vehiculo: str
+    capacidad_m3: float
+    tiempo_operativo_min: float
+    velocidad_kmh: float
+    costo_km_CLP: float
+
+
+# ---------------------------------------------------------------------------
 # Real coordinates — Región de Valparaíso
 # ---------------------------------------------------------------------------
 
-BODEGAS_GEO: list[dict[str, object]] = [
+BODEGAS_GEO: list[BodegaGeo] = [
     {"id_bodega": "Placilla", "latitud": -33.136, "longitud": -71.569, "tamano": "Grande"},
     {"id_bodega": "Pto_San_Antonio", "latitud": -33.583, "longitud": -71.613, "tamano": "Grande"},
     {"id_bodega": "Barrio_Ind_El_Salto", "latitud": -33.038, "longitud": -71.530, "tamano": "Mediana"},
@@ -38,7 +74,7 @@ BODEGAS_GEO: list[dict[str, object]] = [
     {"id_bodega": "La_Ligua", "latitud": -32.450, "longitud": -71.233, "tamano": "Pequeña"},
 ]
 
-COMUNAS_GEO: list[dict[str, object]] = [
+COMUNAS_GEO: list[ComunaGeo] = [
     {"id_comuna": "Valparaiso", "latitud": -33.045, "longitud": -71.620},
     {"id_comuna": "Vina_del_Mar", "latitud": -33.024, "longitud": -71.551},
     {"id_comuna": "Quilpue", "latitud": -33.049, "longitud": -71.442},
@@ -58,6 +94,7 @@ COMUNAS_GEO: list[dict[str, object]] = [
     {"id_comuna": "Algarrobo", "latitud": -33.366, "longitud": -71.666},
     {"id_comuna": "Llaillay", "latitud": -32.842, "longitud": -70.952},
     {"id_comuna": "San_Felipe", "latitud": -32.750, "longitud": -70.725},
+    {"id_comuna": "Los_Andes", "latitud": -32.836, "longitud": -70.596},
 ]
 
 # Comunas con topografía de cerros — restricción de carga pesada
@@ -66,115 +103,43 @@ CERRO_COMMUNES: frozenset[str] = frozenset(
 )
 
 # Insumos con parámetros base
-INSUMOS: list[dict[str,
-                   object]] = [{"insumo": "Agua_5L",
-                                "volumen_m3": 0.005,
-                                "costo_compra": 1500,
-                                "costo_bodegaje": 75,
-                                "alpha_s": 6,
-                                "beta_s": 6,
-                                "es_perecible": 1},
-                               {"insumo": "Racion_24h_Familiar",
-                                "volumen_m3": 0.015,
-                                "costo_compra": 12000,
-                                "costo_bodegaje": 600,
-                                "alpha_s": 10,
-                                "beta_s": 10,
-                                "es_perecible": 1},
-                               {"insumo": "Kit_Medico_Trauma",
-                                "volumen_m3": 0.010,
-                                "costo_compra": 45000,
-                                "costo_bodegaje": 2250,
-                                "alpha_s": 12,
-                                "beta_s": 12,
-                                "es_perecible": 1},
-                               {"insumo": "Medicamentos_Cronicos",
-                                "volumen_m3": 0.002,
-                                "costo_compra": 25000,
-                                "costo_bodegaje": 1250,
-                                "alpha_s": 7,
-                                "beta_s": 7,
-                                "es_perecible": 1},
-                               {"insumo": "Suplementos_Pediatricos",
-                                "volumen_m3": 0.003,
-                                "costo_compra": 18000,
-                                "costo_bodegaje": 900,
-                                "alpha_s": 8,
-                                "beta_s": 8,
-                                "es_perecible": 1},
-                               {"insumo": "Kit_Higiene_Familiar",
-                                "volumen_m3": 0.012,
-                                "costo_compra": 22000,
-                                "costo_bodegaje": 1100,
-                                "alpha_s": 9,
-                                "beta_s": 9,
-                                "es_perecible": 0},
-                               {"insumo": "Frazadas_Termicas",
-                                "volumen_m3": 0.020,
-                                "costo_compra": 8500,
-                                "costo_bodegaje": 425,
-                                "alpha_s": 11,
-                                "beta_s": 11,
-                                "es_perecible": 0},
-                               {"insumo": "Carpas_Refugio",
-                                "volumen_m3": 0.080,
-                                "costo_compra": 85000,
-                                "costo_bodegaje": 4250,
-                                "alpha_s": 14,
-                                "beta_s": 14,
-                                "es_perecible": 0},
-                               {"insumo": "Herramientas_Remocion",
-                                "volumen_m3": 0.050,
-                                "costo_compra": 35000,
-                                "costo_bodegaje": 1750,
-                                "alpha_s": 13,
-                                "beta_s": 13,
-                                "es_perecible": 0},
-                               {"insumo": "Mascarillas_N95",
-                                "volumen_m3": 0.005,
-                                "costo_compra": 8000,
-                                "costo_bodegaje": 400,
-                                "alpha_s": 5,
-                                "beta_s": 5,
-                                "es_perecible": 0},
-                               {"insumo": "Generador_Portatil",
-                                "volumen_m3": 0.150,
-                                "costo_compra": 350000,
-                                "costo_bodegaje": 17500,
-                                "alpha_s": 15,
-                                "beta_s": 15,
-                                "es_perecible": 0},
-                               {"insumo": "Baterias_D",
-                                "volumen_m3": 0.001,
-                                "costo_compra": 4500,
-                                "costo_bodegaje": 225,
-                                "alpha_s": 5,
-                                "beta_s": 5,
-                                "es_perecible": 0},
-                               ]
+INSUMOS: list[InsumoData] = [
+    {"insumo": "Agua_5L", "volumen_m3": 0.005, "costo_compra": 1500,
+     "costo_bodegaje": 75, "alpha_s": 6, "beta_s": 6, "es_perecible": 1},
+    {"insumo": "Racion_24h_Familiar", "volumen_m3": 0.015, "costo_compra": 12000,
+     "costo_bodegaje": 600, "alpha_s": 10, "beta_s": 10, "es_perecible": 1},
+    {"insumo": "Kit_Medico_Trauma", "volumen_m3": 0.010, "costo_compra": 45000,
+     "costo_bodegaje": 2250, "alpha_s": 12, "beta_s": 12, "es_perecible": 1},
+    {"insumo": "Medicamentos_Cronicos", "volumen_m3": 0.002, "costo_compra": 25000,
+     "costo_bodegaje": 1250, "alpha_s": 7, "beta_s": 7, "es_perecible": 1},
+    {"insumo": "Suplementos_Pediatricos", "volumen_m3": 0.003, "costo_compra": 18000,
+     "costo_bodegaje": 900, "alpha_s": 8, "beta_s": 8, "es_perecible": 1},
+    {"insumo": "Kit_Higiene_Familiar", "volumen_m3": 0.012, "costo_compra": 22000,
+     "costo_bodegaje": 1100, "alpha_s": 9, "beta_s": 9, "es_perecible": 0},
+    {"insumo": "Frazadas_Termicas", "volumen_m3": 0.020, "costo_compra": 8500,
+     "costo_bodegaje": 425, "alpha_s": 11, "beta_s": 11, "es_perecible": 0},
+    {"insumo": "Carpas_Refugio", "volumen_m3": 0.080, "costo_compra": 85000,
+     "costo_bodegaje": 4250, "alpha_s": 14, "beta_s": 14, "es_perecible": 0},
+    {"insumo": "Herramientas_Remocion", "volumen_m3": 0.050, "costo_compra": 35000,
+     "costo_bodegaje": 1750, "alpha_s": 13, "beta_s": 13, "es_perecible": 0},
+    {"insumo": "Mascarillas_N95", "volumen_m3": 0.005, "costo_compra": 8000,
+     "costo_bodegaje": 400, "alpha_s": 5, "beta_s": 5, "es_perecible": 0},
+    {"insumo": "Generador_Portatil", "volumen_m3": 0.150, "costo_compra": 350000,
+     "costo_bodegaje": 17500, "alpha_s": 15, "beta_s": 15, "es_perecible": 0},
+    {"insumo": "Baterias_D", "volumen_m3": 0.001, "costo_compra": 4500,
+     "costo_bodegaje": 225, "alpha_s": 5, "beta_s": 5, "es_perecible": 0},
+]
 
-VEHICULOS: list[dict[str,
-                     object]] = [{"vehiculo": "Camioneta_4x4",
-                                  "capacidad_m3": 2.5,
-                                  "tiempo_operativo_min": 5.0,
-                                  "velocidad_kmh": 65.0,
-                                  "costo_km_CLP": 690.0},
-                                 {"vehiculo": "Camion_3_4",
-                                  "capacidad_m3": 18.0,
-                                  "tiempo_operativo_min": 10.0,
-                                  "velocidad_kmh": 55.0,
-                                  "costo_km_CLP": 1020.0},
-                                 {"vehiculo": "Camion_Pesado",
-                                  "capacidad_m3": 45.0,
-                                  "tiempo_operativo_min": 20.0,
-                                  "velocidad_kmh": 45.0,
-                                  "costo_km_CLP": 2620.0},
-                                 {"vehiculo": "Helicoptero",
-                                  "capacidad_m3": 4.0,
-                                  "tiempo_operativo_min": 15.0,
-                                  "velocidad_kmh": 150.0,
-                                  "costo_km_CLP": 14000.0},
-                                 ]
+VEHICULOS: list[VehiculoData] = [
+    {"vehiculo": "Camioneta_4x4", "capacidad_m3": 2.5,
+     "tiempo_operativo_min": 5.0, "velocidad_kmh": 65.0, "costo_km_CLP": 690.0},
+    {"vehiculo": "Camion_3_4", "capacidad_m3": 18.0,
+     "tiempo_operativo_min": 10.0, "velocidad_kmh": 55.0, "costo_km_CLP": 1020.0},
+    {"vehiculo": "Camion_Pesado", "capacidad_m3": 45.0,
+     "tiempo_operativo_min": 20.0, "velocidad_kmh": 45.0, "costo_km_CLP": 2620.0},
+    {"vehiculo": "Helicoptero", "capacidad_m3": 4.0,
+     "tiempo_operativo_min": 15.0, "velocidad_kmh": 150.0, "costo_km_CLP": 14000.0},
+]
 
 # Demanda base por insumo (unidades anuales para todo el radio, se
 # distribuye por comuna)
@@ -193,8 +158,8 @@ DEMANDA_BASE: dict[str, int] = {
     "Baterias_D": 40000,
 }
 
-# Peso por comuna (basado en vulnerabilidad FIBE: 78% en Viña, Quilpué,
-# Villa Alemana)
+# Peso por comuna (basado en vulnerabilidad FIBE: 78% en Viña, Quilpué, Villa Alemana)
+# Los_Andes: ~70.000 hab. en zona de interfaz forestal cordillerana.
 COMUNA_WEIGHT: dict[str, float] = {
     "Valparaiso": 0.120, "Vina_del_Mar": 0.130, "Quilpue": 0.115,
     "Villa_Alemana": 0.100, "Concon": 0.040, "Quintero": 0.035,
@@ -202,14 +167,14 @@ COMUNA_WEIGHT: dict[str, float] = {
     "Quillota": 0.060, "La_Cruz": 0.025, "La_Calera": 0.045,
     "Casablanca": 0.035, "San_Antonio": 0.060, "Cartagena": 0.030,
     "El_Quisco": 0.020, "Algarrobo": 0.020, "Llaillay": 0.025,
-    "San_Felipe": 0.030,
+    "San_Felipe": 0.030, "Los_Andes": 0.030,
 }
 
 # Factor estacional — alta demanda en verano (incendios)
 SEASONAL_FACTOR: dict[int, float] = {
-    1: 3.5, 2: 4.0, 3: 3.0,   # verano: incendios
-    4: 0.4, 5: 0.3, 6: 0.3,   # otoño-invierno: baja
-    7: 0.3, 8: 0.3, 9: 0.4,   # invierno-primavera
+    1: 3.5, 2: 4.0, 3: 3.0,    # verano: incendios
+    4: 0.4, 5: 0.3, 6: 0.3,    # otoño-invierno: baja
+    7: 0.3, 8: 0.3, 9: 0.4,    # invierno-primavera
     10: 0.5, 11: 0.8, 12: 3.2,  # pre-verano
 }
 
@@ -253,11 +218,10 @@ def generate(config: InstanceConfig | None = None) -> None:
     }
     rows_bod: list[dict[str, object]] = []
     for b in BODEGAS_GEO:
-        sp = size_params[str(b["tamano"])]
-        lo, hi = int(
-            sp["cap_range"][0]), int(
+        sp = size_params[b["tamano"]]
+        cap_lo, cap_hi = int(sp["cap_range"][0]), int(
             sp["cap_range"][1])  # type: ignore[index]
-        clo, chi = int(
+        cost_lo, cost_hi = int(
             sp["cost_range"][0]), int(
             sp["cost_range"][1])  # type: ignore[index]
         rows_bod.append({
@@ -265,10 +229,10 @@ def generate(config: InstanceConfig | None = None) -> None:
             "latitud": b["latitud"],
             "longitud": b["longitud"],
             "tamano": b["tamano"],
-            "capacidad_m3": int(rng.integers(lo, hi + 1)),
-            "costo_fijo_CLP": int(rng.integers(clo, chi + 1)),
-            "personal_min": sp["pmin"],
-            "personal_max": sp["pmax"],
+            "capacidad_m3": int(rng.integers(cap_lo, cap_hi + 1)),
+            "costo_fijo_CLP": int(rng.integers(cost_lo, cost_hi + 1)),
+            "personal_min": int(sp["pmin"]),  # type: ignore[arg-type]
+            "personal_max": int(sp["pmax"]),  # type: ignore[arg-type]
         })
     pd.DataFrame(rows_bod).to_csv(out / "bodegas_candidatas.csv", index=False)
 
@@ -279,8 +243,8 @@ def generate(config: InstanceConfig | None = None) -> None:
     # ── 3. insumos.csv ─────────────────────────────────────────────────────
     ins_rows: list[dict[str, object]] = []
     for ins in INSUMOS:
-        alpha_min = float(ins["alpha_s"]) / 60.0
-        beta_min = float(ins["beta_s"]) / 60.0
+        alpha_min = ins["alpha_s"] / 60.0
+        beta_min = ins["beta_s"] / 60.0
         ins_rows.append({
             "insumo": ins["insumo"],
             "volumen_m3": ins["volumen_m3"],
@@ -327,7 +291,6 @@ def generate(config: InstanceConfig | None = None) -> None:
     rows_s0: list[dict[str, object]] = []
     for b in BODEGAS_GEO:
         for ins in INSUMOS:
-            # Non-perishable initial stock; perishable starts at 0
             val = 0 if ins["es_perecible"] else int(rng.integers(0, 31))
             rows_s0.append(
                 {"id_bodega": b["id_bodega"], "insumo": ins["insumo"], "stock_inicial": val})
@@ -345,20 +308,18 @@ def generate(config: InstanceConfig | None = None) -> None:
     rows_tr: list[dict[str, object]] = []
     for b in BODEGAS_GEO:
         for c in COMUNAS_GEO:
-            air_km = _haversine_km(
-                float(b["latitud"]), float(b["longitud"]),
-                float(c["latitud"]), float(c["longitud"])
-            )
+            air_km = _haversine_km(b["latitud"], b["longitud"],
+                                   c["latitud"], c["longitud"])
             road_km = air_km * ROAD_FACTOR
             alt_km = road_km * 1.25  # ruta alternativa es 25% más larga
 
             for veh in ["Camioneta_4x4", "Camion_3_4", "Camion_Pesado"]:
                 vel = veh_info[veh]["vel"]
                 cpkm = veh_info[veh]["cpkm"]
-                # Principal (ruta más rápida)
                 t_princ = road_km / vel * 60.0
                 c_princ = road_km * cpkm
-                # Aptitud Camion_Pesado — 0 en cerros (Alternativa)
+                # Camion_Pesado no apto en rutas de cerros (aptitud = 0 en
+                # Alternativa)
                 apt_alt = 0 if (
                     veh == "Camion_Pesado" and c["id_comuna"] in CERRO_COMMUNES) else 1
                 rows_tr.append({
@@ -368,7 +329,6 @@ def generate(config: InstanceConfig | None = None) -> None:
                     "costo_viaje_CLP": round(c_princ),
                     "aptitud": 1,
                 })
-                # Alternativa
                 t_alt = alt_km / vel * 60.0
                 c_alt = alt_km * cpkm
                 rows_tr.append({
@@ -396,14 +356,13 @@ def generate(config: InstanceConfig | None = None) -> None:
     # ── 10. demanda_proyectada.csv ─────────────────────────────────────────
     rows_d: list[dict[str, object]] = []
     for c in COMUNAS_GEO:
-        jname = str(c["id_comuna"])
+        jname = c["id_comuna"]
         w_j = COMUNA_WEIGHT[jname]
         for ins in INSUMOS:
-            k = str(ins["insumo"])
+            k = ins["insumo"]
             base_anual = DEMANDA_BASE[k] * w_j
             for t in range(1, 13):
                 sf = SEASONAL_FACTOR[t]
-                # Add ±20% noise with fixed seed
                 noise = float(rng.uniform(0.85, 1.15))
                 base_mes = base_anual / 12.0 * sf * noise
                 for p in (1, 2, 3):

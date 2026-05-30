@@ -102,7 +102,8 @@ class InstanceConfig:
     vehicle_ids: tuple[str, ...] = VEHICLE_IDS
     route_ids: tuple[str, ...] = ROUTE_IDS
     perishable: frozenset[str] = field(default_factory=lambda: PERISHABLE)
-    warehouse_category: dict[str, int] = field(default_factory=lambda: WAREHOUSE_CATEGORY)
+    warehouse_category: dict[str, int] = field(
+        default_factory=lambda: WAREHOUSE_CATEGORY)
 
     horizon_months: int = 12
     priorities: tuple[int, ...] = (1, 2, 3)
@@ -116,6 +117,12 @@ class InstanceConfig:
     seed: int = 1113
     time_limit_s: float = 1800.0
     mip_gap: float = 0.0
+
+    # Gurobi WLS — credenciales del grupo (licencia Online Course sin cap
+    # local)
+    wls_access_id: str = "d1d2087a-5595-4edc-8c56-86b291b3d5b3"
+    wls_secret: str = "087e5baa-b338-47f3-81ed-539ca3f6da57"
+    wls_license_id: int = 2827565
 
     # Paths
     data_dir: Path = field(default_factory=lambda: BASE_DIR / "data")

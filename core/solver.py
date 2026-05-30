@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
 
 import gurobipy as gp
 import pandas as pd
 
 from core.config import InstanceConfig
+from core.parameters import Parameters
+from core.sets import Sets
 from core.variables import ModelVars
 
 
@@ -16,111 +17,161 @@ class Solution:
     gap: float
     runtime: float
     status: str
-    # DataFrames for reporting
-    bodegas: pd.DataFrame       # i, t, y, w, e
-    inventario: pd.DataFrame    # i, k, t, s, c
-    envios: pd.DataFrame        # i, j, k, m, t, p, x_val
-    viajes: pd.DataFrame        # i, j, m, t, p, n_val
-    faltantes: pd.DataFrame     # j, k, t, p, f_val
+    # 6 reportes CSV
+    bodegas_abiertas: pd.DataFrame   # i, t_apertura, costo_fijo, dotacion
+    faltante: pd.DataFrame           # j, k, t, p, faltante
+    inventario: pd.DataFrame         # i, k, t, stock_final, compras
+    presupuesto: pd.DataFrame        # categoria, gasto_CLP
+    personal: pd.DataFrame           # i, t, dotacion, saturacion_%
+    rutas: pd.DataFrame              # i, j, m, t, p, viajes, volumen_m3, fill_rate_%
 
 
 def solve(
     model: gp.Model,
     mv: ModelVars,
     config: InstanceConfig,
-    sets_obj: "Sets",  # type: ignore[name-defined]  # noqa: F821
+    sets: Sets,
+    params: Parameters,
 ) -> Solution:
-    from core.sets import Sets
-    s: Sets = sets_obj
+    p_obj = params
 
     model.setParam("TimeLimit", config.time_limit_s)
     model.setParam("MIPGap", config.mip_gap)
     model.optimize()
 
     status_code = model.Status
-    status_map = {
+    STATUS_MAP = {
         gp.GRB.OPTIMAL: "OPTIMAL",
         gp.GRB.TIME_LIMIT: "TIME_LIMIT",
         gp.GRB.INFEASIBLE: "INFEASIBLE",
         gp.GRB.INF_OR_UNBD: "INF_OR_UNBD",
     }
-    status = status_map.get(status_code, f"STATUS_{status_code}")
+    status = STATUS_MAP.get(status_code, f"STATUS_{status_code}")
 
     if status_code == gp.GRB.INF_OR_UNBD:
         model.setParam("DualReductions", 0)
         model.optimize()
         status_code = model.Status
-        status = status_map.get(status_code, f"STATUS_{status_code}")
+        status = STATUS_MAP.get(status_code, f"STATUS_{status_code}")
 
     if status_code == gp.GRB.INFEASIBLE:
-        iis_path = str(config.results_dir / "encontrar_infactibilidad.ilp")
         config.results_dir.mkdir(exist_ok=True)
+        iis_path = str(config.results_dir / "infactibilidad.ilp")
         model.computeIIS()
         model.write(iis_path)
         raise RuntimeError(
-            f"Model is INFEASIBLE. IIS written to {iis_path}. "
-            "Check budget (R13), feasibility of demand coverage, "
-            "or T^max constraints."
+            f"INFEASIBLE. IIS en {iis_path}. "
+            "Revisar: presupuesto R13, capacidad de bodega R4, o T^max."
         )
 
+    if status_code == gp.GRB.TIME_LIMIT and model.SolCount == 0:
+        raise RuntimeError("TIME_LIMIT sin solución incumbente — no se puede extraer resultados.")
+
     if status_code not in (gp.GRB.OPTIMAL, gp.GRB.TIME_LIMIT):
-        raise RuntimeError(f"Unexpected solver status: {status}")
+        raise RuntimeError(f"Estado inesperado del solver: {status}")
 
     obj = model.ObjVal
     gap = model.MIPGap if status_code == gp.GRB.TIME_LIMIT else 0.0
     runtime = model.Runtime
 
-    # ── Extract solution ────────────────────────────────────────────────────
-    rows_bod: list[dict[str, object]] = []
-    for i in s.I:
-        for t in s.T:
-            rows_bod.append({
-                "i": i, "t": t,
-                "y": round(mv.y[i, t].X),
-                "w": round(mv.w[i, t].X),
-                "e": round(mv.e[i, t].X),
-            })
-    bodegas = pd.DataFrame(rows_bod)
+    I, _, K, _, T, _ = sets.I, sets.J, sets.K, sets.M, sets.T, sets.P
+    F = p_obj.F.to_dict()
+    A = p_obj.A.to_dict()
+    E_v = p_obj.E_vol.to_dict()
+    V_k = p_obj.V.to_dict()
+    H_k = p_obj.H.to_dict()
+    Gm = p_obj.G_cost.to_dict()
+    ab = {k: float(p_obj.alpha[k]) + float(p_obj.beta[k]) for k in K}
+    rho = p_obj.rho
+    d_h = p_obj.d
 
+    # ── Reporte 1: Bodegas abiertas ────────────────────────────────────────
+    rows_b: list[dict[str, object]] = []
+    for i in I:
+        for t in T:
+            if mv.w[i, t].X > 0.5:
+                rows_b.append({
+                    "Bodega": i, "Mes_Apertura": t,
+                    "Costo_Fijo_CLP": F[i],
+                    "Dotacion_Mes_Apertura": round(mv.e[i, t].X),
+                })
+    bodegas_abiertas = pd.DataFrame(rows_b)
+
+    # ── Reporte 2: Faltante ────────────────────────────────────────────────
+    rows_f: list[dict[str, object]] = []
+    for (j, k, t, p) in sets.short_keys:
+        val = mv.f[j, k, t, p].X
+        if val > 0.1:
+            rows_f.append({"Comuna": j, "Insumo": k, "Mes": t,
+                          "Prioridad": p, "Faltante": round(val, 1)})
+    faltante = pd.DataFrame(rows_f)
+
+    # ── Reporte 3: Inventario ──────────────────────────────────────────────
     rows_inv: list[dict[str, object]] = []
-    for i in s.I:
-        for k in s.K:
-            for t in s.T:
+    for i in I:
+        for k in K:
+            for t in T:
                 s_val = mv.s[i, k, t].X
                 c_val = mv.c[i, k, t].X
-                if s_val > 1e-6 or c_val > 1e-6:
-                    rows_inv.append({"i": i, "k": k, "t": t, "s": s_val, "c": c_val})
+                if s_val > 0.1 or c_val > 0.1:
+                    rows_inv.append({"Bodega": i, "Insumo": k, "Mes": t, "Stock_Final": round(
+                        s_val, 1), "Compras": round(c_val, 1)})
     inventario = pd.DataFrame(rows_inv)
 
-    rows_env: list[dict[str, object]] = []
-    for (i, j, k, m, t, p) in s.flow_keys:
-        x_val = mv.x[i, j, k, m, t, p].X
-        if x_val > 1e-6:
-            rows_env.append({"i": i, "j": j, "k": k, "m": m, "t": t, "p": p, "x": x_val})
-    envios = pd.DataFrame(rows_env)
+    # ── Reporte 4: Presupuesto ─────────────────────────────────────────────
+    g_ape = sum(F[i] * mv.w[i, t].X for i in I for t in T)
+    g_com = sum(V_k[k] * mv.c[i, k, t].X for i in I for k in K for t in T)
+    g_bod = sum(H_k[k] * mv.s[i, k, t].X for i in I for k in K for t in T)
+    g_per = sum(p_obj.sueldo_mensual * mv.e[i, t].X for i in I for t in T)
+    g_tra = sum(Gm[(i, j, m)] * mv.n[i, j, m, t,
+                p].X for (i, j, m, t, p) in sets.trip_keys)
+    presupuesto = pd.DataFrame({
+        "Categoria": ["Apertura", "Compras", "Bodegaje", "Sueldos", "Transporte"],
+        "Gasto_CLP": [g_ape, g_com, g_bod, g_per, g_tra],
+    })
 
-    rows_viaj: list[dict[str, object]] = []
-    for (i, j, m, t, p) in s.trip_keys:
-        n_val = mv.n[i, j, m, t, p].X
-        if n_val > 1e-6:
-            rows_viaj.append({"i": i, "j": j, "m": m, "t": t, "p": p, "n": n_val})
-    viajes = pd.DataFrame(rows_viaj)
+    # ── Reporte 5: Personal / saturación ──────────────────────────────────
+    rows_per: list[dict[str, object]] = []
+    for i in I:
+        for t in T:
+            dot = mv.e[i, t].X
+            if dot > 0.5:
+                min_usados = sum(
+                    ab[k] * mv.x[i, j, k, m, t2, p].X
+                    for (i2, j, k, m, t2, p) in sets.flow_keys
+                    if i2 == i and t2 == t and mv.x[i2, j, k, m, t2, p].X > 0.5
+                )
+                min_max = dot * 60.0 * d_h * rho
+                sat = (min_usados / min_max * 100) if min_max > 0 else 0.0
+                rows_per.append({"Bodega": i, "Mes": t, "Dotacion": round(
+                    dot), "Saturacion_%": round(sat, 1)})
+    personal = pd.DataFrame(rows_per)
 
-    rows_falt: list[dict[str, object]] = []
-    for (j, k, t, p) in s.short_keys:
-        f_val = mv.f[j, k, t, p].X
-        if f_val > 1e-6:
-            rows_falt.append({"j": j, "k": k, "t": t, "p": p, "f": f_val})
-    faltantes = pd.DataFrame(rows_falt)
+    # ── Reporte 6: Rutas / tasa de llenado ────────────────────────────────
+    rows_r: list[dict[str, object]] = []
+    for (i, j, m, t, p) in sets.trip_keys:
+        viajes = mv.n[i, j, m, t, p].X
+        if viajes > 0.5:
+            vol = sum(
+                E_v[k] * mv.x[i, j, k, m, t, p].X
+                for k in K if (i, j, k, m, t, p) in mv.x
+            )
+            cap_total = A[m] * viajes
+            fill = (vol / cap_total * 100) if cap_total > 0 else 0.0
+            rows_r.append({
+                "Origen": i, "Destino": j, "Vehiculo": m, "Mes": t, "Prioridad": p,
+                "Viajes": int(round(viajes)),
+                "Volumen_m3": round(vol, 2),
+                "Fill_Rate_%": round(fill, 1),
+            })
+    rutas = pd.DataFrame(rows_r)
 
     return Solution(
-        obj_value=obj,
-        gap=gap,
-        runtime=runtime,
-        status=status,
-        bodegas=bodegas,
+        obj_value=obj, gap=gap, runtime=runtime, status=status,
+        bodegas_abiertas=bodegas_abiertas,
+        faltante=faltante,
         inventario=inventario,
-        envios=envios,
-        viajes=viajes,
-        faltantes=faltantes,
+        presupuesto=presupuesto,
+        personal=personal,
+        rutas=rutas,
     )

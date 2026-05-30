@@ -1,0 +1,226 @@
+\documentclass[letterpaper]{article}
+\usepackage[spanish]{babel}
+\selectlanguage{spanish}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\graphicspath{ {./figures/} }
+\usepackage[left=1.25in,right=1.25in,top=1.0in,bottom=1.0in]{geometry}
+\setlength{\parskip}{6pt}
+\setlength{\parindent}{0pt}
+\begin{document}
+
+\begin{center}
+{\Large\bf Análisis de Resultados --- Entrega 4}\\[4pt]
+{\large\bf Minimización del tiempo de respuesta logística para la distribución}\\[2pt]
+{\large\bf de insumos humanitarios de SENAPRED --- Región de Valparaíso}\\[4pt]
+{\normalsize Grupo 92 \quad ICS1113-Optimización}\\
+\end{center}
+\hrule\vspace{6pt}
+\tableofcontents
+\newpage
+
+\section{Estadísticas del Solver}
+
+\begin{table}[H]
+\centering
+\caption{Resumen de la ejecución del modelo}
+\label{tab:solver}
+\begin{tabular}{lr}
+\hline
+\textbf{Indicador} & \textbf{Valor} \\
+\hline
+Estado solver & TIME\_LIMIT (solución factible) \\
+Valor función objetivo $Z^*$ & $131{,}629{,}817$ min-equiv. \\
+GAP de optimalidad & $6{,}02\%$ \\
+Tiempo de resolución & $1{,}800.39$ s (30 min) \\
+Número de variables & $311{,}366$ \\
+Número de restricciones & $338{,}595$ \\
+Número de no-nulos & $2{,}076{,}596$ \\
+\hline
+\end{tabular}
+\end{table}
+
+Un GAP del $6{,}02\%$ indica que la solución encontrada está a lo más un $6{,}02\%$ del óptimo
+global desconocido. Dado que el modelo supera las 311.000 variables, este resultado
+es satisfactorio dentro del límite de 30 minutos.
+
+\section{Bodegas Habilitadas}
+
+Se habilitaron \textbf{12 de 12} bodegas candidatas, todas desde el mes~1.
+Este patrón de apertura anticipada es consistente con la restricción de tiempo máximo
+$T^{\max}_1 = 45$~min: una red descentralizada cubre todos los nodos en ventana crítica.
+
+\begin{table}[H]
+\centering
+\caption{Bodegas habilitadas y mes de apertura}
+\label{tab:bodegas}
+\begin{tabular}{lrr}
+\hline
+    \textbf{Bodega} & \textbf{Mes apertura} & \textbf{Costo fijo (CLP)} \\
+\hline
+    Placilla & 1 & 59603887 \\
+    Pto\_San\_Antonio & 1 & 45734667 \\
+    Barrio\_Ind\_El\_Salto & 1 & 33983161 \\
+    Belloto\_Sur & 1 & 31854632 \\
+    Base\_Torquemada & 1 & 29625860 \\
+    Ruta\_60CH\_Quillota & 1 & 31744420 \\
+    Parque\_Ind\_San\_Felipe & 1 & 32360050 \\
+    Pto\_Quintero & 1 & 27177706 \\
+    Aerodromo\_Rodelillo & 1 & 13986210 \\
+    Casablanca\_Centro & 1 & 10456831 \\
+    Estadio\_Limache & 1 & 12543632 \\
+    La\_Ligua & 1 & 11091252 \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Distribución del Presupuesto}
+
+El presupuesto total utilizado fue de \textbf{\$4,804~MM~CLP},
+sobre un máximo disponible de \$5.000~MM (utilización del $96.1\%$).
+
+\begin{table}[H]
+\centering
+\caption{Distribución del presupuesto utilizado}
+\label{tab:presupuesto}
+\begin{tabular}{lrr}
+\hline
+    \textbf{Categoría} & \textbf{Gasto (CLP)} & \textbf{Porcentaje} \\
+\hline
+    Apertura & 340162308.0 & 7.1 \\
+    Compras & 3630133887.5 & 75.6 \\
+    Bodegaje & 20244648.1 & 0.4 \\
+    Sueldos & 795600000.0 & 16.6 \\
+    Transporte & 17793550.0 & 0.4 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{G3_presupuesto.png}
+\caption{Distribución porcentual del presupuesto por categoría}
+\label{fig:presupuesto}
+\end{figure}
+
+El ítem dominante es \textbf{Compras} ($75{,}7\%$), coherente con la necesidad de
+pre-posicionar inventario en 12 bodegas antes de la temporada de incendios.
+Los sueldos representan el $16{,}5\%$, reflejo de la dotación mínima exigida por R10a en
+todas las instalaciones activas.
+
+\section{Demanda Insatisfecha}
+
+\begin{table}[H]
+\centering
+\caption{Demanda insatisfecha por nivel de prioridad}
+\label{tab:faltante}
+\begin{tabular}{lr}
+\hline
+    \textbf{Prioridad} & \textbf{Faltante total (unidades)} \\
+\hline
+    1 & 296 \\
+    2 & 10573 \\
+    3 & 97031 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.55\textwidth]{G1_faltante_prioridad.png}
+\caption{Distribución del faltante por nivel de prioridad}
+\label{fig:faltante}
+\end{figure}
+
+La demanda insatisfecha de prioridad~1 (soporte vital crítico) se redujo a
+\textbf{296 unidades}, frente a $\approx$180.000 del caso base reactivo
+(E3), representando una mejora del \textbf{88\%} en la cobertura crítica.
+El faltante residual de prioridad~3 (97,031 unidades) corresponde a
+insumos de baja urgencia limitados por la restricción presupuestaria R13.
+
+\section{Operación de la Flota}
+
+\begin{table}[H]
+\centering
+\caption{Top 10 rutas por tasa de llenado vehicular}
+\label{tab:rutas}
+\begin{tabular}{lrrrrr}
+\hline
+    \textbf{Origen} & \textbf{Destino} & \textbf{Vehiculo} & \textbf{Mes} & \textbf{Viajes} & \textbf{Fill Rate (\%)} \\
+\hline
+    Ruta\_60CH\_Quillota & Quillota & Camioneta\_4x4 & 2 & 1 & 100.0 \\
+    Ruta\_60CH\_Quillota & San\_Felipe & Camioneta\_4x4 & 3 & 1 & 100.0 \\
+    Parque\_Ind\_San\_Felipe & San\_Felipe & Camioneta\_4x4 & 3 & 1 & 100.0 \\
+    Parque\_Ind\_San\_Felipe & San\_Felipe & Camioneta\_4x4 & 12 & 2 & 100.0 \\
+    Parque\_Ind\_San\_Felipe & Los\_Andes & Camioneta\_4x4 & 1 & 3 & 100.0 \\
+    Parque\_Ind\_San\_Felipe & Los\_Andes & Camioneta\_4x4 & 1 & 1 & 100.0 \\
+    Parque\_Ind\_San\_Felipe & Los\_Andes & Camioneta\_4x4 & 2 & 2 & 100.0 \\
+    Parque\_Ind\_San\_Felipe & Los\_Andes & Camioneta\_4x4 & 3 & 3 & 100.0 \\
+    Ruta\_60CH\_Quillota & La\_Cruz & Camioneta\_4x4 & 2 & 1 & 100.0 \\
+    Ruta\_60CH\_Quillota & La\_Cruz & Camioneta\_4x4 & 3 & 1 & 100.0 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{G2_fill_rate_vehiculo.png}
+\caption{Tasa de uso de capacidad por tipo de vehículo (fill rate \%)}
+\label{fig:vehiculos}
+\end{figure}
+
+La Camioneta~4x4 domina los despachos de prioridad~1 por su menor tiempo de viaje
+en rutas cortas de la topografía valparaisina. El Helicóptero se activa
+exclusivamente en rutas donde los modos terrestres superan $T^{\max}_1 = 45$~min
+(Los~Andes, Llaillay), exactamente como lo fuerza el conjunto $\mathcal{F}_1$.
+
+\section{Inventario y Balance Temporal}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{G4_stock_vs_faltante.png}
+\caption{Stock final vs.\ demanda insatisfecha por mes}
+\label{fig:stock}
+\end{figure}
+
+El inventario de no perecibles alcanza su máximo en diciembre (mes~12) y enero--marzo,
+anticipando la temporada de incendios, mientras que los perecibles muestran stock
+cero al cierre de cada período (R3 activa). La demanda insatisfecha se concentra
+en los meses de verano, donde la restricción presupuestaria impide cubrir
+la totalidad de los picos de demanda.
+
+\section{Comparación con Caso Base (E3 vs.\ E4)}
+
+\begin{table}[H]
+\centering
+\caption{Comparación E3 (1 bodega centralizada) vs.\ E4 (12 bodegas, Los~Andes incluida)}
+\label{tab:comparacion}
+\begin{tabular}{lcc}
+\hline
+\textbf{Indicador} & \textbf{E3 caso base} & \textbf{E4 solución optimizada} \\
+\hline
+Bodegas habilitadas              & 1 (Placilla)   & 12 \\
+Comunas cubiertas en $\leq45$~min & $\approx50\%$  & 100\% \\
+Faltante prioridad~1 (unidades)  & $\approx$180.000 & 296 \\
+Faltante prioridad~2             & alto           & 10,573 \\
+Faltante prioridad~3             & alto           & 97,031 \\
+Presupuesto utilizado            & ---            & \$4,804~MM (96.1\%) \\
+GAP optimalidad                  & $14{,}12\%$    & $6{,}02\%$ \\
+Comunas modelo                   & 19             & 20 (Los~Andes añadida) \\
+\hline
+\end{tabular}
+\end{table}
+
+La incorporación de Los~Andes como nodo demandante es significativa: con tiempos
+terrestres $>$120~min desde Placilla, requiere cobertura por el Helicóptero
+o la bodega de San~Felipe para cumplir $T^{\max}_2$, lo que el modelo resuelve
+habilitando todas las bodegas desde el mes~1.
+
+\end{document}

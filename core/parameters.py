@@ -7,75 +7,65 @@ import pandas as pd
 
 @dataclass(frozen=True)
 class Parameters:
-    # D_{jktp}: demanda proyectada [unidades]  index=(j,k,t,p)
+    # Demanda D_{jktp} [unidades]  index=(j,k,t,p)
     D: pd.Series
 
-    # C_i: capacidad max bodega [m³]  index=(i,)
+    # Capacidad bodega C_i [m³]  index=(i,)
     C: pd.Series
 
-    # E_k: volumen unitario [m³/unidad]  index=(k,)
-    E_vol: pd.Series
-
-    # F_i: costo fijo apertura [CLP]  index=(i,)
+    # Costo apertura F_i [CLP]  index=(i,)
     F: pd.Series
 
-    # V_{kt}: costo compra [CLP/unidad]  index=(k,t)
+    # Volumen unitario E_k [m³/unidad]  index=(k,)
+    E_vol: pd.Series
+
+    # Costo compra V_k [CLP/unidad]  index=(k,)
     V: pd.Series
 
-    # H_{ikt}: costo mantención [CLP/(unidad·mes)]  index=(i,k,t)
+    # Costo mantención H_k [CLP/unidad/mes]  index=(k,)
     H: pd.Series
 
-    # A_m: capacidad carga vehículo [m³]  index=(m,)
-    A: pd.Series
-
-    # B: presupuesto total [CLP]
-    B: float
-
-    # T_{ijmt}: tiempo transporte [min]  index=(i,j,m,t)   (r colapsado a singleton)
-    T_travel: pd.Series
-
-    # O_m: tiempo preparación [min]  index=(m,)
-    O: pd.Series
-
-    # G_{ijm}: costo operativo por viaje [CLP/viaje]  index=(i,j,m)
-    G_cost: pd.Series
-
-    # W_p: ponderador urgencia  index=(p,)
-    W: pd.Series
-
-    # S0_{ik}: stock inicial  index=(i,k)
+    # Stock inicial S0_{ik}  index=(i,k)
     S0: pd.Series
 
-    # alpha_k, beta_k: tiempos carga/descarga [min/unidad]  index=(k,)
+    # Capacidad vehículo A_m [m³]  index=(m,)
+    A: pd.Series
+
+    # Tiempo operativo O_m [min]  index=(m,)
+    O: pd.Series
+
+    # Tiempo viaje mínimo (R' colapsado) T_{ijm} [min]  index=(i,j,m)
+    T_travel: pd.Series
+
+    # Costo viaje G_{ijm} [CLP/viaje]  index=(i,j,m)
+    G_cost: pd.Series
+
+    # Aptitud Apt_{ijm} ∈ {0,1}  index=(i,j,m)
+    Apt: pd.Series
+
+    # Pool vehicular Q_{mt}  index=(m,t)
+    Q: pd.Series
+
+    # Ponderadores W_p  index=(p,)
+    W: pd.Series
+
+    # Penalización faltante π_p [min-equiv/unidad]  index=(p,)
+    pi: pd.Series
+
+    # Tiempos carga/descarga α_k, β_k [min/unidad]  index=(k,)
     alpha: pd.Series
     beta: pd.Series
 
-    # rho: factor eficiencia
-    rho: float
+    # Dotación personal
+    L: pd.Series       # personal_min por bodega  index=(i,)
+    Emax: pd.Series    # personal_max por bodega  index=(i,)
 
-    # d: horas operativas/mes
-    d: float
-
-    # L_g: dotación mínima  index=(g,)
-    L: pd.Series
-
-    # Emax_g: dotación máxima  index=(g,)
-    Emax: pd.Series
-
-    # Omega_t: costo personal [CLP/(persona·mes)]  index=(t,)
-    Omega: pd.Series
-
-    # Apt_{mj}: aptitud vehículo para la ruta a j  index=(m,j)  (r colapsado)
-    Apt: pd.Series
-
-    # Q_{mt}: pool vehicular [vehículos]  index=(m,t)
-    Q: pd.Series
-
-    # h: factor conversión costo-tiempo [min/CLP]
-    h: float
-
-    # pi_p: penalización faltante [min-equiv/unidad]  index=(p,)
-    pi: pd.Series
-
-    # warehouse_size_category: g para cada i  index=(i,)
+    # Categoría de tamaño de bodega g  index=(i,)
     warehouse_g: pd.Series
+
+    # Escalares
+    rho: float            # factor eficiencia operativa
+    d: float              # horas operativas/mes
+    B: float              # presupuesto total [CLP]
+    h: float              # factor conversión costo→tiempo [min/CLP]
+    sueldo_mensual: float  # Ω_t simplificado como constante [CLP/persona/mes]

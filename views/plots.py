@@ -1,99 +1,124 @@
 from __future__ import annotations
 
-from pathlib import Path
-
 import matplotlib.pyplot as plt
-import pandas as pd
 
 from core.config import InstanceConfig
 from core.solver import Solution
 
+plt.style.use("seaborn-v0_8-darkgrid")
+COLORS = ["#264653", "#2a9d8f", "#e9c46a", "#f4a261", "#e76f51"]
+
 
 def generate_plots(sol: Solution, config: InstanceConfig) -> None:
     config.results_dir.mkdir(exist_ok=True)
+    _plot_faltante_prioridad(sol, config)
+    _plot_fill_rate_vehiculo(sol, config)
+    _plot_presupuesto(sol, config)
+    _plot_stock_vs_faltante(sol, config)
+    print("[plots] 4 gráficos generados en results/")
 
-    _plot_coverage_by_priority(sol, config)
-    _plot_fleet_usage(sol, config)
-    _plot_inventory(sol, config)
 
-
-def _plot_coverage_by_priority(sol: Solution, config: InstanceConfig) -> None:
-    if sol.envios.empty and sol.faltantes.empty:
+def _plot_faltante_prioridad(sol: Solution, config: InstanceConfig) -> None:
+    if sol.faltante.empty:
         return
+    fig, ax = plt.subplots(figsize=(6, 5))
+    falt = sol.faltante.groupby("Prioridad")["Faltante"].sum()
+    falt.plot(
+        kind="pie", ax=ax,
+        autopct="%1.1f%%",
+        colors=["#e63946", "#f4a261", "#e9c46a"][: len(falt)],
+        startangle=90,
+    )
+    ax.set_title("Distribución del faltante por prioridad", fontweight="bold")  # type: ignore[union-attr]
+    ax.set_ylabel("")  # type: ignore[union-attr]
+    fig.tight_layout()
+    fig.savefig(config.results_dir / "G1_faltante_prioridad.png", dpi=300)
+    plt.close(fig)
 
-    fig, ax = plt.subplots(figsize=(8, 4))
-    priorities = config.priorities
 
-    covered: dict[int, float] = {}
-    shortage: dict[int, float] = {}
-    for p in priorities:
-        covered[p] = (
-            sol.envios[sol.envios["p"] == p]["x"].sum()
-            if not sol.envios.empty
-            else 0.0
-        )
-        shortage[p] = (
-            sol.faltantes[sol.faltantes["p"] == p]["f"].sum()
-            if not sol.faltantes.empty
-            else 0.0
-        )
-
-    labels = [f"P{p}" for p in priorities]
-    cov_vals = [covered[p] for p in priorities]
-    short_vals = [shortage[p] for p in priorities]
-
-    x = range(len(priorities))
-    ax.bar(x, cov_vals, label="Cubierto", color="steelblue")
-    ax.bar(x, short_vals, bottom=cov_vals, label="Faltante", color="salmon")
-    ax.set_xticks(list(x))
-    ax.set_xticklabels(labels)
-    ax.set_ylabel("Unidades")
-    ax.set_title("Cobertura por nivel de prioridad")
+def _plot_fill_rate_vehiculo(sol: Solution, config: InstanceConfig) -> None:
+    if sol.rutas.empty:
+        return
+    fig, ax = plt.subplots(figsize=(8, 5))
+    sol.rutas.boxplot(
+        column="Fill_Rate_%",
+        by="Vehiculo",
+        ax=ax,
+        grid=True,
+        patch_artist=True)
+    ax.axhline(
+        y=80,
+        color="g",
+        linestyle="--",
+        alpha=0.6,
+        label="Óptimo (>80%)")
+    ax.set_title(
+        "Tasa de uso de capacidad por tipo de vehículo",
+        fontweight="bold")
+    ax.set_xlabel("Tipo de vehículo")
+    ax.set_ylabel("Fill Rate (%)")
     ax.legend()
+    plt.suptitle("")
+    plt.xticks(rotation=15, ha="right")
     fig.tight_layout()
-    fig.savefig(config.results_dir / "cobertura_prioridad.png", dpi=150)
+    fig.savefig(config.results_dir / "G2_fill_rate_vehiculo.png", dpi=300)
     plt.close(fig)
 
 
-def _plot_fleet_usage(sol: Solution, config: InstanceConfig) -> None:
-    if sol.viajes.empty:
-        return
-
-    fig, ax = plt.subplots(figsize=(8, 4))
-    usage = sol.viajes.groupby("m")["n"].sum().sort_values(ascending=False)
-    usage.plot(kind="bar", ax=ax, color="steelblue", edgecolor="white")
-    ax.set_ylabel("Viajes totales")
-    ax.set_title("Uso de flota por tipo de vehículo")
-    ax.set_xlabel("Tipo vehículo")
-    plt.xticks(rotation=30, ha="right")
+def _plot_presupuesto(sol: Solution, config: InstanceConfig) -> None:
+    fig, ax = plt.subplots(figsize=(7, 5))
+    total = sol.presupuesto["Gasto_CLP"].sum()
+    ax.pie(
+        sol.presupuesto["Gasto_CLP"],
+        labels=sol.presupuesto["Categoria"],
+        autopct="%1.1f%%",
+        colors=COLORS,
+        startangle=90,
+    )
+    ax.set_title(
+        f"Distribución de recursos\n(Total: ${total / 1e6:,.0f} MM CLP)",
+        fontweight="bold",
+    )
     fig.tight_layout()
-    fig.savefig(config.results_dir / "uso_flota.png", dpi=150)
+    fig.savefig(config.results_dir / "G3_presupuesto.png", dpi=300)
     plt.close(fig)
 
 
-def _plot_inventory(sol: Solution, config: InstanceConfig) -> None:
+def _plot_stock_vs_faltante(sol: Solution, config: InstanceConfig) -> None:
     if sol.inventario.empty:
         return
+    fig, ax1 = plt.subplots(figsize=(9, 5))
+    inv_mes = (
+        sol.inventario.groupby("Mes")["Stock_Final"]
+        .sum()
+        .reindex(range(1, 13), fill_value=0)
+    )
+    inv_mes.plot(
+        kind="bar",
+        ax=ax1,
+        color="#2a9d8f",
+        alpha=0.75,
+        label="Stock final")
+    ax1.set_ylabel("Unidades en stock")
+    ax1.set_xlabel("Mes")
+    ax1.set_title("Stock vs. Demanda insatisfecha por mes", fontweight="bold")
 
-    Kv = list(config.Kv)
-    Kn = list(config.Kn)
+    if not sol.faltante.empty:
+        ax2 = ax1.twinx()
+        falt_mes = (
+            sol.faltante.groupby("Mes")["Faltante"]
+            .sum()
+            .reindex(range(1, 13), fill_value=0)
+        )
+        falt_mes.plot(
+            kind="line", ax=ax2, color="#e63946", marker="X",
+            linewidth=2, label="Demanda insatisfecha",
+        )
+        ax2.set_ylabel("Unidades faltantes", color="#e63946")
+        ax2.legend(loc="upper right")
 
-    fig, axes = plt.subplots(1, 2, figsize=(12, 4))
-
-    for ax, supply_list, title in [
-        (axes[0], Kv, "Inventario perecibles (s_{ikt})"),
-        (axes[1], Kn, "Inventario no perecibles (s_{ikt})"),
-    ]:
-        subset = sol.inventario[sol.inventario["k"].isin(supply_list)]
-        if subset.empty:
-            ax.set_title(f"{title}\n(sin inventario)")
-            continue
-        pivot = subset.groupby(["t", "k"])["s"].sum().unstack(fill_value=0)
-        pivot.plot(ax=ax, marker="o")
-        ax.set_xlabel("Mes")
-        ax.set_ylabel("Unidades")
-        ax.set_title(title)
-
+    ax1.legend(loc="upper left")
+    plt.xticks(rotation=0)
     fig.tight_layout()
-    fig.savefig(config.results_dir / "inventario.png", dpi=150)
+    fig.savefig(config.results_dir / "G4_stock_vs_faltante.png", dpi=300)
     plt.close(fig)

@@ -29,8 +29,8 @@ def _plot_faltante_prioridad(sol: Solution, config: InstanceConfig) -> None:
         colors=["#e63946", "#f4a261", "#e9c46a"][: len(falt)],
         startangle=90,
     )
-    ax.set_title("Distribución del faltante por prioridad", fontweight="bold")
-    ax.set_ylabel("")
+    ax.set_title("Distribución del faltante por prioridad", fontweight="bold")  # type: ignore[union-attr]
+    ax.set_ylabel("")  # type: ignore[union-attr]
     fig.tight_layout()
     fig.savefig(config.results_dir / "G1_faltante_prioridad.png", dpi=300)
     plt.close(fig)

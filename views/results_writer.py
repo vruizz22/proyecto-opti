@@ -58,7 +58,7 @@ def _print_console(sol: Solution, model: gp.Model) -> None:
         for b in bodegas:
             t = sol.bodegas_abiertas.loc[
                 sol.bodegas_abiertas["Bodega"] == b, "Mes_Apertura"
-            ].iloc[0]
+            ].iloc[0]  # type: ignore[union-attr]
             print(f"    → {b} (mes {t})")
 
     pto_total = sol.presupuesto["Gasto_CLP"].sum()

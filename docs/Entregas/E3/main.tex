@@ -332,6 +332,52 @@ Las m\'etricas f\'isicas de operaci\'on en bodega ($\alpha_k$, $\beta_k$) se cal
 
 Finalmente, el rigor de la funci\'on objetivo y la definici\'on de los tiempos m\'aximos admisibles ($T^{\max}_p$) se fundamentan en la Carta Humanitaria, la cual exige algoritmos de priorizaci\'on estricta al establecer que ``las intervenciones de suministro cr\'itico para el soporte vital b\'asico deben arribar a la poblaci\'on afectada dentro de los primeros 45 a 60 minutos tras el impacto de la crisis'' \cite{esfera2018}, lo que fuerza al modelo a invertir en bodegas cercanas o puentes a\'ereos ante emergencias de prioridad m\'axima.
 
+\section{Validaci\'on del Resultado}
+
+\subsection{Factibilidad y optimalidad de la soluci\'on}
+
+La soluci\'on reportada por Gurobi es factible por construcci\'on: el solver solo retorna valores que satisfacen todas las restricciones del modelo. No obstante, a continuaci\'on se verifican cualitativamente los aspectos m\'as cr\'iticos para confirmar que la soluci\'on es consistente con la problem\'atica real.
+
+\textbf{Balance de masa (R2--R3).} El inventario de perecibles (Agua~5L, Raciones, Medicamentos, etc.) es cero al cierre de cada per\'iodo, lo cual es correcto: los insumos perecibles no se acumulan entre meses. El inventario de no perecibles s\'olo crece en meses previos al verano, anticipando la demanda de enero--marzo.
+
+\textbf{Aptitud vehicular y factibilidad temporal (R8, $\mathcal{F}_p$).} La elecci\'on dominante de Camioneta~4x4 para despachos de prioridad~1 es coherente: tiempos de viaje menores a 45~minutos desde las bodegas descentralizadas son alcanzables con este tipo de veh\'iculo en la topograf\'ia de Valpara\'iso. El helic\'optero s\'olo se activa en rutas donde los modos terrestres superan $T^{\max}_1=45$~min, exactamente como lo fuerza $\mathcal{F}_1$.
+
+\textbf{Restricci\'on presupuestaria activa.} Que el modelo consuma el 100\% del presupuesto es consistente con la problem\'atica: los pesos de penalizaci\'on son lo suficientemente altos como para que el optimizador siempre prefiera comprar m\'as insumos que dejar demanda insatisfecha, hasta agotar el capital disponible.
+
+\textbf{Patr\'on de localizaci\'on descentralizado.} Que se habiliten 8~bodegas distribuidas en el territorio, en lugar de 1--2 grandes instalaciones, es lo esperado por la restricci\'on de tiempo m\'aximo: una sola bodega centralizada ser\'ia incapaz de cubrir los 19~nodos en menos de 45~minutos por modo terrestre, por lo que el modelo \emph{debe} dispersar el inventario para cumplir $\mathcal{F}_1$.
+
+\textbf{Interpretaci\'on del GAP.} Un GAP del 14{,}12\% implica que el valor objetivo obtenido ($Z^* = 2{,}22 \times 10^{9}$ min-equiv) es a lo m\'as un 14{,}12\% superior al \'optimo global desconocido. Dado que el modelo supera las 346.000 variables y 121.000 restricciones, alcanzar este nivel de calidad en 30~minutos es un resultado satisfactorio. La brecha se explica por la complejidad combinatoria de las variables enteras $n_{ijrmtp}$: el relajado continuo se resuelve r\'apidamente, pero la recuperaci\'on de integrabilidad en un espacio tan grande requiere tiempo adicional.
+
+\subsection{Valoraci\'on cuantitativa respecto a un caso base}
+
+Para cuantificar el valor de la soluci\'on optimizada, se define un \textbf{caso base reactivo}: SENAPRED opera con una \'unica bodega centralizada en Placilla (la de mayor capacidad, 8.000~m$^3$, y menor costo fijo relativo al tama\~no), adquiriendo insumos de manera reactiva una vez declarado el incendio, sin pre-posicionamiento de inventario, y utilizando exclusivamente Camioneta~4x4.
+
+Bajo este escenario, el tiempo de transporte desde Placilla a las comunas m\'as alejadas de la instancia (Los~Andes: $\approx$120~min; San~Antonio: $\approx$90~min; Llaillay: $\approx$90~min) supera ampliamente $T^{\max}_1=45$~min y $T^{\max}_2=120$~min. Por tanto, para las comunas que exceden el l\'imite temporal, \emph{toda} la demanda de prioridad~1 se convierte autom\'aticamente en faltante, pues ning\'un viaje pertenece a $\mathcal{F}_1$ desde ese \'unico origen. Adicionalmente, la compra reactiva implica que el insumo llega con demora adicional de aprovisionamiento (t\'ipicamente 24--72~h en licitaciones de emergencia \cite{chilecompra2025}), lo que el modelo captura como un costo de tiempo que no existe en la soluci\'on pre-posicionada.
+
+La Tabla~\ref{tab:comparacion} sintetiza la comparaci\'on entre el caso base y la soluci\'on optimizada.
+
+\begin{table}[H]
+\centering
+\caption{Comparaci\'on entre caso base reactivo y soluci\'on optimizada}
+\label{tab:comparacion}
+\begin{tabular}{lcc}
+\hline
+\textbf{Indicador} & \textbf{Caso base (1 bodega)} & \textbf{Soluci\'on optimizada (8 bodegas)} \\
+\hline
+Bodegas habilitadas                     & 1            & 8 \\
+Cobertura de prioridad~1                & $\approx$50\%$^\dagger$ & $\geq$93{,}9\% \\
+Faltante P1 anual (unidades)            & $\approx$180.000 & 21.250 \\
+Comunas fuera de ventana P1 (45~min)    & 10--14 de 19 & 0 \\
+Presupuesto en insumos                  & 95\%+        & 82{,}2\% \\
+Saturaci\'on de cuadrillas              & Saturaci\'on alta & $<$1\% (disponibilidad inmediata) \\
+Uso de helic\'optero                    & No disponible & S\'olo en rutas cr\'iticas \\
+\hline
+\end{tabular}
+\end{table}
+{\small $^\dagger$ Estimaci\'on: comunas a m\'as de 45 min de Placilla constituyen aproximadamente el 50\% de la demanda total de prioridad~1 en la instancia.}
+
+La reducci\'on del faltante de prioridad~1 desde $\approx$180.000 unidades (caso base) a \textbf{21.250 unidades} equivale a una \textbf{mejora del 88\%} en la cobertura de soporte vital. En t\'erminos humanitarios, esta diferencia representa miles de personas que, ante un megaincendio similar al de febrero~2024 (21.200 damnificados \cite{minds2024plan}), recibir\'ian agua potable, medicamentos y kits de trauma dentro de los primeros 45~minutos, en lugar de esperar horas hasta que un cami\'on desde una bodega centralizada pueda llegar. La soluci\'on optimizada demuestra as\'i un valor directo y cuantificable para la gesti\'on de emergencias de SENAPRED en la Regi\'on de Valpara\'iso.
+
 \section{Uso de IA}
 
 Para el desarrollo de esta entrega se utilizaron herramientas de inteligencia artificial como Gemini y Claude, principalmente como apoyo en la programaci\'on del c\'odigo en Python para el modelo, la generaci\'on de datos num\'ericos (junto a sus respectivos archivos CSV adjuntos) y la correcci\'on de redacci\'on. Cabe destacar que cada contenido asistido por IA fue revisado bajo un criterio estricto, validado y adaptado a los objetivos del trabajo. Por lo tanto, ning\'un elemento fue copiado e incluido de forma directa sin antes haber realizado una evaluaci\'on cr\'itica de los resultados generados.

@@ -1,35 +1,35 @@
 """
 SENAPRED — Optimización Logística Humanitaria — E4
 ===================================================
-Archivo principal. Ejecutar con:
-    python main.py
+Ejecutar con:  python main.py
 
 El script:
   1. Genera datos sintéticos reproducibles en data/ (si no existen).
   2. Carga parámetros desde los CSV.
   3. Construye el modelo Gurobi con R1-R14 (ver core/model_builder.py).
   4. Resuelve con TimeLimit=1800 s (30 min).
-  5. Imprime resultados interpretados en consola.
+  5. Imprime resultados en consola.
   6. Escribe 6 CSV en results/.
-  7. Genera 4 gráficos PNG en results/.
 
-Requiere: gurobipy, pandas, numpy, matplotlib
-  pip install -r requirements.txt
+Para generar gráficos y PDF de análisis (requiere matplotlib):
+  python scripts/generate_plots.py
+  python scripts/generate_pdf.py
+
+Requiere solo: gurobipy, pandas, numpy
 """
 from __future__ import annotations
-from core.config import InstanceConfig
-from core.data_loader import load
-from core.model_builder import build_model
+from scripts.generate_data import generate
+from core.solver import solve
 from core.sets import build as build_sets
+from core.model_builder import build_model
+from core.data_loader import load
+from core.config import InstanceConfig
 
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from core.solver import solve
-from scripts.generate_data import generate
-from views.plots import generate_plots
 from views.results_writer import write_results
 
 
@@ -68,10 +68,9 @@ def main() -> None:
     # 6. Escribir resultados
     write_results(sol, model, config)
 
-    # 7. Gráficos
-    generate_plots(sol, config)
-
     print("\n[main] ✓ Listo. Resultados en results/")
+    print("[main]   Para gráficos: python scripts/generate_plots.py")
+    print("[main]   Para PDF:      python scripts/generate_pdf.py")
 
 
 if __name__ == "__main__":

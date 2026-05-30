@@ -6,6 +6,7 @@ import gurobipy as gp
 import pandas as pd
 
 from core.config import InstanceConfig
+from core.parameters import Parameters
 from core.sets import Sets
 from core.variables import ModelVars
 
@@ -30,10 +31,9 @@ def solve(
     mv: ModelVars,
     config: InstanceConfig,
     sets: Sets,
-    params: "Parameters",  # type: ignore[name-defined]  # noqa: F821
+    params: Parameters,
 ) -> Solution:
-    from core.parameters import Parameters
-    p_obj: Parameters = params
+    p_obj = params
 
     model.setParam("TimeLimit", config.time_limit_s)
     model.setParam("MIPGap", config.mip_gap)
@@ -73,7 +73,6 @@ def solve(
 
     I, _, K, _, T, _ = sets.I, sets.J, sets.K, sets.M, sets.T, sets.P
     F = p_obj.F.to_dict()
-    Q = p_obj.Q.to_dict()
     A = p_obj.A.to_dict()
     E_v = p_obj.E_vol.to_dict()
     V_k = p_obj.V.to_dict()

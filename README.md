@@ -42,14 +42,17 @@ python scripts/generate_plots.py
 
 Genera 4 PNG en `results/` a partir de los CSV ya producidos.
 
-### 4. Generar PDF de análisis de resultados
+### 4. Compilar PDF de análisis de resultados
+
+Copia los PNG de `results/` a `docs/Entregas/E4/figures/` y compila:
 
 ```bash
-python scripts/generate_pdf.py
+cp results/G*.png docs/Entregas/E4/figures/
 cd docs/Entregas/E4 && pdflatex analisis_resultados.tex
 ```
 
-Produce `docs/Entregas/E4/analisis_resultados.tex` con tablas, gráficos y comparación E3 vs E4.
+El .tex en `docs/Entregas/E4/analisis_resultados.tex` es el documento estático de análisis.
+Para subir a Overleaf: incluir el `.tex` y la carpeta `figures/` con los PNG.
 
 ---
 

@@ -1,84 +1,84 @@
 from __future__ import annotations
 
-from pathlib import Path
-
 import gurobipy as gp
-import pandas as pd
 
 from core.config import InstanceConfig
 from core.solver import Solution
 
 
 def write_results(
-    sol: Solution,
-    model: gp.Model,
-    config: InstanceConfig,
-) -> None:
+        sol: Solution,
+        model: gp.Model,
+        config: InstanceConfig) -> None:
     config.results_dir.mkdir(exist_ok=True)
-    xlsx_path = config.results_dir / "resultados.xlsx"
 
-    n_vars = model.NumVars
-    n_constrs = model.NumConstrs
+    # ── 6 CSV de resultados ───────────────────────────────────────────────
+    if not sol.bodegas_abiertas.empty:
+        sol.bodegas_abiertas.to_csv(
+            config.results_dir / "01_Reporte_Bodegas_Abiertas.csv", index=False
+        )
+    if not sol.faltante.empty:
+        sol.faltante.to_csv(
+            config.results_dir / "02_Reporte_Faltante.csv", index=False
+        )
+    if not sol.inventario.empty:
+        sol.inventario.to_csv(
+            config.results_dir / "03_Reporte_Inventario.csv", index=False
+        )
+    sol.presupuesto.to_csv(
+        config.results_dir / "04_Reporte_Presupuesto.csv", index=False
+    )
+    if not sol.personal.empty:
+        sol.personal.to_csv(
+            config.results_dir / "05_Reporte_Personal.csv", index=False
+        )
+    if not sol.rutas.empty:
+        sol.rutas.to_csv(
+            config.results_dir / "06_Reporte_Rutas.csv", index=False
+        )
 
-    with pd.ExcelWriter(xlsx_path, engine="openpyxl") as writer:
-        # Resumen
-        resumen = pd.DataFrame([
-            {"Métrica": "Función objetivo (min-equiv)", "Valor": round(sol.obj_value, 2)},
-            {"Métrica": "GAP MIP (%)", "Valor": round(sol.gap * 100, 4)},
-            {"Métrica": "Tiempo resolución (s)", "Valor": round(sol.runtime, 1)},
-            {"Métrica": "Estado", "Valor": sol.status},
-            {"Métrica": "Nº variables", "Valor": n_vars},
-            {"Métrica": "Nº restricciones", "Valor": n_constrs},
-        ])
-        resumen.to_excel(writer, sheet_name="Resumen", index=False)
-
-        # Bodegas
-        if not sol.bodegas.empty:
-            sol.bodegas.to_excel(writer, sheet_name="Bodegas", index=False)
-
-        # Compras e Inventario
-        if not sol.inventario.empty:
-            sol.inventario.to_excel(writer, sheet_name="Inventario", index=False)
-
-        # Envíos
-        if not sol.envios.empty:
-            sol.envios.to_excel(writer, sheet_name="Envíos", index=False)
-
-        # Viajes
-        if not sol.viajes.empty:
-            sol.viajes.to_excel(writer, sheet_name="Viajes", index=False)
-
-        # Faltantes
-        if not sol.faltantes.empty:
-            sol.faltantes.to_excel(writer, sheet_name="Faltantes", index=False)
-
-    print(f"\n[results] Resultados escritos en {xlsx_path}")
-    _print_summary(sol, config)
+    _print_console(sol, model)
 
 
-def _print_summary(sol: Solution, config: InstanceConfig) -> None:
-    commune_names = config.commune_names
-    print("\n" + "=" * 60)
-    print("RESUMEN EJECUTIVO — SENAPRED Logística Humanitaria")
-    print("=" * 60)
-    print(f"Función objetivo total:   {sol.obj_value:,.0f} min-equiv")
-    print(f"Estado del solver:        {sol.status}")
-    print(f"Tiempo de resolución:     {sol.runtime:.1f} s")
+def _print_console(sol: Solution, model: gp.Model) -> None:
+    print("\n" + "=" * 65)
+    print("SENAPRED — Optimización Logística Humanitaria")
+    print("=" * 65)
+    print(f"  Estado solver        : {sol.status}")
+    print(f"  Función objetivo Z*  : {sol.obj_value:,.2f} minutos-equiv.")
+    print(f"  GAP de optimalidad   : {sol.gap * 100:.4f}%")
+    print(f"  Tiempo de resolución : {sol.runtime:.2f} s")
+    print(f"  Nº variables         : {model.NumVars:,}")
+    print(f"  Nº restricciones     : {model.NumConstrs:,}")
+    print(f"  Nº no-nulos (matriz) : {model.NumNZs:,}")
 
-    if not sol.bodegas.empty:
-        open_i = sol.bodegas[sol.bodegas["w"] == 1]["i"].unique().tolist()
-        print(f"Bodegas habilitadas:      {open_i}")
+    if not sol.bodegas_abiertas.empty:
+        bodegas = sol.bodegas_abiertas["Bodega"].tolist()
+        print(f"\n  Bodegas habilitadas  : {len(bodegas)} de 12")
+        for b in bodegas:
+            t = sol.bodegas_abiertas.loc[
+                sol.bodegas_abiertas["Bodega"] == b, "Mes_Apertura"
+            ].values[0]
+            print(f"    → {b} (mes {t})")
 
-    if not sol.faltantes.empty:
-        total_short = sol.faltantes["f"].sum()
-        print(f"Faltante total:           {total_short:,.0f} unidades")
-    else:
-        print("Faltante total:           0 — demanda cubierta completamente")
+    pto_total = sol.presupuesto["Gasto_CLP"].sum()
+    print(f"\n  Presupuesto utilizado: ${pto_total / 1e6:,.0f} MM CLP")
+    for _, row in sol.presupuesto.iterrows():
+        pct = row["Gasto_CLP"] / pto_total * 100 if pto_total > 0 else 0
+        print(
+            f"    {
+                row['Categoria']:<12}: ${
+                row['Gasto_CLP'] /
+                1e6:,.0f} MM ({
+                pct:.1f}%)")
 
-    if not sol.envios.empty:
-        for j_idx, jname in enumerate(commune_names):
-            vol = sol.envios[sol.envios["j"] == j_idx]["x"].sum()
-            if vol > 0:
-                print(f"  → {jname}: {vol:,.0f} unidades enviadas")
+    for p in (1, 2, 3):
+        if not sol.faltante.empty:
+            total = sol.faltante[sol.faltante["Prioridad"]
+                                 == p]["Faltante"].sum()
+            print(f"\n  Faltante prioridad {p}  : {total:,.0f} unidades")
+        else:
+            print(f"\n  Faltante prioridad {p}  : 0")
 
-    print("=" * 60)
+    print("=" * 65)
+    print("[results] CSVs escritos en results/")

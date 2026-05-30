@@ -1,19 +1,32 @@
 """
-SENAPRED Humanitarian Logistics Optimization — E3
-Run: python main.py
+SENAPRED — Optimización Logística Humanitaria — E4
+===================================================
+Archivo principal. Ejecutar con:
+    python main.py
+
+El script:
+  1. Genera datos sintéticos reproducibles en data/ (si no existen).
+  2. Carga parámetros desde los CSV.
+  3. Construye el modelo Gurobi con R1-R14 (ver core/model_builder.py).
+  4. Resuelve con TimeLimit=1800 s (30 min).
+  5. Imprime resultados interpretados en consola.
+  6. Escribe 6 CSV en results/.
+  7. Genera 4 gráficos PNG en results/.
+
+Requiere: gurobipy, pandas, numpy, matplotlib
+  pip install -r requirements.txt
 """
 from __future__ import annotations
+from core.config import InstanceConfig
+from core.data_loader import load
+from core.model_builder import build_model
+from core.sets import build as build_sets
 
 import sys
 from pathlib import Path
 
-# Ensure project root on path when run directly
 sys.path.insert(0, str(Path(__file__).parent))
 
-from core.config import InstanceConfig
-from core.data_loader import load
-from core.model_builder import build_model
-from core.sets import build
 from core.solver import solve
 from scripts.generate_data import generate
 from views.plots import generate_plots
@@ -24,50 +37,41 @@ def main() -> None:
     config = InstanceConfig()
     config.results_dir.mkdir(exist_ok=True)
 
-    # Step 1: generate data if missing
-    if not (config.data_dir / "demanda.csv").exists():
-        print("[main] Generating synthetic data...")
+    # 1. Generar datos si no existen
+    if not (config.data_dir / "demanda_proyectada.csv").exists():
+        print("[main] Generando datos sintéticos (semilla fija)...")
         generate(config)
+    else:
+        print("[main] Datos encontrados en data/")
 
-    # Step 2: load parameters
-    print("[main] Loading parameters...")
+    # 2. Cargar parámetros
+    print("[main] Cargando parámetros...")
     params = load(config)
 
-    # Step 3: build sets (sparsity)
-    print("[main] Building sets...")
-    sets = build(config, params)
+    # 3. Construir conjuntos dispersos
+    print("[main] Construyendo conjuntos (R', F_p, Apt)...")
+    sets = build_sets(config, params)
+    print(f"       trip_keys={len(sets.trip_keys):,}  "
+          f"flow_keys={len(sets.flow_keys):,}  "
+          f"short_keys={len(sets.short_keys):,}")
 
-    # Step 4: build model
-    print("[main] Building model...")
+    # 4. Construir modelo
+    print("[main] Construyendo modelo...")
     model, mv = build_model(sets, params, config)
+    nv, nc, nz = model.NumVars, model.NumConstrs, model.NumNZs
+    print(f"       NumVars={nv:,}  NumConstrs={nc:,}  NumNZs={nz:,}")
 
-    n_vars = model.NumVars
-    n_constrs = model.NumConstrs
-    print(f"[main] NumVars={n_vars}  NumConstrs={n_constrs}")
+    # 5. Resolver
+    print(f"[main] Resolviendo (TimeLimit={config.time_limit_s:.0f} s)...")
+    sol = solve(model, mv, config, sets, params)
 
-    if n_vars >= 2000 or n_constrs >= 2000:
-        print(
-            f"[main] ERROR: License cap exceeded! "
-            f"NumVars={n_vars}, NumConstrs={n_constrs}. "
-            "Reduce T_dem in InstanceConfig (e.g. fire_months=(1,2)) and re-run."
-        )
-        sys.exit(1)
-
-    # Step 5: solve
-    print("[main] Solving...")
-    sol = solve(model, mv, config, sets)
-
-    print(f"\n[main] Status={sol.status}  Obj={sol.obj_value:,.0f}  "
-          f"GAP={sol.gap*100:.2f}%  Runtime={sol.runtime:.1f}s")
-
-    # Step 6: write results
+    # 6. Escribir resultados
     write_results(sol, model, config)
 
-    # Step 7: plots
-    print("[main] Generating plots...")
+    # 7. Gráficos
     generate_plots(sol, config)
 
-    print("[main] Done. Check results/ directory.")
+    print("\n[main] ✓ Listo. Resultados en results/")
 
 
 if __name__ == "__main__":

@@ -40,6 +40,7 @@ COMMUNE_IDS: tuple[str, ...] = (
     "Algarrobo",
     "Llaillay",
     "San_Felipe",
+    "Los_Andes",
 )
 
 SUPPLY_IDS: tuple[str, ...] = (

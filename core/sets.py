@@ -49,17 +49,19 @@ def build(config: InstanceConfig, params: Parameters) -> Sets:
     t_max = config.t_max_minutes
 
     # Pre-compute O(1) lookups
-    o_dict: dict[str, float] = {str(m_): float(v)
-                                for m_, v in params.O.items()}
+    o_raw: dict[Any, Any] = dict(params.O.items())
+    o_dict: dict[str, float] = {str(k): float(v) for k, v in o_raw.items()}
+    t_travel_raw: dict[Any, Any] = dict(params.T_travel.items())
     t_travel_dict: dict[tuple[str, str, str], float] = {
-        (str(i_), str(j_), str(m_)): float(v)
-        for (i_, j_, m_), v in params.T_travel.items()
+        (str(k[0]), str(k[1]), str(k[2])): float(v)
+        for k, v in t_travel_raw.items()
     }
 
     # Demand index: only (j,k,t,p) where D > 0
+    demand_raw: dict[Any, Any] = dict(params.D.items())
     demand_pos: set[tuple[str, str, int, int]] = {
-        (str(j_), str(k_), int(t_), int(p_))
-        for (j_, k_, t_, p_), v in params.D.items()
+        (str(k[0]), str(k[1]), int(k[2]), int(k[3]))
+        for k, v in demand_raw.items()
         if float(v) > 0.0
     }
 

@@ -83,13 +83,13 @@ def load(config: InstanceConfig) -> Parameters:
     idx_min = trans_apt.groupby(["id_bodega", "id_comuna", "vehiculo"])[
         "tiempo_min"].idxmin()
     r_prime = trans_apt.loc[idx_min].set_index(
-        ["id_bodega", "id_comuna", "vehiculo"])k
+        ["id_bodega", "id_comuna", "vehiculo"])
 
-    T_travel: pd.Series = r_prime["tiempo_min"].rename_axis(["i", "j", "m"])
-    G_cost: pd.Series = r_prime["costo_viaje_CLP"].rename_axis(["i", "j", "m"])
+    T_travel: pd.Series = r_prime["tiempo_min"].rename_axis(["i", "j", "m"])  # type: ignore[arg-type]
+    G_cost: pd.Series = r_prime["costo_viaje_CLP"].rename_axis(["i", "j", "m"])  # type: ignore[arg-type]
     # Apt: 1 for all (i,j,m) present in R' (already filtered by apt=1 above)
     Apt: pd.Series = pd.Series(
-        1, index=r_prime.index.rename(["i", "j", "m"]), name="aptitud"
+        1, index=r_prime.index.rename(["i", "j", "m"]), name="aptitud"  # type: ignore[arg-type]
     )
 
     # Validation

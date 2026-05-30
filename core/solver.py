@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import gurobipy as gp
 import pandas as pd
@@ -16,7 +16,7 @@ class Solution:
     gap: float
     runtime: float
     status: str
-    # 6 reportes CSV (misma estructura que el análisis del compañero)
+    # 6 reportes CSV
     bodegas_abiertas: pd.DataFrame   # i, t_apertura, costo_fijo, dotacion
     faltante: pd.DataFrame           # j, k, t, p, faltante
     inventario: pd.DataFrame         # i, k, t, stock_final, compras
@@ -71,7 +71,7 @@ def solve(
     gap = model.MIPGap if status_code == gp.GRB.TIME_LIMIT else 0.0
     runtime = model.Runtime
 
-    I, J, K, M, T, P = sets.I, sets.J, sets.K, sets.M, sets.T, sets.P
+    I, _, K, _, T, _ = sets.I, sets.J, sets.K, sets.M, sets.T, sets.P
     F = p_obj.F.to_dict()
     Q = p_obj.Q.to_dict()
     A = p_obj.A.to_dict()

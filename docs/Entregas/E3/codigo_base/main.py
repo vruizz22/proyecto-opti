@@ -7,8 +7,6 @@ Original file is located at
     https://colab.research.google.com/drive/1EEnxX_lSn-m2rqkCQXmb4A0rq47JEKRa
 """
 
-!pip install gurobipy pandas matplotlib
-
 import pandas as pd
 import gurobipy as gp
 from gurobipy import GRB

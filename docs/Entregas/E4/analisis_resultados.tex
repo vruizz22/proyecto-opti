@@ -177,22 +177,45 @@ stock con 10.573 y 97.031 unidades respectivamente. Ante las restricciones
 conjuntas de capacidad vehicular, capacidad de bodega y presupuesto, el modelo
 aplica un \textbf{triage logístico}: decide sacrificar cobertura de insumos de
 baja urgencia para proteger el soporte vital básico de las comunas afectadas.
-Insumos críticos como Agua~5L, Kits~Médicos de Trauma, Medicamentos~Crónicos y
-Suplementos~Pediátricos presentan una cobertura prácticamente total en
-prioridad~1.
 
-El estrés logístico residual se concentra en las comunas donde la alta densidad
-poblacional de interfaz urbano-forestal satura la capacidad de la flota durante
-el verano: Viña~del~Mar, Quilpué, Villa~Alemana, Valparaíso y San~Antonio
-registran los mayores déficits. Cabe destacar que este faltante no ocurre por
-lejanía territorial —todas estas comunas cuentan con bodegas de apoyo a menos de
-45 minutos— sino por la demanda excepcional que generan los megaincendios de
-verano sobre una flota institucional de tamaño fijo. La incorporación de
-\textbf{Los~Andes} como nuevo nodo demandante es particularmente significativa:
-con tiempos terrestres superiores a 120~minutos desde la mayoría de las bodegas,
-su cobertura de prioridad~1 depende del Helicóptero o de la bodega de
-Parque~Ind~San~Felipe, situación que el modelo resuelve correctamente habilitando
-ambas desde el mes~1.
+El triage se verifica insumo por insumo en los datos. Los siguientes
+\textbf{7 insumos presentan 0 unidades de faltante en prioridad~1} durante
+todo el horizonte anual:
+\begin{itemize}[leftmargin=2em, itemsep=2pt]
+  \item \textbf{Agua~5L} y \textbf{Raciones~24h}: soporte vital alimentario básico.
+  \item \textbf{Kit~Médico~Trauma}, \textbf{Medicamentos~Crónicos} y
+        \textbf{Suplementos~Pediátricos}: cadena de frío crítica, fallo con consecuencias
+        irreversibles.
+  \item \textbf{Mascarillas~N95} y \textbf{Kit~Higiene~Familiar}: protección
+        sanitaria inmediata en zonas de humo e incendio.
+\end{itemize}
+
+En contraste, los insumos con faltante de prioridad~1 son exclusivamente
+\textbf{infraestructura de refugio}: Frazadas~Térmicas (172 unidades),
+Carpas~Refugio (78 unidades), Generadores~Portátiles (24 unidades) y
+Herramientas~de~Remoción (20 unidades). Que el faltante crítico residual recaiga
+sobre refugio y no sobre alimento o medicina no es un error del modelo, sino
+exactamente el resultado correcto: ante una flota finita y un presupuesto
+acotado, el optimizador prioriza lo que salva vidas en las primeras horas.
+
+El estrés logístico \textbf{por volumen total} se concentra en las comunas de
+alta densidad poblacional de interfaz urbano-forestal: Viña~del~Mar (12.433
+unidades), Quilpué (11.048), Valparaíso (10.024) y Villa~Alemana (9.097)
+acumulan el 39\% de todo el faltante regional. Sin embargo, el estrés por
+\textbf{prioridad~1} presenta una geografía distinta: las comunas con mayor
+déficit crítico son Algarrobo (84 unidades), Llaillay (39), Olmué (38) y
+El~Quisco (37). Estas son comunas de acceso complicado o con alta demanda
+estacional de veraneo —no las más pobladas—, lo que demuestra que el faltante
+de P1 no ocurre por densidad sino por la incapacidad de la flota de cumplir
+$T^{\max}_1 = 45$~min en ciertas rutas bajo pico de demanda simultánea.
+
+La incorporación de \textbf{Los~Andes} como nuevo nodo demandante se refleja
+directamente en el ranking: 27 unidades de P1 faltante, siendo el $5^{\circ}$
+nodo más crítico. Con tiempos terrestres superiores a 120~minutos desde la
+mayoría de las bodegas, su cobertura parcial de P1 depende del Helicóptero
+o de Parque~Ind~San~Felipe, y el residuo de 27 unidades representa la fracción
+de demanda que supera incluso la capacidad aérea disponible en los meses de
+mayor incendio.
 
 % ──────────────────────────────────────────────────────────────────────────────
 \section{Análisis de distribución de recursos}
@@ -232,11 +255,11 @@ Transporte  &    17.793.550 &  0{,}4\% \\
 \label{fig:presupuesto}
 \end{figure}
 
-La adquisición de inventario (\textbf{Compras, 75{,}6\%}) es el ítem
-dominante, coherente con la necesidad de pre-posicionar suministros en las 12
-bodegas antes de la temporada crítica. Para lograr los tiempos de respuesta
-exigidos, el modelo prioriza la disponibilidad física de insumos sobre la
-eficiencia financiera: es más costoso llegar tarde que comprar antes.
+La adquisición de inventario (\textbf{Compras, 75{,}6\%, \$3.630~MM}) es el
+ítem dominante, coherente con la necesidad de pre-posicionar suministros en
+las 12 bodegas antes de la temporada crítica. Para lograr los tiempos de
+respuesta exigidos, el modelo prioriza la disponibilidad física de insumos
+sobre la eficiencia financiera: es más costoso llegar tarde que comprar antes.
 
 Un elemento notable es el peso de los \textbf{Sueldos (16{,}6\%, \$796~MM)}.
 Al habilitar las 12 bodegas desde el mes~1, la restricción R10a obliga a
@@ -253,6 +276,17 @@ promedio por viaje es mínima, lo que reduce el costo variable por ruta. La
 red paga el costo de la proximidad en infraestructura y personal, pero se
 ahorra sustancialmente en operación de flota.
 
+El hecho de que el modelo \textbf{no agote el presupuesto} (\$196~MM
+disponibles sin usar) no es una ineficiencia: es la consecuencia de que la
+\textbf{flota es la restricción activa, no el capital}. Los 97.031 insumos
+de prioridad~3 sin cobertura no se deben a falta de dinero para comprarlos
+---hay $196~MM disponibles--- sino a que la flota institucional no tiene
+capacidad de transportar ese volumen adicional dentro de $T^{\max}_3 = 240$~min
+durante los picos de verano. Gastar más en compras no reduciría el faltante:
+los camiones ya están en su límite. Esta es la diferencia fundamental respecto
+a un escenario con menos bodegas, donde el presupuesto sí se agotaba porque
+el cuello de botella era la cobertura geográfica, no la flota.
+
 % ──────────────────────────────────────────────────────────────────────────────
 \section{Capacidad de cuadrillas y saturación}
 
@@ -265,20 +299,27 @@ un área geográfica reducida y sirve a un subconjunto acotado de comunas, lo qu
 implica que el volumen de despachos por bodega es significativamente menor al
 que concentraría una red centralizada.
 
-La tasa promedio de saturación es \textbf{inferior al 2\%} en todas las
-instalaciones, con peak en bodegas de alta actividad como Parque~Ind~San~Felipe
-y Ruta~60CH~Quillota, que atienden los valles interiores con mayor diversidad
-de comunas. Esto demuestra que la red opera con una \textbf{holgura logística
-casi total}, asegurando que los vehículos puedan ser cargados inmediatamente al
-declararse una alerta, sin generar cuellos de botella en bodega ni tiempos de
-espera en el despacho.
+La saturación pico del sistema se registra en \textbf{Aeródromo~Rodelillo}
+con un $4{,}8\%$ en febrero (mes~2), seguido de \textbf{Belloto~Sur} con
+$4{,}6\%$ y \textbf{Estadio~Limache} con $4{,}3\%$. Estas tres instalaciones
+atienden la franja de cerros de mayor riesgo incendiario (eje Viña~del~Mar,
+Quilpué, Limache) y tienen dotaciones pequeñas (3 y 6 personas), lo que
+explica que sean las más exigidas proporcionalmente en los meses de verano.
+En el extremo opuesto, \textbf{Placilla} y \textbf{La~Ligua} registran
+saturación $0{,}0\%$: Placilla concentra la mayor dotación del sistema
+(15~personas) pero las comunas que rodean Valparaíso son atendidas
+principalmente por bodegas más cercanas al litoral; La~Ligua cubre el extremo
+norte de la región, de menor exposición al fuego en este horizonte.
 
-Este patrón es una consecuencia deliberada del modelo: al invertir en
-dotaciones mínimas garantizadas por R10a en las 12 instalaciones, el
-optimizador sacrifica eficiencia de recursos humanos en pos de
-\textbf{velocidad de respuesta}. Una bodega con personal al 2\% de saturación
-no es ineficiente; es una bodega lista para operar al 100\% de su capacidad
-de despacho en los primeros 45 minutos de una emergencia.
+Que la red opere con saturaciones inferiores al $5\%$ en todos los nodos
+demuestra que opera con \textbf{holgura logística casi total}: cuando se
+declara una alerta, los camiones pueden ser cargados de inmediato sin generar
+cuellos de botella en almacén. Este patrón es una consecuencia deliberada del
+modelo: al invertir en dotaciones mínimas garantizadas por R10a en las 12
+instalaciones, el optimizador sacrifica eficiencia de recursos humanos en pos de
+\textbf{velocidad de respuesta}. Una bodega al $5\%$ de saturación no es
+ineficiente; es una bodega lista para operar al $100\%$ de su capacidad de
+despacho en los primeros 45~minutos de una emergencia.
 
 % ──────────────────────────────────────────────────────────────────────────────
 \section{Despliegue de vehículos y eficiencia}

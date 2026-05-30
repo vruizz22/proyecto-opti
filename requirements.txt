@@ -1,0 +1,8 @@
+# Librerías permitidas por enunciado
+gurobipy==13.0.1
+numpy>=1.26.0
+pandas>=2.2.0
+# Visualización (no requerida para la optimización)
+matplotlib>=3.8.0
+# Testing
+pytest>=8.0.0

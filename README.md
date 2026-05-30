@@ -1,4 +1,92 @@
-# 🚨 Disaster Risk Management: Inventory Pre-positioning (SENAPRED)
+# SENAPRED — Optimización Logística Humanitaria (E4)
+
+> **Para el ayudante:** ejecutar `python main.py` desde la raíz del proyecto. Genera datos (si no existen), resuelve el modelo y escribe los 6 reportes CSV en `results/`. Solo requiere `gurobipy`, `pandas` y `numpy`.
+
+---
+
+# Disaster Risk Management: Inventory Pre-positioning (SENAPRED)
+
+---
+
+## Cómo ejecutar
+
+### 1. Instalar dependencias
+
+```bash
+pip install -r requirements.txt
+```
+
+> El ayudante solo necesita `gurobipy`, `pandas` y `numpy`.
+
+### 2. Ejecutar el modelo (para el ayudante)
+
+```bash
+python main.py
+```
+
+El script es completamente autónomo:
+
+1. Si los CSV en `data/` no existen, los genera con semilla fija 1113 (reproducible). Si ya existen, los reutiliza.
+2. Construye el modelo Gurobi con las restricciones R1–R14 (ver `core/model_builder.py`).
+3. Resuelve con TimeLimit=1800 s.
+4. Imprime resumen en consola.
+5. Escribe 6 CSV en `results/`.
+
+**Requisito:** Gurobi con licencia WLS activa (credenciales en `core/config.py`).
+
+### 3. Generar gráficos (opcional, requiere matplotlib)
+
+```bash
+python scripts/generate_plots.py
+```
+
+Genera 4 PNG en `results/` a partir de los CSV ya producidos.
+
+### 4. Ejecutar tests de integración (opcional)
+
+```bash
+pytest test/test_model.py -v
+```
+
+Los tests verifican:
+
+- Factibilidad del solver (OPTIMAL o TIME\_LIMIT con incumbente) y GAP < 15 %
+- Restricciones R1, R2, R3, R5, R13 satisfechas numéricamente en la solución
+- Calidad E4: 12/12 bodegas abiertas, P1 faltante < 500 u, triage P3 > P2 > P1
+- Costo de bodegaje > 0 (R9 activo) y los 6 reportes CSV no vacíos
+
+> **Tiempo estimado: ~2 minutos.** El fixture usa `TimeLimit=120 s` (no el límite de producción de 1800 s), suficiente para obtener una solución incumbente válida. Para omitir además los tests que iteran todas las claves dispersas y reducir a <30 s:
+> ```bash
+> pytest test/test_model.py -v -k "not demand_coverage and not inventory_balance and not vehicle_capacity"
+> ```
+
+### 5. Compilar PDF de análisis de resultados
+
+Copia los PNG de `results/` a `docs/Entregas/E4/figures/` y compila:
+
+```bash
+cp results/G*.png docs/Entregas/E4/figures/
+cd docs/Entregas/E4 && pdflatex analisis_resultados.tex
+```
+
+El `.tex` en `docs/Entregas/E4/analisis_resultados.tex` es el documento estático de análisis.
+Para subir a Overleaf: incluir el `.tex` y la carpeta `figures/` con los PNG.
+
+---
+
+## Salidas generadas en `results/`
+
+| Archivo | Descripción |
+|---------|-------------|
+| `01_Reporte_Bodegas_Abiertas.csv` | Bodegas habilitadas y mes de apertura |
+| `02_Reporte_Faltante.csv` | Demanda insatisfecha por prioridad |
+| `03_Reporte_Inventario.csv` | Stock y compras por bodega/mes |
+| `04_Reporte_Presupuesto.csv` | Desglose de gasto por categoría |
+| `05_Reporte_Personal.csv` | Dotación y saturación de cuadrillas |
+| `06_Reporte_Rutas.csv` | Viajes y fill rate por ruta/vehículo |
+| `G1–G4.png` | Gráficos de análisis (generados con `generate_plots.py`) |
+
+---
 
 This repository contains the development of the semester project for the **Optimization (ICS1113)** course at **Pontificia Universidad Católica de Chile (2026-1)**.
 

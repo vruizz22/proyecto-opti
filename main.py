@@ -11,9 +11,8 @@ El script:
   5. Imprime resultados en consola.
   6. Escribe 6 CSV en results/.
 
-Para generar gráficos y PDF de análisis (requiere matplotlib):
+Para generar gráficos (requiere matplotlib):
   python scripts/generate_plots.py
-  python scripts/generate_pdf.py
 
 Requiere solo: gurobipy, pandas, numpy
 """
@@ -70,7 +69,6 @@ def main() -> None:
 
     print("\n[main] ✓ Listo. Resultados en results/")
     print("[main]   Para gráficos: python scripts/generate_plots.py")
-    print("[main]   Para PDF:      python scripts/generate_pdf.py")
 
 
 if __name__ == "__main__":

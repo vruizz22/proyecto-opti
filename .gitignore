@@ -10,3 +10,17 @@
 *.csv
 !main.pdf
 node_modules/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Gurobi license (no subir al repo)
+gurobi.lic
+
+# Excepciones explícitas
+!requirements.txt

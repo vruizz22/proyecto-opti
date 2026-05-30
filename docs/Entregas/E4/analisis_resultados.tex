@@ -30,7 +30,7 @@
 % ──────────────────────────────────────────────────────────────────────────────
 \section{Características del modelo}
 
-El programa del modelo generó un total de \textbf{311.366 variables de decisión}. Estas se
+El programa del modelo generó un total de \textbf{322.931 variables de decisión}. Estas se
 dividen según su naturaleza matemática en tres categorías:
 
 \begin{itemize}[leftmargin=2em, itemsep=3pt]
@@ -58,21 +58,25 @@ dividen según su naturaleza matemática en tres categorías:
     solución.
 \end{itemize}
 
-Toda esta red de variables está sujeta a \textbf{338.595 restricciones
+Toda esta red de variables está sujeta a \textbf{351.072 restricciones
 matemáticas} que garantizan el balance de masa (R2--R3), el respeto a las
 capacidades físicas de bodegas y vehículos (R4--R5), las condiciones de
 aptitud y factibilidad temporal (R6--R8), las holguras de personal (R9--R10b),
 la restricción de presupuesto (R13) y el condicionamiento de compras a
-apertura (R14). La matriz de coeficientes evalúa \textbf{2.076.596 elementos
+apertura (R14). La matriz de coeficientes evalúa \textbf{2.153.357 elementos
 no nulos}.
 
-Tras \textbf{1.800,39 segundos} de procesamiento (equivalente al límite
+Tras \textbf{1.800,43 segundos} de procesamiento (equivalente al límite
 máximo de 30 minutos), el solver alcanzó un \textbf{GAP de optimalidad del
-$6{,}02\%$}, reportando un valor de la función objetivo de
-$Z^* = 131{,}629{,}817$ minutos-equivalentes. Un GAP del $6{,}02\%$ implica
-que la solución obtenida está a lo más un $6{,}02\%$ por encima del óptimo
-global desconocido, un resultado satisfactorio dada la complejidad combinatoria
-del modelo con más de 311.000 variables.
+$2{,}82\%$}, reportando un valor de la función objetivo de
+$Z^* = 161{.}488{.}295$ minutos-equivalentes. Un GAP del $2{,}82\%$ implica
+que la solución obtenida está a lo más un $2{,}82\%$ por encima del óptimo
+global desconocido ---un resultado especialmente satisfactorio considerando
+que el modelo exploró 5.412 nodos con más de 3,4 millones de iteraciones
+simplex en el tiempo límite. El solver identificó \textbf{10 soluciones
+incumbentes} durante la búsqueda, con la mejor a $1{,}61 \times 10^8$
+minutos-equivalentes, mostrando una convergencia robusta hacia la región
+óptima.
 
 % ──────────────────────────────────────────────────────────────────────────────
 \section{Estrategia de localización y posicionamiento de bodegas}
@@ -139,6 +143,18 @@ es además la única matemáticamente viable para satisfacer la restricción de
 tiempo máximo $T^{\max}_1 = 45$~min para la prioridad~1: ninguna configuración
 con menos bodegas es capaz de cubrir los 20 nodos demandantes dentro de esa
 ventana temporal con los modos de transporte disponibles.
+
+Esta conclusión es empíricamente corroborada por la comparación con la red
+de \textbf{8 bodegas} evaluada en etapas previas del proyecto. Con esa
+configuración reducida, la falta de cobertura geográfica forzaba al modelo a
+dejar \textbf{20.601 unidades de prioridad~1 sin atender} ---79 veces más que
+los 296 del presente resultado--- ya que las rutas desde los 8 nodos hacia
+comunas como Los~Andes, Algarrobo o Llaillay superaban sistemáticamente los
+$45$~minutos. La apertura de los 4 nodos adicionales (Placilla,
+Barrio~Ind~El~Salto, Belloto~Sur y La~Ligua) es la intervención que reduce
+ese déficit en más del $98{,}5\%$, confirmando que la cobertura geográfica
+---y no el presupuesto--- era el cuello de botella crítico de la red de 8
+bodegas.
 
 % ──────────────────────────────────────────────────────────────────────────────
 \section{Estadísticas de insumos y triage}
@@ -280,12 +296,22 @@ El hecho de que el modelo \textbf{no agote el presupuesto} (\$196~MM
 disponibles sin usar) no es una ineficiencia: es la consecuencia de que la
 \textbf{flota es la restricción activa, no el capital}. Los 97.031 insumos
 de prioridad~3 sin cobertura no se deben a falta de dinero para comprarlos
----hay $196~MM disponibles--- sino a que la flota institucional no tiene
+---hay \$196~MM disponibles--- sino a que la flota institucional no tiene
 capacidad de transportar ese volumen adicional dentro de $T^{\max}_3 = 240$~min
 durante los picos de verano. Gastar más en compras no reduciría el faltante:
 los camiones ya están en su límite. Esta es la diferencia fundamental respecto
-a un escenario con menos bodegas, donde el presupuesto sí se agotaba porque
-el cuello de botella era la cobertura geográfica, no la flota.
+a la red de 8 bodegas (\$5.000~MM gastados íntegramente), donde el cuello
+de botella era la cobertura geográfica: sin acceso temporal a todas las comunas
+dentro de $T^{\max}_p$, el modelo agotaba el presupuesto comprando inventario
+que no podía entregar a tiempo.
+
+Un elemento que no aparecía en configuraciones anteriores es el \textbf{costo de
+bodegaje (\$20~MM, 0{,}4\%)}. Este costo refleja la mantención del inventario
+no perecible acumulado mes a mes en las bodegas activas (restricción~R9). Su
+presencia en la solución es, paradójicamente, una señal positiva: indica que la
+red está reteniendo stock no perecible durante los meses de invierno para
+pre-posicionarlo antes de la temporada crítica, exactamente como se observa en
+el patrón de acumulación de noviembre (sección~\ref{sec:inventario}).
 
 % ──────────────────────────────────────────────────────────────────────────────
 \section{Capacidad de cuadrillas y saturación}
@@ -389,6 +415,7 @@ generan picos de demanda que la Camioneta~4x4 sola no puede absorber.
 
 % ──────────────────────────────────────────────────────────────────────────────
 \section{Inventario y balance temporal}
+\label{sec:inventario}
 
 \textit{Documento: 03\_Reporte\_Inventario.csv}
 

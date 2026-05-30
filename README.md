@@ -1,6 +1,6 @@
 # SENAPRED — Optimización Logística Humanitaria (E4)
 
-> **Para el ayudante:** ejecutar `python main.py` desde la raíz del proyecto. Genera datos, resuelve el modelo y escribe todos los reportes automáticamente. Ver sección "Cómo ejecutar" abajo.
+> **Para el ayudante:** ejecutar `python main.py` desde la raíz del proyecto. Genera datos (si no existen), resuelve el modelo y escribe los 6 reportes CSV en `results/`. Solo requiere `gurobipy`, `pandas` y `numpy`.
 
 ---
 
@@ -8,28 +8,48 @@
 
 ---
 
-## Cómo ejecutar (instrucciones para el ayudante)
+## Cómo ejecutar
+
+### 1. Instalar dependencias
 
 ```bash
-# Activar entorno virtual
-source .venv/bin/activate
+pip install -r requirements.txt
+```
 
-# Ejecutar — genera datos, resuelve y produce reportes
+> El ayudante solo necesita `gurobipy`, `pandas` y `numpy`.
+
+### 2. Ejecutar el modelo (para el ayudante)
+
+```bash
 python main.py
 ```
 
 El script es completamente autónomo:
 
-1. Genera los CSV en `data/` con semilla fija 1113 (reproducible).
-2. Construye el modelo Gurobi (R1–R14, ver `core/model_builder.py`).
+1. Si los CSV en `data/` no existen, los genera con semilla fija 1113 (reproducible). Si ya existen, los reutiliza.
+2. Construye el modelo Gurobi con las restricciones R1–R14 (ver `core/model_builder.py`).
 3. Resuelve con TimeLimit=1800 s.
 4. Imprime resumen en consola.
-5. Escribe 6 CSV + Excel en `results/`.
-6. Genera 4 gráficos PNG en `results/`.
+5. Escribe 6 CSV en `results/`.
 
-**Requisito:** Gurobi con licencia WLS o académica activa.  
-Librerías permitidas por enunciado: `gurobipy`, `pandas`, `numpy`, `matplotlib`.  
-Si falta alguna: `pip install -r requirements.txt`
+**Requisito:** Gurobi con licencia WLS activa (credenciales en `core/config.py`).
+
+### 3. Generar gráficos (opcional, requiere matplotlib)
+
+```bash
+python scripts/generate_plots.py
+```
+
+Genera 4 PNG en `results/` a partir de los CSV ya producidos.
+
+### 4. Generar PDF de análisis de resultados
+
+```bash
+python scripts/generate_pdf.py
+cd docs/Entregas/E4 && pdflatex analisis_resultados.tex
+```
+
+Produce `docs/Entregas/E4/analisis_resultados.tex` con tablas, gráficos y comparación E3 vs E4.
 
 ---
 
@@ -40,10 +60,10 @@ Si falta alguna: `pip install -r requirements.txt`
 | `01_Reporte_Bodegas_Abiertas.csv` | Bodegas habilitadas y mes de apertura |
 | `02_Reporte_Faltante.csv` | Demanda insatisfecha por prioridad |
 | `03_Reporte_Inventario.csv` | Stock y compras por bodega/mes |
-| `04_Reporte_Presupuesto.csv` | Desglose de gasto |
+| `04_Reporte_Presupuesto.csv` | Desglose de gasto por categoría |
 | `05_Reporte_Personal.csv` | Dotación y saturación de cuadrillas |
 | `06_Reporte_Rutas.csv` | Viajes y fill rate por ruta/vehículo |
-| `G1–G4 .png` | Gráficos de análisis |
+| `G1–G4.png` | Gráficos de análisis (generados con `generate_plots.py`) |
 
 ---
 

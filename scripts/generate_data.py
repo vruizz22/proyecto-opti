@@ -11,7 +11,7 @@ from __future__ import annotations
 import sys
 from math import asin, cos, radians, sin, sqrt
 from pathlib import Path
-from typing import TypedDict
+from typing import Any, TypedDict
 
 import numpy as np
 import pandas as pd
@@ -211,7 +211,7 @@ def generate(config: InstanceConfig | None = None) -> None:
     out.mkdir(exist_ok=True)
 
     # ── 1. bodegas_candidatas.csv ──────────────────────────────────────────
-    size_params: dict[str, dict[str, object]] = {
+    size_params: dict[str, dict[str, Any]] = {
         "Grande": {"cap_range": (7000, 9500), "cost_range": (45_000_000, 60_000_000), "pmin": 15, "pmax": 50},
         "Mediana": {"cap_range": (3000, 4500), "cost_range": (25_000_000, 35_000_000), "pmin": 6, "pmax": 25},
         "Pequeña": {"cap_range": (1000, 1600), "cost_range": (10_000_000, 15_000_000), "pmin": 3, "pmax": 12},
@@ -219,11 +219,8 @@ def generate(config: InstanceConfig | None = None) -> None:
     rows_bod: list[dict[str, object]] = []
     for b in BODEGAS_GEO:
         sp = size_params[b["tamano"]]
-        cap_lo, cap_hi = int(sp["cap_range"][0]), int(
-            sp["cap_range"][1])  # type: ignore[index]
-        cost_lo, cost_hi = int(
-            sp["cost_range"][0]), int(
-            sp["cost_range"][1])  # type: ignore[index]
+        cap_lo, cap_hi = int(sp["cap_range"][0]), int(sp["cap_range"][1])
+        cost_lo, cost_hi = int(sp["cost_range"][0]), int(sp["cost_range"][1])
         rows_bod.append({
             "id_bodega": b["id_bodega"],
             "latitud": b["latitud"],
@@ -231,8 +228,8 @@ def generate(config: InstanceConfig | None = None) -> None:
             "tamano": b["tamano"],
             "capacidad_m3": int(rng.integers(cap_lo, cap_hi + 1)),
             "costo_fijo_CLP": int(rng.integers(cost_lo, cost_hi + 1)),
-            "personal_min": int(sp["pmin"]),  # type: ignore[arg-type]
-            "personal_max": int(sp["pmax"]),  # type: ignore[arg-type]
+            "personal_min": int(sp["pmin"]),
+            "personal_max": int(sp["pmax"]),
         })
     pd.DataFrame(rows_bod).to_csv(out / "bodegas_candidatas.csv", index=False)
 

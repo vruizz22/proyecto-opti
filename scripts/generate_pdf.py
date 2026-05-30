@@ -15,7 +15,6 @@ import pandas as pd
 import shutil
 import sys
 from pathlib import Path
-from typing import Union
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -137,9 +136,9 @@ def generate_pdf(config: InstanceConfig | None = None) -> None:
     # Cargar CSVs
     bodegas = _read(res / "01_Reporte_Bodegas_Abiertas.csv")
     faltante = _read(res / "02_Reporte_Faltante.csv")
-    inventario = _read(res / "03_Reporte_Inventario.csv")
+    _inventario = _read(res / "03_Reporte_Inventario.csv")
     presupuesto = _read(res / "04_Reporte_Presupuesto.csv")
-    personal = _read(res / "05_Reporte_Personal.csv")
+    _personal = _read(res / "05_Reporte_Personal.csv")
     rutas = _read(res / "06_Reporte_Rutas.csv")
 
     if presupuesto.empty:

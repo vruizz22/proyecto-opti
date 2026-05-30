@@ -1,4 +1,51 @@
-# 🚨 Disaster Risk Management: Inventory Pre-positioning (SENAPRED)
+# SENAPRED — Optimización Logística Humanitaria (E4)
+
+> **Para el ayudante:** ejecutar `python main.py` desde la raíz del proyecto. Genera datos, resuelve el modelo y escribe todos los reportes automáticamente. Ver sección "Cómo ejecutar" abajo.
+
+---
+
+# Disaster Risk Management: Inventory Pre-positioning (SENAPRED)
+
+---
+
+## Cómo ejecutar (instrucciones para el ayudante)
+
+```bash
+# Activar entorno virtual
+source .venv/bin/activate
+
+# Ejecutar — genera datos, resuelve y produce reportes
+python main.py
+```
+
+El script es completamente autónomo:
+
+1. Genera los CSV en `data/` con semilla fija 1113 (reproducible).
+2. Construye el modelo Gurobi (R1–R14, ver `core/model_builder.py`).
+3. Resuelve con TimeLimit=1800 s.
+4. Imprime resumen en consola.
+5. Escribe 6 CSV + Excel en `results/`.
+6. Genera 4 gráficos PNG en `results/`.
+
+**Requisito:** Gurobi con licencia WLS o académica activa.  
+Librerías permitidas por enunciado: `gurobipy`, `pandas`, `numpy`, `matplotlib`.  
+Si falta alguna: `pip install -r requirements.txt`
+
+---
+
+## Salidas generadas en `results/`
+
+| Archivo | Descripción |
+|---------|-------------|
+| `01_Reporte_Bodegas_Abiertas.csv` | Bodegas habilitadas y mes de apertura |
+| `02_Reporte_Faltante.csv` | Demanda insatisfecha por prioridad |
+| `03_Reporte_Inventario.csv` | Stock y compras por bodega/mes |
+| `04_Reporte_Presupuesto.csv` | Desglose de gasto |
+| `05_Reporte_Personal.csv` | Dotación y saturación de cuadrillas |
+| `06_Reporte_Rutas.csv` | Viajes y fill rate por ruta/vehículo |
+| `G1–G4 .png` | Gráficos de análisis |
+
+---
 
 This repository contains the development of the semester project for the **Optimization (ICS1113)** course at **Pontificia Universidad Católica de Chile (2026-1)**.
 

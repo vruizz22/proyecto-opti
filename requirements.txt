@@ -1,16 +1,5 @@
-# Solver — Trial license, expira 2026-11-25
+# Librerías permitidas por enunciado
 gurobipy==13.0.1
-
-# Data — permitidas por enunciado
 numpy>=1.26.0
 pandas>=2.2.0
-sympy>=1.13.0
-
-# Generación de datos sintéticos (mismo patrón que EV project)
-Faker>=24.0.0
-
-# Lectura/escritura Excel (.xlsx para datos y resultados)
-openpyxl>=3.1.0
-
-# Visualización de resultados para el informe
 matplotlib>=3.8.0

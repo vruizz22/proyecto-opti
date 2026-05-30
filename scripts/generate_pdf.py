@@ -9,14 +9,15 @@ Luego compilar el PDF:
     cd docs/Entregas/E4 && pdflatex analisis_resultados.tex
 """
 from __future__ import annotations
-from core.config import InstanceConfig
-import pandas as pd
 
 import shutil
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from core.config import InstanceConfig  # noqa: E402
+import pandas as pd  # noqa: E402
 
 
 # ---------------------------------------------------------------------------
@@ -32,13 +33,32 @@ def _read(p: Path) -> pd.DataFrame:
     return pd.read_csv(p) if p.exists() else pd.DataFrame()
 
 
+def _escape_latex(s: str) -> str:
+    """Escape LaTeX special characters in plain text values."""
+    replacements = [
+        ("\\", r"\textbackslash{}"),
+        ("&", r"\&"),
+        ("%", r"\%"),
+        ("$", r"\$"),
+        ("#", r"\#"),
+        ("_", r"\_"),
+        ("{", r"\{"),
+        ("}", r"\}"),
+        ("~", r"\textasciitilde{}"),
+        ("^", r"\textasciicircum{}"),
+    ]
+    for char, escaped in replacements:
+        s = s.replace(char, escaped)
+    return s
+
+
 def _df_to_latex(df: pd.DataFrame, caption: str, label: str,
                  float_fmt: str = "{:.1f}") -> str:
     if df.empty:
         return f"% Tabla vacía: {label}\n"
     col_fmt = "l" + "r" * (len(df.columns) - 1)
     header = " & ".join(
-        r"\textbf{" + str(c) + "}" for c in df.columns) + r" \\"
+        r"\textbf{" + _escape_latex(str(c)) + "}" for c in df.columns) + r" \\"
     rows: list[str] = []
     for _, row in df.iterrows():
         cells: list[str] = []
@@ -46,7 +66,7 @@ def _df_to_latex(df: pd.DataFrame, caption: str, label: str,
             if isinstance(v, float):
                 cells.append(float_fmt.format(v))
             else:
-                cells.append(str(v))
+                cells.append(_escape_latex(str(v)))
         rows.append(" & ".join(cells) + r" \\")
     body = "\n    ".join(rows)
     return (

@@ -42,7 +42,25 @@ python scripts/generate_plots.py
 
 Genera 4 PNG en `results/` a partir de los CSV ya producidos.
 
-### 4. Compilar PDF de análisis de resultados
+### 4. Ejecutar tests de integración (opcional)
+
+```bash
+pytest test/test_model.py -v
+```
+
+Los tests verifican:
+
+- Factibilidad del solver (OPTIMAL o TIME\_LIMIT con incumbente) y GAP < 15 %
+- Restricciones R1, R2, R3, R5, R13 satisfechas numéricamente en la solución
+- Calidad E4: 12/12 bodegas abiertas, P1 faltante < 500 u, triage P3 > P2 > P1
+- Costo de bodegaje > 0 (R9 activo) y los 6 reportes CSV no vacíos
+
+> **Tiempo estimado: ~2 minutos.** El fixture usa `TimeLimit=120 s` (no el límite de producción de 1800 s), suficiente para obtener una solución incumbente válida. Para omitir además los tests que iteran todas las claves dispersas y reducir a <30 s:
+> ```bash
+> pytest test/test_model.py -v -k "not demand_coverage and not inventory_balance and not vehicle_capacity"
+> ```
+
+### 5. Compilar PDF de análisis de resultados
 
 Copia los PNG de `results/` a `docs/Entregas/E4/figures/` y compila:
 
@@ -51,7 +69,7 @@ cp results/G*.png docs/Entregas/E4/figures/
 cd docs/Entregas/E4 && pdflatex analisis_resultados.tex
 ```
 
-El .tex en `docs/Entregas/E4/analisis_resultados.tex` es el documento estático de análisis.
+El `.tex` en `docs/Entregas/E4/analisis_resultados.tex` es el documento estático de análisis.
 Para subir a Overleaf: incluir el `.tex` y la carpeta `figures/` con los PNG.
 
 ---

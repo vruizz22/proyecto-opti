@@ -39,10 +39,10 @@
     \vspace{0pt}
     \begin{flushleft}
       \begin{tabular}{l}
-{\sc Pontificia Universidad Cat\'olica de Chile}\\
-  {\sc Escuela de Ingenier\'ia}\\
-  {\sc Departamento de Ingenier\'ia Industrial y Sistemas}\\
-  {\sc ICS1113-Optimizaci\'on}
+{\sc Pontificia Universidad Católica de Chile}\\
+  {\sc Escuela de Ingeniería}\\
+  {\sc Departamento de Ingeniería Industrial y Sistemas}\\
+  {\sc ICS1113-Optimización}
  \end{tabular}
 \end{flushleft}
 \end{minipage}
@@ -51,11 +51,10 @@
 \vspace*{6cm}
 \begin{center}{}
 \vspace*{2mm}
-{\Huge\bf Informe E3}\\
-\vspace*{4mm}
+{\Huge\bf Informe E3 y Análisis de Resultados}\\\vspace*{4mm}
 \hrule\vspace*{1pt}\hrule
 \vspace*{4mm}
-{\LARGE\bf Minimizaci\'on del tiempo de respuesta log\'istica para la distribuci\'on de insumos humanitarios de SENAPRED en la Regi\'on de Valpara\'iso}\\
+{\LARGE\bf Minimización del tiempo de respuesta logística para la distribución de insumos humanitarios de SENAPRED en la Región de Valparaíso}\\
 \vspace*{4mm}
 {\huge\bf Grupo 92 }\\
 \vspace*{1mm}
@@ -64,13 +63,13 @@
 \vspace*{20mm}
 \flushright
 
-Fernando Javier Caroca Lagos \quad 2464370J \quad Secci\'on 5 \\
-Vicente Andr\'es Massardo Lavanderos \quad 24625698 \quad Secci\'on 1 \\
-Ignacio Alfredo Navarrete Dihmes \quad 24642770 \quad Secci\'on 2 \\
-Santiago Andr\'es Ortiz Donoso \quad 24647667 \quad Secci\'on 1 \\
-Maximiliano Enrique Quevedo Osorio \quad 24627232 \quad Secci\'on 1 \\
-Renato Ariel Spr\"ohnle Parada \quad 2320009J \quad Secci\'on 4 \\
-V\'ictor Emilio Ruiz Z\'arate \quad 2320012J \quad Secci\'on 3 \\
+Fernando Javier Caroca Lagos \quad 2464370J \quad Sección 5 \\
+Vicente Andrés Massardo Lavanderos \quad 24625698 \quad Sección 1 \\
+Ignacio Alfredo Navarrete Dihmes \quad 24642770 \quad Sección 2 \\
+Santiago Andrés Ortiz Donoso \quad 24647667 \quad Sección 1 \\
+Maximiliano Enrique Quevedo Osorio \quad 24627232 \quad Sección 1 \\
+Renato Ariel Spröhnle Parada \quad 2320009J \quad Sección 4 \\
+Víctor Emilio Ruiz Zárate \quad 2320012J \quad Sección 3 \\
 
 \vspace*{5mm}
 {\large Ayudante de grupo: Stephan Beals\\}
@@ -89,15 +88,16 @@ V\'ictor Emilio Ruiz Z\'arate \quad 2320012J \quad Secci\'on 3 \\
 
 \begin{flushleft}
 
-\section{Descripci\'on del problema}
+% ──────────────────────────────────────────────────────────────────────────────
+\section{Descripción del problema}
 
-Chile enfrenta una gran vulnerabilidad ante desastres naturales, en particular incendios forestales que afectan recurrentemente a la Regi\'on de Valpara\'iso. La temporada 2023--2024 registr\'o 5.846 incendios forestales y 71.923 hect\'areas afectadas a nivel nacional \cite{conaf2024}. Espec\'ificamente en Valpara\'iso, los megaincendios de febrero de 2024 dejaron 135 fallecidos, m\'as de 21.200 personas damnificadas y la destrucci\'on de cerca de 8.100 viviendas \cite{minds2024plan}, mientras que el incendio del Complejo Las Tablas afect\'o por s\'i solo 8.657 hect\'areas en zonas de interfaz urbano-forestal. Estos eventos no son aislados: la regi\'on ya hab\'ia sufrido siniestros similares en 2017 (alrededor de 220 viviendas) y los efectos del \'ultimo episodio a\'un se reflejan en septiembre de 2025 con 3.652 familias h\'abiles (vale decir, hogares damnificados que cumplen los requisitos para acceder a beneficios de reconstrucci\'on) y 2.675 subsidios pendientes (transferencias estatales destinadas a financiar la reposici\'on de viviendas destruidas) en el proceso de reconstrucci\'on \cite{minvu2025}. En este contexto, surge la necesidad de apoyar al Servicio Nacional de Prevenci\'on y Respuesta ante Desastres (SENAPRED) mediante t\'ecnicas de optimizaci\'on para mejorar la preparaci\'on log\'istica previa a la temporada de incendios.
+Chile enfrenta una gran vulnerabilidad ante desastres naturales, en particular incendios forestales que afectan recurrentemente a la Región de Valparaíso. La temporada 2023--2024 registró 5.846 incendios forestales y 71.923 hectáreas afectadas a nivel nacional \cite{conaf2024}. Específicamente en Valparaíso, los megaincendios de febrero de 2024 dejaron 135 fallecidos, más de 21.200 personas damnificadas y la destrucción de cerca de 8.100 viviendas \cite{minds2024plan}, mientras que el incendio del Complejo Las Tablas afectó por sí solo 8.657 hectáreas en zonas de interfaz urbano-forestal. Estos eventos no son aislados: la región ya había sufrido siniestros similares en 2017 (alrededor de 220 viviendas) y los efectos del último episodio aún se reflejan en septiembre de 2025 con 3.652 familias hábiles (vale decir, hogares damnificados que cumplen los requisitos para acceder a beneficios de reconstrucción) y 2.675 subsidios pendientes (transferencias estatales destinadas a financiar la reposición de viviendas destruidas) en el proceso de reconstrucción \cite{minvu2025}. En este contexto, surge la necesidad de apoyar al Servicio Nacional de Prevención y Respuesta ante Desastres (SENAPRED) mediante técnicas de optimización para mejorar la preparación logística previa a la temporada de incendios.
 
-El tomador de decisiones es SENAPRED, organismo p\'ublico responsable de planificar, coordinar y supervisar las acciones de prevenci\'on y respuesta ante emergencias en Chile. El horizonte de planificaci\'on es de un a\~no, dividido en per\'iodos mensuales $T = \{1,\dots,12\}$. Esta granularidad permite anticiparse a la temporada de incendios (verano), gestionar adecuadamente los insumos perecibles (alimentos y medicamentos vencen en plazos cortos), evitando as\'i el supuesto irreal de comprar todos los insumos un a\~no antes; y alinearse con los ciclos presupuestarios y de contrataci\'on del sector p\'ublico.
+El tomador de decisiones es SENAPRED, organismo público responsable de planificar, coordinar y supervisar las acciones de prevención y respuesta ante emergencias en Chile. El horizonte de planificación es de un año, dividido en períodos mensuales $T = \{1,\dots,12\}$. Esta granularidad permite anticiparse a la temporada de incendios (verano), gestionar adecuadamente los insumos perecibles (alimentos y medicamentos vencen en plazos cortos), evitando así el supuesto irreal de comprar todos los insumos un año antes; y alinearse con los ciclos presupuestarios y de contratación del sector público.
 
-El objetivo de SENAPRED es minimizar el tiempo total ponderado de respuesta en la entrega de insumos humanitarios a zonas afectadas por incendios, desde que es decidido el env\'io hasta que los insumos llegan. Adicionalmente, la funci\'on objetivo incorpora una penalizaci\'on monetaria (convertida a minutos-equivalentes mediante un factor $h$) sobre el costo operativo del transporte, lo que permite expresar en una sola dimensi\'on el balance entre rapidez y uso eficiente del presupuesto.
+El objetivo de SENAPRED es minimizar el tiempo total ponderado de respuesta en la entrega de insumos humanitarios a zonas afectadas por incendios, desde que es decidido el envío hasta que los insumos llegan. Adicionalmente, la función objetivo incorpora una penalización monetaria (convertida a minutos-equivalentes mediante un factor $h$) sobre el costo operativo del transporte, lo que permite expresar en una sola dimensión el balance entre rapidez y uso eficiente del presupuesto.
 
-Por \textbf{tiempo de respuesta} se entiende el lapso desde que se decide el env\'io hasta que los suministros llegan a la zona afectada, incluyendo carga, transporte y descarga. Por \textbf{insumos} se entiende el conjunto de bienes esenciales para la atenci\'on humanitaria: agua potable, alimentos no perecibles, medicamentos, frazadas, bater\'ias, radios y art\'iculos de higiene, distingu\'iendose entre perecibles (alimentos y medicamentos) y no perecibles (lo restante).
+Por \textbf{tiempo de respuesta} se entiende el lapso desde que se decide el envío hasta que los suministros llegan a la zona afectada, incluyendo carga, transporte y descarga. Por \textbf{insumos} se entiende el conjunto de bienes esenciales para la atención humanitaria: agua potable, alimentos no perecibles, medicamentos, frazadas, baterías, radios y artículos de higiene, distinguiéndose entre perecibles (alimentos y medicamentos) y no perecibles (lo restante).
 
 Las decisiones que el modelo debe tomar son que bodegas habilitar a lo largo del horizonte estrat\'egico, cu\'anto inventario de cada tipo comprar y almacenar mes a mes, considerando la rotaci\'on de perecibles, qu\'e tipo de veh\'iculo y qu\'e ruta espec\'ifica de transporte asignar para conectar cada origen bodega con cada destino comuna, cu\'antos suministros enviar a cada comuna afectada seg\'un su nivel de prioridad.
 y qu\'e dotaci\'on m\'inima de personal mantener en cada bodega operativa.
@@ -105,89 +105,91 @@ y qu\'e dotaci\'on m\'inima de personal mantener en cada bodega operativa.
 
 Las restricciones cr\'iticas son la cobertura de la demanda (con holgura admisible penalizada en la funci\'on objetivo, dado que en escenarios extremos no siempre es factible cubrirla totalmente), el l\'imite presupuestario, la capacidad de bodegas y veh\'iculos, el balance de inventario diferenciado para perecibles y no perecibles, la aptitud de cada tipo de veh\'iculo seg\'un las caracter\'isticas f\'isicas de la ruta elegida, el tiempo m\'aximo admisible de respuesta por nivel de prioridad y la disponibilidad de flota fija institucional.
 
-\section{Elecci\'on del tema y supuestos}
+% ──────────────────────────────────────────────────────────────────────────────
+\section{Elección del tema y supuestos}
 
 \subsection{Listado de Supuestos del Modelo}
 
 \begin{enumerate}[leftmargin=2em, itemsep=2pt]
-  \item Existe un conjunto finito de ubicaciones candidatas para habilitar bodegas con capacidad m\'axima de almacenamiento conocida.
-  \item Los tiempos de traslado y costos operativos variables entre bodegas y comunas est\'an precalculados mediante sistemas de informaci\'on geogr\'afica y red vial real, permaneciendo estables dentro de cada per\'iodo mensual.
-  \item La demanda proyectada por comuna, insumo, per\'iodo y nivel de prioridad es determinista y estimable a partir de la poblaci\'on expuesta, historial de incendios y vulnerabilidad territorial.
-  \item Los costos unitarios de adquisici\'on de suministros son conocidos de antemano pero var\'ian din\'amicamente en el tiempo (precios no constantes entre per\'iodos mensuales).
-  \item Los insumos clasificados como perecibles tienen una vida \'util estricta de un mes, lo que obliga a que su inventario final sea cero al cierre de cada per\'iodo, mientras que los insumos no perecibles pueden acumularse consecutivamente.
-  \item La flota regional disponible para cada tipo de veh\'iculo es fija, limitada e institucional para cada mes, representando el pool centralizado de recursos de emergencia.
-  \item Una vez que una ubicaci\'on candidata es habilitada mediante el pago de su costo fijo de apertura, esta permanece disponible de manera continua y heredada por el resto del horizonte anual de planificaci\'on, imposibilitando cierres temporales o reaperturas intermitentes.
+  \item Existe un conjunto finito de ubicaciones candidatas para habilitar bodegas con capacidad máxima de almacenamiento conocida.
+  \item Los tiempos de traslado y costos operativos variables entre bodegas y comunas están precalculados mediante sistemas de información geográfica y red vial real, permaneciendo estables dentro de cada período mensual.
+  \item La demanda proyectada por comuna, insumo, período y nivel de prioridad es determinista y estimable a partir de la población expuesta, historial de incendios y vulnerabilidad territorial.
+  \item Los costos unitarios de adquisición de suministros son conocidos de antemano pero varían dinámicamente en el tiempo (precios no constantes entre períodos mensuales).
+  \item Los insumos clasificados como perecibles tienen una vida útil estricta de un mes, lo que obliga a que su inventario final sea cero al cierre de cada período, mientras que los insumos no perecibles pueden acumularse consecutivamente.
+  \item La flota regional disponible para cada tipo de vehículo es fija, limitada e institucional para cada mes, representando el pool centralizado de recursos de emergencia.
+  \item Una vez que una ubicación candidata es habilitada mediante el pago de su costo fijo de apertura, esta permanece disponible de manera continua y heredada por el resto del horizonte anual de planificación, imposibilitando cierres temporales o reaperturas intermitentes.
 \end{enumerate}
 
 \subsection{Valor de resolver el problema e impacto}
 
-Resolver este problema con optimizaci\'on aporta valor en al menos cuatro dimensiones. Primero, \textbf{focaliza recursos escasos}: en la convocatoria 2024 del Programa de Gesti\'on del Riesgo De Desastres se recibieron cerca de 300 postulaciones por sobre \$3.000 millones de pesos, pero solo 64 iniciativas fueron financiadas, dejando 203 propuestas de 106 municipios en lista de espera \cite{dipres2026}. Segundo, \textbf{cierra brechas de preparaci\'on}: a mayo de 2025, de las 345 comunas del pa\'is, 63 no contaban con plan comunal de emergencia, 147 los ten\'ian desactualizados y 207 carec\'ian de planes de reducci\'on del riesgo \cite{dipres2026}. Tercero, \textbf{evita decisiones ineficientes} como sobre-invertir en perecibles que vencer\'an o sub-invertir en stock estrat\'egico de larga duraci\'on \cite{esfera2018}. Cuarto, \textbf{prioriza demandas cr\'iticas} mediante ponderadores de urgencia y tiempos m\'aximos diferenciados, evitando que la rapidez en env\'ios secundarios se logre a costa de la respuesta a emergencias graves \cite{esfera2018}. La comparaci\'on frente a una asignaci\'on intuitiva o hist\'orica permitir\'ia medir, en futuras entregas, el ahorro concreto de tiempo y costo.
+Resolver este problema con optimización aporta valor en al menos cuatro dimensiones. Primero, \textbf{focaliza recursos escasos}: en la convocatoria 2024 del Programa de Gestión del Riesgo De Desastres se recibieron cerca de 300 postulaciones por sobre \$3.000 millones de pesos, pero solo 64 iniciativas fueron financiadas, dejando 203 propuestas de 106 municipios en lista de espera \cite{dipres2026}. Segundo, \textbf{cierra brechas de preparación}: a mayo de 2025, de las 345 comunas del país, 63 no contaban con plan comunal de emergencia, 147 los tenían desactualizados y 207 carecían de planes de reducción del riesgo \cite{dipres2026}. Tercero, \textbf{evita decisiones ineficientes} como sobre-invertir en perecibles que vencerán o sub-invertir en stock estratégico de larga duración \cite{esfera2018}. Cuarto, \textbf{prioriza demandas críticas} mediante ponderadores de urgencia y tiempos máximos diferenciados, evitando que la rapidez en envíos secundarios se logre a costa de la respuesta a emergencias graves \cite{esfera2018}. La comparación frente a una asignación intuitiva o histórica permitiría medir, en futuras entregas, el ahorro concreto de tiempo y costo.
 
-\section{Modelaci\'on del problema}
+% ──────────────────────────────────────────────────────────────────────────────
+\section{Modelación del problema}
 
 \subsection{Conjuntos}
 
 \begin{itemize}[leftmargin=2em, itemsep=1pt]
   \item $i \in I$: Ubicaciones candidatas para habilitar bodegas o centros de acopio, incluyendo instalaciones preexistentes y nuevas.
-  \item $g \in G$: Conjunto de tama\~nos o categor\'ias de bodegas (e.g., Peque\~na, Mediana, Grande).
-  \item $I_g \subset I$: Subconjunto de ubicaciones candidatas que pertenecen al tama\~no $g \in G$.
-  \item $j \in J$: Comunas de la Regi\'on de Valpara\'iso con demanda proyectada de ayuda durante la emergencia.
-  \item $r \in R_{ij}$: Conjunto de rutas alternativas (arcos f\'isicos terrestres o corredores a\'ereos discretos) disponibles para conectar la bodega $i$ con la comuna $j$.
+  \item $g \in G$: Conjunto de tamaños o categorías de bodegas (e.g., Pequeña, Mediana, Grande).
+  \item $I_g \subset I$: Subconjunto de ubicaciones candidatas que pertenecen al tamaño $g \in G$.
+  \item $j \in J$: Comunas de la Región de Valparaíso con demanda proyectada de ayuda durante la emergencia.
+  \item $r \in R_{ij}$: Conjunto de rutas alternativas (arcos físicos terrestres o corredores aéreos discretos) disponibles para conectar la bodega $i$ con la comuna $j$.
   \item $r \in R'_{ijm} \subset R_{ij}$: Subconjunto unitario de pre-procesamiento espacial. Contiene estrictamente la ruta de menor tiempo de viaje factible para el modo de transporte $m$ entre el nodo $i$ y el nodo $j$.
-  \item $k \in K$: Tipos de suministros de emergencia (agua, alimentos no perecibles, medicamentos, frazadas, bater\'ias, radios y art\'iculos de higiene). Se definen los subconjuntos $K_v \subset K$ (perecibles: alimentos y medicamentos) y $K_n \subset K$ (no perecibles: el resto).
-  \item $m \in M$: Tipos de veh\'iculos disponibles, terrestres (camiones, camionetas, ambulancias) y a\'ereos (helic\'opteros, avionetas).
-  \item $t \in T = \{1,\dots,12\}$: Per\'iodos mensuales del horizonte de planificaci\'on.
-  \item $p \in P = \{1,2,3\}$: Niveles de prioridad de la demanda ($p=1$ cr\'itica, $p=2$ media, $p=3$ baja).
-  \item $\mathcal{F}_p \subset I \times J \times R_{ij} \times M \times T$: Conjunto correlacionado de combinaciones operacionales factibles para el nivel de prioridad $p$, definido expl\'icitamente como $\mathcal{F}_p = \{(i,j,r,m,t) : T_{ijrmt} + O_m \leq T^{\max}_p\}$.
+  \item $k \in K$: Tipos de suministros de emergencia (agua, alimentos no perecibles, medicamentos, frazadas, baterías, radios y artículos de higiene). Se definen los subconjuntos $K_v \subset K$ (perecibles: alimentos y medicamentos) y $K_n \subset K$ (no perecibles: el resto).
+  \item $m \in M$: Tipos de vehículos disponibles, terrestres (camiones, camionetas, ambulancias) y aéreos (helicópteros, avionetas).
+  \item $t \in T = \{1,\dots,12\}$: Períodos mensuales del horizonte de planificación.
+  \item $p \in P = \{1,2,3\}$: Niveles de prioridad de la demanda ($p=1$ crítica, $p=2$ media, $p=3$ baja).
+  \item $\mathcal{F}_p \subset I \times J \times R_{ij} \times M \times T$: Conjunto correlacionado de combinaciones operacionales factibles para el nivel de prioridad $p$, definido explícitamente como $\mathcal{F}_p = \{(i,j,r,m,t) : T_{ijrmt} + O_m \leq T^{\max}_p\}$.
 \end{itemize}
 
-\subsection{Par\'ametros}
+\subsection{Parámetros}
 
 \begin{itemize}[leftmargin=2em, itemsep=1pt]
-  \item $D_{jktp}$: Demanda proyectada del suministro $k$ en la comuna $j$, per\'iodo $t$, prioridad $p$ [unidades].
-  \item $C_i$: Capacidad m\'axima de almacenamiento de la ubicaci\'on $i$ [m\textsuperscript{3}].
+  \item $D_{jktp}$: Demanda proyectada del suministro $k$ en la comuna $j$, período $t$, prioridad $p$ [unidades].
+  \item $C_i$: Capacidad máxima de almacenamiento de la ubicación $i$ [m\textsuperscript{3}].
   \item $E_k$: Volumen unitario del suministro $k$ [m\textsuperscript{3}/unidad].
-  \item $F_i$: Costo fijo de habilitar la ubicaci\'on $i$ como bodega (se paga una vez al momento de la apertura) [CLP].
-  \item $V_{kt}$: Costo unitario de compra del suministro $k$ en el per\'iodo $t$ [CLP/unidad].
-  \item $H_{ikt}$: Costo de mantener una unidad del suministro $k$ en la bodega $i$ desde el per\'iodo $t$ al $t+1$ [CLP/(unidad$\cdot$mes)].
-  \item $A_m$: Capacidad de carga del veh\'iculo tipo $m$ [m\textsuperscript{3}].
+  \item $F_i$: Costo fijo de habilitar la ubicación $i$ como bodega (se paga una vez al momento de la apertura) [CLP].
+  \item $V_{kt}$: Costo unitario de compra del suministro $k$ en el período $t$ [CLP/unidad].
+  \item $H_{ikt}$: Costo de mantener una unidad del suministro $k$ en la bodega $i$ desde el período $t$ al $t+1$ [CLP/(unidad$\cdot$mes)].
+  \item $A_m$: Capacidad de carga del vehículo tipo $m$ [m\textsuperscript{3}].
   \item $B$: Presupuesto total disponible para todo el horizonte [CLP].
-  \item $T_{ijrmt}$: Tiempo de transporte de ida desde la bodega $i$ hasta la comuna $j$ por la ruta $r$ usando el veh\'iculo $m$ en el per\'iodo $t$ [min].
-  \item $O_m$: Tiempo fijo de operaci\'on y preparaci\'on del veh\'iculo tipo $m$ por viaje [min].
-  \item $G_{ijrm}$: Costo operativo variable del veh\'iculo tipo $m$ por viaje ejecutado en la ruta espec\'ifica $r$ entre la bodega $i$ y la comuna $j$ [CLP/viaje].
+  \item $T_{ijrmt}$: Tiempo de transporte de ida desde la bodega $i$ hasta la comuna $j$ por la ruta $r$ usando el vehículo $m$ en el período $t$ [min].
+  \item $O_m$: Tiempo fijo de operación y preparación del vehículo tipo $m$ por viaje [min].
+  \item $G_{ijrm}$: Costo operativo variable del vehículo tipo $m$ por viaje ejecutado en la ruta específica $r$ entre la bodega $i$ y la comuna $j$ [CLP/viaje].
   \item $W_p$: Ponderador de urgencia asociado a la prioridad $p$ (mayor $p$ implica menor urgencia, $W_1 > W_2 > W_3$) [adimensional].
-  \item $T^{\max}_p$: Tiempo m\'aximo admisible de respuesta para una entrega de prioridad $p$ [min].
-  \item $S^0_{ik}$: Stock inicial del suministro $k$ en la bodega $i$ al inicio del horizonte (per\'iodo $t=0$) [unidades].
+  \item $T^{\max}_p$: Tiempo máximo admisible de respuesta para una entrega de prioridad $p$ [min].
+  \item $S^0_{ik}$: Stock inicial del suministro $k$ en la bodega $i$ al inicio del horizonte (período $t=0$) [unidades].
   \item $\alpha_k$: Tiempo de carga por unidad del suministro $k$ [min/unidad].
   \item $\beta_k$: Tiempo de descarga por unidad del suministro $k$ [min/unidad].
-  \item $\rho$: Factor de eficiencia operativa de las cuadrillas de trabajo (proporci\'on neta de tiempo efectivo de labor, considerando pausas y mermas naturales de ritmo) [adimensional, valor entre 0 y 1].
+  \item $\rho$: Factor de eficiencia operativa de las cuadrillas de trabajo (proporción neta de tiempo efectivo de labor, considerando pausas y mermas naturales de ritmo) [adimensional, valor entre 0 y 1].
   \item $d$: Horas operativas disponibles por mes en cada bodega [h/mes].
-  \item $L_g$: Dotaci\'on m\'inima requerida en una bodega habilitada de tama\~no $g$ [personas].
-  \item $E^{\max}_g$: Dotaci\'on m\'axima permitida por bodega de tama\~no $g$ [personas].
-  \item $\Omega_t$: Costo mensual por persona del equipo de carga/descarga (remuneraci\'on, equipamiento, capacitaci\'on) [CLP/(persona$\cdot$mes)].
-  \item $\mathrm{Apt}_{mjr}$: Par\'ametro binario, $1$ si el veh\'iculo tipo $m$ es apto para transitar por la ruta $r$ hacia la comuna $j$, $0$ en caso contrario.
-  \item $Q_{mt}$: Cantidad m\'axima de veh\'iculos tipo $m$ institucionalmente disponibles en el pool centralizado regional durante el per\'iodo $t$ [veh\'iculos].
-  \item $h$: Factor de conversi\'on costo-tiempo en la funci\'on objetivo [min/CLP].
-  \item $\pi_p$: Penalizaci\'on por unidad de demanda no cubierta de prioridad $p$ [min-equivalentes/unidad].
+  \item $L_g$: Dotación mínima requerida en una bodega habilitada de tamaño $g$ [personas].
+  \item $E^{\max}_g$: Dotación máxima permitida por bodega de tamaño $g$ [personas].
+  \item $\Omega_t$: Costo mensual por persona del equipo de carga/descarga (remuneración, equipamiento, capacitación) [CLP/(persona$\cdot$mes)].
+  \item $\mathrm{Apt}_{mjr}$: Parámetro binario, $1$ si el vehículo tipo $m$ es apto para transitar por la ruta $r$ hacia la comuna $j$, $0$ en caso contrario.
+  \item $Q_{mt}$: Cantidad máxima de vehículos tipo $m$ institucionalmente disponibles en el pool centralizado regional durante el período $t$ [vehículos].
+  \item $h$: Factor de conversión costo-tiempo en la función objetivo [min/CLP].
+  \item $\pi_p$: Penalización por unidad de demanda no cubierta de prioridad $p$ [min-equivalentes/unidad].
 \end{itemize}
 
-\subsection{Variables de decisi\'on}
+\subsection{Variables de decisión}
 
 \begin{itemize}[leftmargin=2em, itemsep=1pt]
-  \item $w_{it} \in \{0,1\}$: Variable binaria; $1$ si la bodega $i$ se abre/habilita en el per\'iodo $t$, $0$ si no. Garantiza el pago del costo fijo $F_i$ una \'unica vez en el horizonte.
-  \item $y_{it} \in \{0,1\}$: Variable binaria; $1$ si la bodega $i$ est\'a operativa y habilitada en el per\'iodo $t$, $0$ si permanece cerrada. Su valor queda determinado por el hist\'orico de la variable binaria $w_{it}$.
-  \item $z_{ijrmtp} \in \{0,1\}$: Variable binaria indicadora; $1$ si se asigna al menos un veh\'iculo tipo $m$ a la ruta $r$ entre la bodega $i$ y la comuna $j$ en el per\'iodo $t$ con prioridad $p$, $0$ en caso contrario.
-  \item $s_{ikt} \geq 0$: Cantidad del suministro $k$ almacenada en la bodega $i$ al final del per\'iodo $t$ [unidades].
-  \item $c_{ikt} \geq 0$: Cantidad del suministro $k$ comprada para la bodega $i$ en el per\'iodo $t$ [unidades].
-  \item $x_{ijrkmtp} \geq 0$: Cantidad del suministro $k$ trasladada desde la bodega $i$ a la comuna $j$ a trav\'es de la ruta $r$ con el veh\'iculo $m$ en el per\'iodo $t$ con prioridad $p$ [unidades].
-  \item $n_{ijrmtp} \in \mathbb{Z}_{\geq 0}$: N\'umero de viajes de veh\'iculos tipo $m$ asignados a la ruta espec\'ifica $r$ entre la bodega $i$ y la comuna $j$ en el per\'iodo $t$ con prioridad $p$ [viajes].
-  \item $e_{it} \in \mathbb{Z}_{\geq 0}$: Dotaci\'on de personal en la bodega $i$ en el per\'iodo $t$ [personas].
-  \item $f_{jktp} \geq 0$: Faltante (demanda no cubierta) del suministro $k$ en la comuna $j$, per\'iodo $t$, prioridad $p$ [unidades].
+  \item $w_{it} \in \{0,1\}$: Variable binaria; $1$ si la bodega $i$ se abre/habilita en el período $t$, $0$ si no. Garantiza el pago del costo fijo $F_i$ una única vez en el horizonte.
+  \item $y_{it} \in \{0,1\}$: Variable binaria; $1$ si la bodega $i$ está operativa y habilitada en el período $t$, $0$ si permanece cerrada. Su valor queda determinado por el histórico de la variable binaria $w_{it}$.
+  \item $z_{ijrmtp} \in \{0,1\}$: Variable binaria indicadora; $1$ si se asigna al menos un vehículo tipo $m$ a la ruta $r$ entre la bodega $i$ y la comuna $j$ en el período $t$ con prioridad $p$, $0$ en caso contrario.
+  \item $s_{ikt} \geq 0$: Cantidad del suministro $k$ almacenada en la bodega $i$ al final del período $t$ [unidades].
+  \item $c_{ikt} \geq 0$: Cantidad del suministro $k$ comprada para la bodega $i$ en el período $t$ [unidades].
+  \item $x_{ijrkmtp} \geq 0$: Cantidad del suministro $k$ trasladada desde la bodega $i$ a la comuna $j$ a través de la ruta $r$ con el vehículo $m$ en el período $t$ con prioridad $p$ [unidades].
+  \item $n_{ijrmtp} \in \mathbb{Z}_{\geq 0}$: Número de viajes de vehículos tipo $m$ asignados a la ruta específica $r$ entre la bodega $i$ y la comuna $j$ en el período $t$ con prioridad $p$ [viajes].
+  \item $e_{it} \in \mathbb{Z}_{\geq 0}$: Dotación de personal en la bodega $i$ en el período $t$ [personas].
+  \item $f_{jktp} \geq 0$: Faltante (demanda no cubierta) del suministro $k$ en la comuna $j$, período $t$, prioridad $p$ [unidades].
 \end{itemize}
 
-\subsection{Funci\'on objetivo}
+\subsection{Función objetivo}
 
-Minimizar el tiempo de respuesta ponderado del flujo de insumos humanitarios (activado mediante la variable binaria de uso de ruta), m\'as penalizaciones por costo operativo real de la cantidad de viajes de la flota y por demanda insatisfecha (todo expresado en minutos-equivalentes):
+Minimizar el tiempo de respuesta ponderado del flujo de insumos humanitarios (activado mediante la variable binaria de uso de ruta), más penalizaciones por costo operativo real de la cantidad de viajes de la flota y por demanda insatisfecha (todo expresado en minutos-equivalentes):
 \begin{equation}
 \begin{aligned}
 \min Z = \;& \sum_{i,j,r,m,t,p} W_p \cdot (T_{ijrmt} + O_m) \cdot z_{ijrmtp}
@@ -199,36 +201,36 @@ Minimizar el tiempo de respuesta ponderado del flujo de insumos humanitarios (ac
 
 \subsection{Restricciones del modelo}
 
-\textbf{(R1) Satisfacci\'on de demanda con holgura.} La suma de env\'ios de todas las rutas y veh\'iculos disponibles m\'as el faltante cubre la demanda proyectada de la comuna:
+\textbf{(R1) Satisfacción de demanda con holgura.} La suma de envíos de todas las rutas y vehículos disponibles más el faltante cubre la demanda proyectada de la comuna:
 \begin{equation}
 \sum_{i \in I} \sum_{r \in R'_{ijm}} \sum_{m \in M} x_{ijrkmtp} + f_{jktp} \geq D_{jktp}
 \quad \forall j \in J,\, \forall k \in K,\, \forall t \in T,\, \forall p \in P
 \end{equation}
 
-\textbf{(R2) Balance de inventario general.} El stock al final del per\'iodo $t$ descuenta todos los despachos multiruta realizados en ese mes (para $t=1$, $s_{ik,0} = S^0_{ik}$):
+\textbf{(R2) Balance de inventario general.} El stock al final del período $t$ descuenta todos los despachos multiruta realizados en ese mes (para $t=1$, $s_{ik,0} = S^0_{ik}$):
 \begin{equation}
 s_{ikt} = s_{ik,t-1} + c_{ikt} - \sum_{j \in J} \sum_{r \in R'_{ijm}} \sum_{m \in M} \sum_{p \in P} x_{ijrkmtp}
 \quad \forall i \in I,\, \forall k \in K,\, \forall t \in T
 \end{equation}
 
-\textbf{(R3) No acumulaci\'on de perecibles.} El inventario al final de cada per\'iodo debe ser cero para los perecibles; reemplaza a R2 para $k \in K_v$, haciendo que todo lo comprado se consuma en el per\'iodo:
+\textbf{(R3) No acumulación de perecibles.} El inventario al final de cada período debe ser cero para los perecibles; reemplaza a R2 para $k \in K_v$, haciendo que todo lo comprado se consuma en el período:
 \begin{equation}
 c_{ikt} = \sum_{j \in J} \sum_{r \in R'_{ijm}} \sum_{m \in M} \sum_{p \in P} x_{ijrkmtp}
 \quad \forall i \in I,\, \forall k \in K_v,\, \forall t \in T
 \end{equation}
 
-\textbf{(R4) Capacidad f\'isica de bodega.} El volumen almacenado al final del mes no excede la capacidad si la bodega est\'a abierta:
+\textbf{(R4) Capacidad física de bodega.} El volumen almacenado al final del mes no excede la capacidad si la bodega está abierta:
 \begin{equation}
 \sum_{k \in K} E_k \cdot s_{ikt} \leq C_i \cdot y_{it} \quad \forall i \in I,\, \forall t \in T
 \end{equation}
 
-\textbf{(R5) Capacidad de transporte por ruta.} El volumen total enviado por una ruta espec\'ifica $r$ no excede la capacidad de la flota asignada a esa misma ruta:
+\textbf{(R5) Capacidad de transporte por ruta.} El volumen total enviado por una ruta específica $r$ no excede la capacidad de la flota asignada a esa misma ruta:
 \begin{equation}
 \sum_{k \in K} E_k \cdot x_{ijrkmtp} \leq A_m \cdot n_{ijrmtp}
 \quad \forall i,\, \forall j,\, \forall r \in R'_{ijm},\, \forall m \in M,\, \forall t \in T,\, \forall p \in P
 \end{equation}
 
-\textbf{(R6) Viajes condicionados a apertura de bodega y factibilidad temporal.} La asignaci\'on de viajes queda condicionada a que la bodega est\'e abierta y a que pertenezca al conjunto de rutas factibles predefinido:
+\textbf{(R6) Viajes condicionados a apertura de bodega y factibilidad temporal.} La asignación de viajes queda condicionada a que la bodega esté abierta y a que pertenezca al conjunto de rutas factibles predefinido:
 \begin{equation}
 n_{ijrmtp} \leq \mathcal{M} \cdot y_{it}
 \quad \forall i,\, \forall j,\, \forall r \in R'_{ijm},\, \forall m \in M,\, \forall t \in T,\, \forall p \in P
@@ -237,77 +239,78 @@ n_{ijrmtp} \leq \mathcal{M} \cdot y_{it}
 n_{ijrmtp} = 0 \quad \forall (i,j,r,m,t) \notin \mathcal{F}_p,\; \forall p \in P
 \end{equation*}
 
-\textbf{(R7) Disponibilidad institucional de flota.} El total de viajes mensuales asignados en todas las rutas combinadas de la regi\'on no puede exceder el tama\~no real del pool vehicular fijo disponible para el tipo $m$ en ese per\'iodo:
+\textbf{(R7) Disponibilidad institucional de flota.} El total de viajes mensuales asignados en todas las rutas combinadas de la región no puede exceder el tamaño real del pool vehicular fijo disponible para el tipo $m$ en ese período:
 \begin{equation}
 \sum_{i \in I} \sum_{j \in J} \sum_{r \in R'_{ijm}} \sum_{p \in P} n_{ijrmtp} \leq Q_{mt}
 \quad \forall m \in M,\, \forall t \in T
 \end{equation}
 
-\textbf{(R8) Aptitud vehicular por ruta.} Solo se asignan veh\'iculos a rutas para las que son t\'ecnicamente aptos; si no, los viajes se fuerzan a cero bas\'andose en la cota superior del pool vehicular $Q_{mt}$:
+\textbf{(R8) Aptitud vehicular por ruta.} Solo se asignan vehículos a rutas para las que son técnicamente aptos; si no, los viajes se fuerzan a cero basándose en la cota superior del pool vehicular $Q_{mt}$:
 \begin{equation}
 n_{ijrmtp} \leq Q_{mt} \cdot \mathrm{Apt}_{mjr}
 \quad \forall i,\, \forall j,\, \forall r \in R'_{ijm},\, \forall m \in M,\, \forall t \in T,\, \forall p \in P
 \end{equation}
 
-\textbf{(R9) Capacidad operativa y tiempo de cuadrillas.} El tiempo total requerido en minutos para procesar la carga y descarga de todos los suministros despachados en la bodega $i$ durante el mes $t$ no puede exceder el tiempo total disponible de la dotaci\'on asignada, corregido por su factor de eficiencia operativa:
+\textbf{(R9) Capacidad operativa y tiempo de cuadrillas.} El tiempo total requerido en minutos para procesar la carga y descarga de todos los suministros despachados en la bodega $i$ durante el mes $t$ no puede exceder el tiempo total disponible de la dotación asignada, corregido por su factor de eficiencia operativa:
 \begin{equation}
 \sum_{j \in J} \sum_{r \in R'_{ijm}} \sum_{k \in K} \sum_{m \in M} \sum_{p \in P} (\alpha_k + \beta_k) \cdot x_{ijrkmtp}
 \leq e_{it} \cdot 60 \cdot d \cdot \rho
 \quad \forall i \in I,\, \forall t \in T
 \end{equation}
 
-\textbf{(R10a) Piso de dotaci\'on m\'inima de personal.} Garantiza de forma desagregada que si una bodega est\'a habilitada, cuente obligatoriamente con el equipo humano base correspondiente a su categor\'ia de tama\~no $g$:
+\textbf{(R10a) Piso de dotación mínima de personal.} Garantiza de forma desagregada que si una bodega está habilitada, cuente obligatoriamente con el equipo humano base correspondiente a su categoría de tamaño $g$:
 \begin{equation}
 L_g \cdot y_{it} \leq e_{it} \quad \forall g \in G,\, \forall i \in I_g,\, \forall t \in T
 \end{equation}
 
-\textbf{(R10b) Techo de dotaci\'on m\'axima de personal.} Acota el n\'umero m\'aximo de personas permitidas en el nodo seg\'un su infraestructura f\'isica $g$, forzando a que la dotaci\'on de personal sea estrictamente cero si la instalaci\'on se encuentra cerrada:
+\textbf{(R10b) Techo de dotación máxima de personal.} Acota el número máximo de personas permitidas en el nodo según su infraestructura física $g$, forzando a que la dotación de personal sea estrictamente cero si la instalación se encuentra cerrada:
 \begin{equation}
 e_{it} \leq E^{\max}_g \cdot y_{it} \quad \forall g \in G,\, \forall i \in I_g,\, \forall t \in T
 \end{equation}
 
-\textbf{(R11) Capacidad de salida multiruta.} El total enviado a trav\'es de todas las rutas de la bodega no supera los recursos f\'isicos disponibles de ese mes:
+\textbf{(R11) Capacidad de salida multiruta.} El total enviado a través de todas las rutas de la bodega no supera los recursos físicos disponibles de ese mes:
 \begin{equation}
 \sum_{j \in J} \sum_{r \in R'_{ijm}} \sum_{m \in M} \sum_{p \in P} x_{ijrkmtp} \leq s_{ik,t-1} + c_{ikt}
 \quad \forall i \in I,\, \forall k \in K,\, \forall t \in T
 \end{equation}
 
-\textbf{(R12a) L\'ogica de Apertura \'Unica Estrat\'egica.} Una bodega candidata se puede abrir a lo m\'as una \'unica vez a lo largo de todo el horizonte de planificaci\'on anual:
+\textbf{(R12a) Lógica de Apertura Única Estratégica.} Una bodega candidata se puede abrir a lo más una única vez a lo largo de todo el horizonte de planificación anual:
 \begin{equation}
 \sum_{t \in T} w_{it} \leq 1 \quad \forall i \in I
 \end{equation}
 
-\textbf{(R12b) Operaci\'on Continua Heredada.} Si la bodega estuvo operativa en el per\'iodo $t-1$, seguir\'a estando operativa en $t$ (con la convenci\'on $y_{i,0} = 0$):
+\textbf{(R12b) Operación Continua Heredada.} Si la bodega estuvo operativa en el período $t-1$, seguirá estando operativa en $t$ (con la convención $y_{i,0} = 0$):
 \begin{equation}
 y_{it} \geq y_{i,t-1} \quad \forall i \in I,\, \forall t \in T
 \end{equation}
 
-\textbf{(R12c) Activaci\'on en per\'iodo de apertura.} Si la bodega se abre en el per\'iodo $t$, queda operativa en este mismo:
+\textbf{(R12c) Activación en período de apertura.} Si la bodega se abre en el período $t$, queda operativa en este mismo:
 \begin{equation}
 y_{it} \geq w_{it} \quad \forall i \in I,\, \forall t \in T
 \end{equation}
 
-\textbf{(R12d) Cota superior de operatividad ligada a apertura.} Asegura que una bodega solo pueda operar si fue habilitada en el mes actual o en alg\'un mes anterior:
+\textbf{(R12d) Cota superior de operatividad ligada a apertura.} Asegura que una bodega solo pueda operar si fue habilitada en el mes actual o en algún mes anterior:
 \begin{equation}
 y_{it} \leq \sum_{\tau=1}^{t} w_{i\tau} \quad \forall i \in I,\, \forall t \in T
 \end{equation}
 
-\textbf{(R13) Presupuesto total.} La suma de costos fijos de apertura (activados por la binaria \'unica $w_{it}$), compras, almacenamiento, personal y operaci\'on de rutas no supera el presupuesto disponible:
+\textbf{(R13) Presupuesto total.} La suma de costos fijos de apertura (activados por la binaria única $w_{it}$), compras, almacenamiento, personal y operación de rutas no supera el presupuesto disponible:
 \begin{equation}
 \sum_{i,t} F_i \cdot w_{it} + \sum_{i,k,t} V_{kt} \cdot c_{ikt} + \sum_{i,k,t} H_{ikt} \cdot s_{ikt} + \sum_{i,t} \Omega_t \cdot e_{it} + \sum_{\substack{i,j,m,t,p \\ r \in R'_{ijm}}} G_{ijrm} \cdot n_{ijrmtp} \leq B
 \end{equation}
 
-\textbf{(R14) Compras condicionadas a la apertura de bodega.} Solo se pueden hacer compras de insumos en una bodega que est\'a habilitada:
+\textbf{(R14) Compras condicionadas a la apertura de bodega.} Solo se pueden hacer compras de insumos en una bodega que está habilitada:
 \begin{equation}
 c_{ikt} \leq \mathcal{M} \cdot y_{it} \quad \forall i \in I,\, \forall k \in K,\, \forall t \in T
 \end{equation}
 
-\textbf{(R15) Vinculaci\'on de cantidad de viajes con uso de ruta.} Obliga a la variable indicadora $z$ a encenderse si se asigna al menos un veh\'iculo a la ruta:
+\textbf{(R15) Vinculación de cantidad de viajes con uso de ruta.} Obliga a la variable indicadora $z$ a encenderse si se asigna al menos un vehículo a la ruta:
 \begin{equation}
 n_{ijrmtp} \leq Q_{mt} \cdot z_{ijrmtp}
 \quad \forall i \in I,\, \forall j \in J,\, \forall r \in R'_{ijm},\, \forall m \in M,\, \forall t \in T,\, \forall p \in P
 \end{equation}
 
+% ──────────────────────────────────────────────────────────────────────────────
 \section{Naturaleza de las variables}
 
 \begin{align*}
@@ -316,87 +319,246 @@ n_{ijrmtp} \leq Q_{mt} \cdot z_{ijrmtp}
 & e_{it},\, n_{ijrmtp} \in \mathbb{Z}_{\geq 0}
 \end{align*}
 
-\section{Origen de los Datos y Justificaci\'on de Realismo Operativo}
+% ──────────────────────────────────────────────────────────────────────────────
+\section{Origen de los Datos y Justificación de Realismo Operativo}
 
-Para garantizar la validez operativa del modelo de optimizaci\'on, los par\'ametros num\'ericos de la instancia base fueron construidos integrando bases de datos gubernamentales y est\'andares internacionales de log\'istica humanitaria, asegurando que la red represente fielmente la infraestructura y topograf\'ia de la Regi\'on de Valpara\'iso. La proyecci\'on de la demanda estacional ($D_{jktp}$) y la definici\'on de nodos cr\'iticos se establecieron utilizando las Fichas B\'asicas de Emergencia (FIBE), asignando factores de vulnerabilidad a comunas de interfaz urbano-forestal sustentados emp\'iricamente en que ``el 78\% de las familias damnificadas durante los megaincendios de 2024 se concentraron en \'areas de alta densidad de interfaz en Vi\~na del Mar, Quilpu\'e y Villa Alemana'' \cite{mdsf2024fibe}. Asimismo, los tiempos de transporte ($T_{ijrmt}$) y la aptitud vehicular ($\mathrm{Apt}_{mjr}$) abandonan el supuesto irreal de distancias euclidianas para incorporar la fricci\'on vial real, restringiendo el tr\'ansito de carga pesada en zonas de cerros y acotando la velocidad en rutas principales a 65 km/h, conforme a las directrices de dise\~no geom\'etrico que indican que ``la velocidad de operaci\'on segura para veh\'iculos de carga pesada en rutas de topograf\'ia ondulada a accidentada en la zona central no debe superar los 60 a 70 km/h'' \cite{mop2020}. La dimensi\'on presupuestaria ($F_i$, $V_{kt}$, $G_{ijrm}$) extrae sus cotas directamente de procesos de licitaci\'on recientes en Mercado P\'ublico, donde los c\'anones de arriendo para galpones industriales de entre 1.000 y 8.000 metros c\'ubicos en sectores log\'isticos como Placilla y San Antonio ``oscilan formalmente entre los 10 y 60 millones de pesos mensuales'' \cite{chilecompra2025}. Las m\'etricas f\'isicas de operaci\'on en bodega ($\alpha_k$, $\beta_k$) se calibraron entre 5 y 15 segundos por unidad manipulada, aplicando un factor de eficiencia humana ($\rho = 0{,}75$) para reflejar la merma por fatiga. Finalmente, el rigor de la funci\'on objetivo y la definici\'on de los tiempos m\'aximos admisibles ($T^{\max}_p$) se fundamentan en la Carta Humanitaria, la cual exige algoritmos de priorizaci\'on estricta al establecer que ``las intervenciones de suministro cr\'itico para el soporte vital b\'asico deben arribar a la poblaci\'on afectada dentro de los primeros 45 a 60 minutos tras el impacto de la crisis'' \cite{esfera2018}, lo que fuerza al modelo a invertir en bodegas cercanas o puentes a\'ereos ante emergencias de prioridad m\'axima.
+Para garantizar la validez operativa del modelo, los parámetros numéricos se construyeron integrando bases de datos gubernamentales y estándares internacionales, representando fielmente la realidad logística de la Región de Valparaíso:
 
-\section{Validaci\'on del Resultado}
+\begin{itemize}[leftmargin=2em, itemsep=3pt]
+  \item \textbf{Demanda estacional ($D_{jktp}$):} Estimada mediante Fichas Básicas de Emergencia (FIBE), focalizando la vulnerabilidad en zonas de interfaz urbano-forestal. Esto se sustenta en que el 78\% de las familias damnificadas en los megaincendios de 2024 se concentraron en áreas de alta densidad en Viña del Mar, Quilpué y Villa Alemana \cite{mdsf2024fibe}.
+  \item \textbf{Tiempos y ruteo ($T_{ijrmt}$, $\mathrm{Apt}_{mjr}$):} Se descartaron las distancias euclidianas a favor de la fricción vial real. Siguiendo directrices geométricas del MOP, la velocidad para vehículos de carga pesada en topografía accidentada se limitó a un máximo seguro de 65 km/h \cite{mop2020}.
+  \item \textbf{Presupuesto y costos ($F_i$, $V_{kt}$, $G_{ijrm}$):} Parametrizados con licitaciones recientes de Mercado Público. Los cánones de arriendo para bodegas industriales en zonas como Placilla o San Antonio se ajustaron a valores reales de mercado (10 a 60 millones CLP mensuales) \cite{chilecompra2025}.
+  \item \textbf{Operación en bodega ($\alpha_k$, $\beta_k$):} Calibrada entre 5 y 15 segundos por unidad manipulada, aplicando un factor de eficiencia humana ($\rho = 0{,}75$) para reflejar la merma natural por fatiga de las cuadrillas.
+  \item \textbf{Tiempos máximos de respuesta ($T^{\max}_p$):} Fundamentados en la Carta Humanitaria (Proyecto Esfera), la cual exige que las intervenciones críticas para el soporte vital básico arriben a la población afectada dentro de los primeros 45 a 60 minutos \cite{esfera2018}. Esto fuerza matemáticamente al modelo a invertir en proximidad.
+\end{itemize}
 
-\subsection{Factibilidad y optimalidad de la soluci\'on}
+% ──────────────────────────────────────────────────────────────────────────────
+\section{Análisis de Resultados}
 
-La soluci\'on reportada por Gurobi es factible por construcci\'on: el solver solo retorna valores que satisfacen todas las restricciones del modelo. No obstante, a continuaci\'on se verifican cualitativamente los aspectos m\'as cr\'iticos para confirmar que la soluci\'on es consistente con la problem\'atica real.
+\subsection{Características del modelo}
 
-\textbf{Balance de masa (R2--R3).} El inventario de perecibles (Agua~5L, Raciones, Medicamentos, etc.) es cero al cierre de cada per\'iodo, lo cual es correcto: los insumos perecibles no se acumulan entre meses. El inventario de no perecibles s\'olo crece en meses previos al verano, anticipando la demanda de enero--marzo.
+El modelo generó un total de \textbf{348.275 variables} (binarias para aperturas y rutas, enteras para viajes/personal, y continuas para flujos/inventario) y \textbf{376.416 restricciones} matemáticas, con 2.204.045 elementos no nulos.
 
-\textbf{Aptitud vehicular y factibilidad temporal (R8, $\mathcal{F}_p$).} La elecci\'on dominante de Camioneta~4x4 para despachos de prioridad~1 es coherente: tiempos de viaje menores a 45~minutos desde las bodegas descentralizadas son alcanzables con este tipo de veh\'iculo en la topograf\'ia de Valpara\'iso. El helic\'optero s\'olo se activa en rutas donde los modos terrestres superan $T^{\max}_1=45$~min, exactamente como lo fuerza $\mathcal{F}_1$.
+Tras \textbf{1.800,43 segundos} (límite de 30 min), Gurobi reportó una función objetivo de $Z^* = 163.770.095{,}08$ min-equiv, con un \textbf{GAP del $14{,}02\%$}. El aumento del GAP respecto a iteraciones previas se debe a la inclusión de restricciones lógicas (\textit{Big-M}) que corrigen el cálculo del tiempo de viaje y la operatividad. A pesar de esto, la solución obtenida es operativamente robusta, eliminando distorsiones y reflejando tiempos reales sin penalización multiplicativa por convoyes.
 
-\textbf{Restricci\'on presupuestaria activa.} Que el modelo consuma el 100\% del presupuesto es consistente con la problem\'atica: los pesos de penalizaci\'on son lo suficientemente altos como para que el optimizador siempre prefiera comprar m\'as insumos que dejar demanda insatisfecha, hasta agotar el capital disponible.
+\subsection{Estrategia de localización y posicionamiento de bodegas}
 
-\textbf{Patr\'on de localizaci\'on descentralizado.} Que se habiliten 8~bodegas distribuidas en el territorio, en lugar de 1--2 grandes instalaciones, es lo esperado por la restricci\'on de tiempo m\'aximo: una sola bodega centralizada ser\'ia incapaz de cubrir los 19~nodos en menos de 45~minutos por modo terrestre, por lo que el modelo \emph{debe} dispersar el inventario para cumplir $\mathcal{F}_1$.
-
-\textbf{Interpretaci\'on del GAP.} Un GAP del 14{,}12\% implica que el valor objetivo obtenido ($Z^* = 2{,}22 \times 10^{9}$ min-equiv) es a lo m\'as un 14{,}12\% superior al \'optimo global desconocido. Dado que el modelo supera las 346.000 variables y 121.000 restricciones, alcanzar este nivel de calidad en 30~minutos es un resultado satisfactorio. La brecha se explica por la complejidad combinatoria de las variables enteras $n_{ijrmtp}$: el relajado continuo se resuelve r\'apidamente, pero la recuperaci\'on de integrabilidad en un espacio tan grande requiere tiempo adicional.
-
-\subsection{Valoraci\'on cuantitativa respecto a un caso base}
-
-Para cuantificar el valor de la soluci\'on optimizada, se define un \textbf{caso base reactivo}: SENAPRED opera con una \'unica bodega centralizada en Placilla (la de mayor capacidad, 8.000~m$^3$, y menor costo fijo relativo al tama\~no), adquiriendo insumos de manera reactiva una vez declarado el incendio, sin pre-posicionamiento de inventario, y utilizando exclusivamente Camioneta~4x4.
-
-Bajo este escenario, el tiempo de transporte desde Placilla a las comunas m\'as alejadas de la instancia (Los~Andes: $\approx$120~min; San~Antonio: $\approx$90~min; Llaillay: $\approx$90~min) supera ampliamente $T^{\max}_1=45$~min y $T^{\max}_2=120$~min. Por tanto, para las comunas que exceden el l\'imite temporal, \emph{toda} la demanda de prioridad~1 se convierte autom\'aticamente en faltante, pues ning\'un viaje pertenece a $\mathcal{F}_1$ desde ese \'unico origen. Adicionalmente, la compra reactiva implica que el insumo llega con demora adicional de aprovisionamiento (t\'ipicamente 24--72~h en licitaciones de emergencia \cite{chilecompra2025}), lo que el modelo captura como un costo de tiempo que no existe en la soluci\'on pre-posicionada. La Tabla~\ref{tab:comparacion} sintetiza la comparaci\'on entre el caso base y la soluci\'on optimizada.
+El modelo habilita las \textbf{12 bodegas candidatas en el mes 1}. Esta apertura descentralizada cubre 4 macrozonas estratégicas (costa, polo urbano, arco interior y cordillera) y asegura una preparación anticipada.
 
 \begin{table}[H]
 \centering
-\caption{Comparaci\'on entre caso base reactivo y soluci\'on optimizada}
-\label{tab:comparacion}
-\begin{tabular}{lcc}
+\caption{Bodegas habilitadas y mes de apertura}
+\label{tab:bodegas_abiertas}
+\begin{tabular}{lrr}
 \hline
-\textbf{Indicador} & \textbf{Caso base (1 bodega)} & \textbf{Soluci\'on optimizada (8 bodegas)} \\
+\textbf{Bodega} & \textbf{Mes apertura} & \textbf{Costo fijo (CLP)} \\
 \hline
-Bodegas habilitadas                     & 1            & 8 \\
-Cobertura de prioridad~1                & $\approx$50\%$^\dagger$ & $\geq$93{,}9\% \\
-Faltante P1 anual (unidades)            & $\approx$180.000 & 21.250 \\
-Comunas fuera de ventana P1 (45~min)    & 10--14 de 19 & 0 \\
-Presupuesto en insumos                  & 95\%+        & 82{,}2\% \\
-Saturaci\'on de cuadrillas              & Saturaci\'on alta & $<$1\% (disponibilidad inmediata) \\
-Uso de helic\'optero                    & No disponible & S\'olo en rutas cr\'iticas \\
+Placilla                & 1 & 59.603.887 \\
+Pto\_San\_Antonio       & 1 & 45.734.667 \\
+Barrio\_Ind\_El\_Salto  & 1 & 33.983.161 \\
+Belloto\_Sur            & 1 & 31.854.632 \\
+Base\_Torquemada        & 1 & 29.625.860 \\
+Ruta\_60CH\_Quillota    & 1 & 31.744.420 \\
+Parque\_Ind\_San\_Felipe & 1 & 32.360.050 \\
+Pto\_Quintero           & 1 & 27.177.706 \\
+Aerodromo\_Rodelillo    & 1 & 13.986.210 \\
+Casablanca\_Centro      & 1 & 10.456.831 \\
+Estadio\_Limache        & 1 & 12.543.632 \\
+La\_Ligua               & 1 & 11.091.252 \\
 \hline
 \end{tabular}
 \end{table}
-{\small $^\dagger$ Estimaci\'on: comunas a m\'as de 45 min de Placilla constituyen aproximadamente el 50\% de la demanda total de prioridad~1 en la instancia.}
 
-La reducci\'on del faltante de prioridad~1 desde $\approx$180.000 unidades (caso base) a \textbf{21.250 unidades} equivale a una \textbf{mejora del 88\%} en la cobertura de soporte vital. En t\'erminos humanitarios, esta diferencia representa miles de personas que, ante un megaincendio similar al de febrero~2024 (21.200 damnificados \cite{minds2024plan}), recibir\'ian agua potable, medicamentos y kits de trauma dentro de los primeros 45~minutos, en lugar de esperar horas hasta que un cami\'on desde una bodega centralizada pueda llegar. La soluci\'on optimizada demuestra as\'i un valor directo y cuantificable para la gesti\'on de emergencias de SENAPRED en la Regi\'on de Valpara\'iso.
+Agotar todas las ubicaciones en el primer mes es la única estrategia logísticamente viable para satisfacer el umbral estricto de \textbf{45 minutos} de la Prioridad 1 y pre-posicionar inventario antes de verano.
 
+\subsection{Estadísticas de insumos y triage}
+
+El modelo aplica un estricto triage logístico priorizando la supervivencia:
+
+\begin{table}[H]
+\centering
+\caption{Demanda insatisfecha por nivel de prioridad}
+\label{tab:faltante_prio}
+\begin{tabular}{lr}
+\hline
+\textbf{Prioridad} & \textbf{Faltante total (unidades)} \\
+\hline
+1 (soporte vital crítico) &     471 \\
+2 (atención media)        &  10.158 \\
+3 (baja urgencia)         &  97.966 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{G1_faltante_prioridad.png}
+\caption{Distribución porcentual del faltante por nivel de prioridad}
+\label{fig:faltante_pie}
+\end{figure}
+
+La Prioridad 1 absorbe solo el \textbf{0{,}4\% del faltante}. Insumos vitales (Agua 5L, Medicamentos crónicos, Kits de trauma) presentan \textbf{0 unidades faltantes}. El déficit de P1 recae casi exclusivamente en insumos de refugio (Frazadas, Carpas). 
+
+Geográficamente, aunque Viña del Mar y Quilpué concentran el 40\% del volumen total faltante, el mayor estrés en Prioridad 1 ocurre en comunas periféricas o de acceso complejo (San Antonio, Algarrobo, Quillota, Los Andes), producto de la fricción logística de los tiempos de viaje (límite de 45 min).
+
+\subsection{Análisis de distribución de recursos}
+
+Se utiliza el \textbf{95{,}9\%} del presupuesto total (\$4.794 MM).
+
+\begin{table}[H]
+\centering
+\caption{Distribución del presupuesto utilizado}
+\label{tab:presupuesto_total}
+\begin{tabular}{lrr}
+\hline
+\textbf{Categoría} & \textbf{Gasto (CLP)} & \textbf{Porcentaje} \\
+\hline
+Compras     & 3.625.204.075 & 75{,}6\% \\
+Sueldos     &   795.600.000 & 16{,}6\% \\
+Apertura    &   340.162.308 &  7{,}1\% \\
+Transporte  &    16.629.372 &  0{,}3\% \\
+Bodegaje    &    16.259.980 &  0{,}3\% \\
+\hline
+\textbf{Total} & \textbf{4.793.855.735} & \textbf{100{,}0\%} \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{G3_presupuesto.png}
+\caption{Distribución porcentual del presupuesto por categoría}
+\label{fig:presupuesto_pie}
+\end{figure}
+
+Las \textbf{Compras (75{,}6\%)} dominan para garantizar pre-posicionamiento, seguidas por los \textbf{Sueldos (16{,}6\%)}, asegurando operarios 24/7 en las 12 instalaciones. El gasto en transporte es ínfimo (\textbf{0{,}3\%}) gracias al uso eficiente de convoyes. Los \$206 MM sobrantes ratifican que el cuello de botella logístico es la \textbf{capacidad volumétrica de la flota disponible}, no el financiamiento.
+
+\subsection{Capacidad de cuadrillas y saturación}
+
+El sistema opera con baja saturación de personal; el pico máximo se observa en Aeródromo Rodelillo con un \textbf{5{,}0\%} en febrero, mientras que bodegas grandes como Placilla operan al $\approx0{,}1\%$. Esta \textbf{holgura logística} es una decisión intencional del optimizador: garantiza disponibilidad inmediata de cuadrillas para cargar la flota y despachar envíos críticos en los primeros minutos de la alerta.
+
+\subsection{Despliegue de vehículos y eficiencia}
+
+La corrección algorítmica de la función de tiempo liberó la penalización por uso masivo de flota, permitiendo usar camiones pesados al máximo de su capacidad.
+
+\begin{table}[H]
+\centering
+\caption{Top 10 rutas por tasa de llenado vehicular}
+\label{tab:rutas_top10}
+\begin{tabular}{llllrr}
+\hline
+\textbf{Origen} & \textbf{Destino} & \textbf{Vehículo} & \textbf{Mes} & \textbf{Prioridad} & \textbf{Fill Rate (\%)} \\
+\hline
+Barrio\_Ind\_El\_Salto   & Viña\_del\_Mar & Camion\_Pesado &  2 & 1 & 100{,}0 \\
+Barrio\_Ind\_El\_Salto   & Viña\_del\_Mar & Camion\_Pesado &  2 & 2 & 100{,}0 \\
+Estadio\_Limache         & Limache        & Camion\_3\_4   &  2 & 2 & 100{,}0 \\
+Pto\_San\_Antonio        & San\_Antonio   & Camion\_3\_4   &  1 & 1 & 100{,}0 \\
+Pto\_San\_Antonio        & San\_Antonio   & Camion\_3\_4   &  1 & 2 & 100{,}0 \\
+Pto\_San\_Antonio        & San\_Antonio   & Camion\_3\_4   &  2 & 1 & 100{,}0 \\
+Pto\_San\_Antonio        & San\_Antonio   & Camion\_3\_4   &  2 & 2 & 100{,}0 \\
+Ruta\_60CH\_Quillota     & Quillota       & Camion\_3\_4   &  1 & 2 & 100{,}0 \\
+Ruta\_60CH\_Quillota     & Quillota       & Camion\_3\_4   &  2 & 1 & 100{,}0 \\
+Ruta\_60CH\_Quillota     & Quillota       & Camion\_3\_4   &  2 & 2 & 100{,}0 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{G2_fill_rate_vehiculo.png}
+\caption{Tasa de uso de capacidad por tipo de vehículo (fill rate \%)}
+\label{fig:vehiculos_box}
+\end{figure}
+
+El modelo logra que \textbf{Camiones Pesados y de 3/4 alcancen un 100\% de ocupación} para abastecer centros urbanos en meses críticos (meses 1 y 2). Simultáneamente, la \textbf{Camioneta 4x4} se consolida como el vehículo más consistente (mediana de fill rate del 55{,}5\%) para respuestas ágiles de Prioridad 1 en cerros, y el Helicóptero se restringe eficientemente a zonas terrestres inviables (Los Andes).
+
+\subsection{Inventario y balance temporal}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{G4_stock_vs_faltante.png}
+\caption{Stock final vs.\ demanda insatisfecha por mes}
+\label{fig:stock_graf}
+\end{figure}
+
+El modelo implementa una \textbf{estrategia de acumulación anticipada}. El stock de insumos no perecibles alcanza su máximo pico preventivo en \textbf{noviembre (mes 11)} para absorber el embate estival. Los insumos perecibles, en cumplimiento de la restricción R3, se adquieren y despachan en el mismo mes, logrando un stock final de \textbf{0 unidades}.
+
+La demanda insatisfecha se dispara en verano (febrero alcanza 32.300 faltantes) y cae a cero en invierno. Esto ratifica que la saturación estival no es producto de fallas lógicas o de capital, sino de un \textbf{estrés físico estructural de la capacidad vehicular regional} frente a eventos de gran magnitud.
+
+% ──────────────────────────────────────────────────────────────────────────────
+\section{Validación del Resultado}
+
+\subsection{Factibilidad y optimalidad de la solución}
+
+La solución reportada por Gurobi es matemáticamente factible y logísticamente coherente con la realidad operativa de SENAPRED:
+
+\begin{itemize}[leftmargin=2em, itemsep=3pt]
+  \item \textbf{Balance de masa:} El inventario de insumos perecibles es cero al cierre de cada mes (evitando vencimientos), mientras que los no perecibles se acumulan estratégicamente previo al verano.
+  \item \textbf{Aptitud vehicular:} La Camioneta 4x4 domina los despachos de Prioridad 1 por su agilidad. El helicóptero se activa exclusivamente en rutas donde la topografía impide cumplir el límite de 45 minutos terrestres.
+  \item \textbf{Presupuesto y Localización:} La apertura de las 12 bodegas y el uso del $95{,}9\%$ del presupuesto confirman que la red \emph{necesita} descentralizarse al máximo. El límite del sistema no es financiero, sino la capacidad física de la flota para cumplir los tiempos de respuesta.
+  \item \textbf{Calidad de la solución (GAP):} Obtener un GAP del $14{,}02\%$ ($Z^* \approx 163{,}7$ MM) en 30 minutos es un rendimiento excelente, considerando que la corrección de la función de tiempo añadió miles de restricciones lógicas y variables binarias ($z_{ijrmtp}$) que endurecieron enormemente la combinatoria del modelo.
+\end{itemize}
+
+\subsection{Valoración cuantitativa respecto a un caso base}
+
+Para medir el impacto real, se evaluó un \textbf{caso base reactivo}: operar con una única bodega centralizada (Placilla), realizar compras post-desastre (con 24-72h de demora) y usar solo Camionetas 4x4. En este escenario, las comunas periféricas superan ampliamente los tiempos máximos admisibles, convirtiendo toda su demanda crítica en faltante.
+
+La Tabla~\ref{tab:comparacion_base} sintetiza esta mejora sustancial:
+
+\begin{table}[H]
+\centering
+\caption{Comparación entre caso base reactivo y solución optimizada}
+\label{tab:comparacion_base}
+\begin{tabular}{lcc}
+\hline
+\textbf{Indicador} & \textbf{Caso base (1 bodega)} & \textbf{Solución optimizada (12 bodegas)} \\
+\hline
+Bodegas habilitadas                     & 1            & 12 \\
+Cobertura de prioridad~1                & $\approx$50\%$^\dagger$ & $>99{,}6\%$ \\
+Faltante P1 anual (unidades)            & $\approx$180.000 & 471 \\
+Comunas fuera de ventana P1 (45~min)    & 10--14 de 20 & 0 \\
+Presupuesto total utilizado             & 95\%+        & 95{,}9\% \\
+Saturación de cuadrillas                & Saturación alta & $<5\%$ (disponibilidad inmediata) \\
+Uso de helicóptero                      & No disponible & Sólo en rutas críticas \\
+\hline
+\end{tabular}
+\end{table}
+{\small $^\dagger$ Estimación: comunas a más de 45 min de Placilla constituyen aproximadamente el 50\% de la demanda total de prioridad~1 en la instancia.}
+
+La reducción del faltante de Prioridad~1 desde $\approx$180.000 unidades a \textbf{apenas 471 unidades} representa una mejora casi total en la cobertura de soporte vital. En términos humanitarios, esto garantiza que, ante un megaincendio, miles de damnificados reciban agua, medicamentos y kits de trauma en los críticos primeros 45 minutos.
+
+% ──────────────────────────────────────────────────────────────────────────────
 \section{Uso de IA}
 
-Para el desarrollo de esta entrega se utilizaron herramientas de inteligencia artificial como Gemini y Claude, principalmente como apoyo en la programaci\'on del c\'odigo en Python para el modelo, la generaci\'on de datos num\'ericos (junto a sus respectivos archivos CSV adjuntos) y la correcci\'on de redacci\'on. Cabe destacar que cada contenido asistido por IA fue revisado bajo un criterio estricto, validado y adaptado a los objetivos del trabajo. Por lo tanto, ning\'un elemento fue copiado e incluido de forma directa sin antes haber realizado una evaluaci\'on cr\'itica de los resultados generados.
+Para el desarrollo de esta entrega se utilizaron herramientas de inteligencia artificial como Gemini y Claude, principalmente como apoyo en la programación del código en Python para el modelo, la generación de datos numéricos (junto a sus respectivos archivos CSV adjuntos) y la corrección de redacción. Cabe destacar que cada contenido asistido por IA fue revisado bajo un criterio estricto, validado y adaptado a los objetivos del trabajo. Por lo tanto, ningún elemento fue copiado e incluido de forma directa sin antes haber realizado una evaluación crítica de los resultados generados.
 
 \newpage
 \begin{thebibliography}{9}
 
 \bibitem{conaf2024}
-Corporaci\'on Nacional Forestal. (2024, 26 de abril). \textit{CONAF entreg\'o balance de incendios temporada 2023--2024}. Recuperado de \url{https://www.conaf.cl/conaf-entrego-balance-de-incendios-temporada-2023-2024/}
+Corporación Nacional Forestal. (2024, 26 de abril). \textit{CONAF entregó balance de incendios temporada 2023--2024}. Recuperado de \url{https://www.conaf.cl/conaf-entrego-balance-de-incendios-temporada-2023-2024/}
 
 \bibitem{minds2024plan}
-Ministerio de Desarrollo Social y Familia. (2024). \textit{Plan de reconstrucci\'on: incendios 02 y 03 de febrero de 2024, Regi\'on de Valpara\'iso}. Recuperado de \url{https://www.desarrollosocialyfamilia.gob.cl/storage/docs/Plan_reconstruccion.pdf}
+Ministerio de Desarrollo Social y Familia. (2024). \textit{Plan de reconstrucción: incendios 02 y 03 de febrero de 2024, Región de Valparaíso}. Recuperado de \url{https://www.desarrollosocialyfamilia.gob.cl/storage/docs/Plan_reconstruccion.pdf}
 
 \bibitem{minvu2025}
-Secretar\'ia Regional Ministerial de Vivienda y Urbanismo, Regi\'on de Valpara\'iso. (2025, octubre). \textit{Reporte mensual reconstrucci\'on incendio 2F 2024, Regi\'on de Valpara\'iso: septiembre 2025}. Recuperado de \url{https://www.minvu.gob.cl/wp-content/uploads/2025/10/Reporte-Reconstruccion-Septiembre.pdf}
+Secretaría Regional Ministerial de Vivienda y Urbanismo, Región de Valparaíso. (2025, octubre). \textit{Reporte mensual reconstrucción incendio 2F 2024, Región de Valparaíso: septiembre 2025}. Recuperado de \url{https://www.minvu.gob.cl/wp-content/uploads/2025/10/Reporte-Reconstruccion-Septiembre.pdf}
 
 \bibitem{dipres2026}
-Direcci\'on de Presupuestos. (2025). \textit{Evaluaci\'on ex ante - Proceso formulaci\'on presupuestaria 2026: Programa de Gesti\'on del Riesgo de Desastres}. Recuperado de \url{https://www.dipres.gob.cl/597/articles-383612_doc_pdf.pdf}
+Dirección de Presupuestos. (2025). \textit{Evaluación ex ante - Proceso formulación presupuestaria 2026: Programa de Gestión del Riesgo de Desastres}. Recuperado de \url{https://www.dipres.gob.cl/597/articles-383612_doc_pdf.pdf}
 
 \bibitem{mdsf2024fibe}
-Ministerio de Desarrollo Social y Familia. (2024). \textit{Reporte Consolidado Ficha B\'asica de Emergencia (FIBE) -- An\'alisis de afectaci\'on megaincendios Regi\'on de Valpara\'iso}. Subsecretar\'ia de Servicios Sociales, Gobierno de Chile.
+Ministerio de Desarrollo Social y Familia. (2024). \textit{Reporte Consolidado Ficha Básica de Emergencia (FIBE) -- Análisis de afectación megaincendios Región de Valparaíso}. Subsecretaría de Servicios Sociales, Gobierno de Chile.
 
 \bibitem{mop2020}
-Ministerio de Obras P\'ublicas [MOP]. (2020). \textit{Manual de Carreteras: Volumen 2 -- Procedimientos de Estudios Viales y Dise\~no Geom\'etrico}. Direcci\'on de Vialidad, Gobierno de Chile.
+Ministerio de Obras Públicas [MOP]. (2020). \textit{Manual de Carreteras: Volumen 2 -- Procedimientos de Estudios Viales y Diseño Geométrico}. Dirección de Vialidad, Gobierno de Chile.
 
 \bibitem{chilecompra2025}
-Direcci\'on ChileCompra. (2025). \textit{Hist\'orico de Licitaciones y Convenios Marco: Arrendamiento de infraestructura y servicios de bodegaje}. Ministerio de Hacienda, Gobierno de Chile. Recuperado del portal Mercado P\'ublico.
+Dirección ChileCompra. (2025). \textit{Histórico de Licitaciones y Convenios Marco: Arrendamiento de infraestructura y servicios de bodegaje}. Ministerio de Hacienda, Gobierno de Chile. Recuperado del portal Mercado Público.
 
 \bibitem{esfera2018}
-Asociaci\'on Esfera. (2018). \textit{El Manual Esfera: Carta Humanitaria y normas m\'inimas para la respuesta humanitaria} (4.\textordfeminine\ ed.). Ginebra, Su\'iza: The Sphere Project.
+Asociación Esfera. (2018). \textit{El Manual Esfera: Carta Humanitaria y normas mínimas para la respuesta humanitaria} (4.\textordfeminine\ ed.). Ginebra, Suiza: The Sphere Project.
 
 \end{thebibliography}
-
-\end{flushleft}
 
 \end{document}

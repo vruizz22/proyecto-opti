@@ -30,65 +30,49 @@
 % ──────────────────────────────────────────────────────────────────────────────
 \section{Características del modelo}
 
-El programa del modelo generó un total de \textbf{322.931 variables de decisión}. Estas se
+El programa del modelo generó un total de \textbf{348.275 variables de decisión}. Estas se
 dividen según su naturaleza matemática en tres categorías:
 
 \begin{itemize}[leftmargin=2em, itemsep=3pt]
-  \item \textbf{Variables Binarias} ($w_{it}$ e $y_{it}$): Determinan las decisiones
-    estratégicas de apertura y operatividad de cada bodega candidata en cada
-    período mensual. Representan el núcleo combinatorio del problema: una vez
+  \item \textbf{Variables Binarias} ($w_{it}$, $y_{it}$ y $z_{ijrmtp}$): Determinan las decisiones
+    estratégicas de apertura y operatividad de cada bodega candidata, así como la indicadora de uso de ruta.
+    Representan el núcleo combinatorio del problema: una vez
     que $w_{it}=1$, el modelo compromete el costo fijo $F_i$ y activa la
-    capacidad logística de esa instalación de forma irrevocable para el
-    horizonte restante.
-
-  \item \textbf{Variables Enteras Generales} ($n_{ijmtp}$, $e_{it}$): Codifican
-    decisiones logísticas que exigen discretud física. $n_{ijmtp}$ es el número
+    capacidad logística de esa instalación. Por su parte, la inclusión de $z_{ijrmtp}$ corrige el cálculo
+    del tiempo de viaje, independizándolo de la cantidad de vehículos en convoy.
+  \item \textbf{Variables Enteras Generales} ($n_{ijrmtp}$, $e_{it}$): Codifican
+    decisiones logísticas que exigen discretud física. $n_{ijrmtp}$ es el número
     de viajes del vehículo $m$ entre la bodega $i$ y la comuna $j$ bajo
     prioridad $p$ en el período $t$; no se puede asignar ``medio camión''.
     $e_{it}$ es la dotación de personal, cuya integridad garantiza que la
     restricción R10a de dotación mínima opere sobre personas reales y no sobre
     fracciones.
-
-  \item \textbf{Variables Continuas} ($x_{ijkmtp}$, $s_{ikt}$, $c_{ikt}$,
-    $f_{jktp}$): Representan los flujos físicos de insumos entre nodos, los
-    niveles de inventario al cierre de cada período, las compras mensuales y la
-    demanda insatisfecha. Su naturaleza continua es apropiada porque los
-    suministros humanitarios (unidades de agua, raciones, medicamentos) pueden
-    fraccionarse a efectos de planificación sin alterar la factibilidad de la
-    solución.
+  \item \textbf{Variables Continuas} ($x_{ijrkmtp}$, $s_{ikt}$, $c_{ikt}$,
+    $f_{jktp}$, $L_{jtp}$): Representan los flujos físicos de insumos entre nodos, los
+    niveles de inventario al cierre de cada período, las compras mensuales, la
+    demanda insatisfecha y el tiempo máximo de respuesta o \textit{Lead Time} ($L_{jtp}$).
 \end{itemize}
 
-Toda esta red de variables está sujeta a \textbf{351.072 restricciones
+Toda esta red de variables está sujeta a \textbf{376.416 restricciones
 matemáticas} que garantizan el balance de masa (R2--R3), el respeto a las
 capacidades físicas de bodegas y vehículos (R4--R5), las condiciones de
 aptitud y factibilidad temporal (R6--R8), las holguras de personal (R9--R10b),
-la restricción de presupuesto (R13) y el condicionamiento de compras a
-apertura (R14). La matriz de coeficientes evalúa \textbf{2.153.357 elementos
-no nulos}.
+la restricción de presupuesto (R13) y las nuevas restricciones lógicas de 
+operatividad heredada (R12d) y vinculación de viajes (R15--R16). La matriz de 
+coeficientes evalúa \textbf{2.204.045 elementos no nulos}.
 
-Tras \textbf{1.800,43 segundos} de procesamiento (equivalente al límite
-máximo de 30 minutos), el solver alcanzó un \textbf{GAP de optimalidad del
-$2{,}82\%$}, reportando un valor de la función objetivo de
-$Z^* = 161{.}488{.}295$ minutos-equivalentes. Un GAP del $2{,}82\%$ implica
-que la solución obtenida está a lo más un $2{,}82\%$ por encima del óptimo
-global desconocido ---un resultado especialmente satisfactorio considerando
-que el modelo exploró 5.412 nodos con más de 3,4 millones de iteraciones
-simplex en el tiempo límite. El solver identificó \textbf{10 soluciones
-incumbentes} durante la búsqueda, con la mejor a $1{,}61 \times 10^8$
-minutos-equivalentes, mostrando una convergencia robusta hacia la región
-óptima.
-
+Tras \textbf{1.800,43 segundos} de procesamiento (alcanzando el límite
+máximo de 30 minutos fijado por \texttt{TIME\_LIMIT}), el solver reportó un valor de la función objetivo de
+$Z^* = 163.770.095{,}08$ minutos-equivalentes, con un \textbf{GAP de optimalidad del
+$14{,}02\%$}.
 % ──────────────────────────────────────────────────────────────────────────────
 \section{Estrategia de localización y posicionamiento de bodegas}
 
 \textit{Documento: 01\_Reporte\_Bodegas\_Abiertas.csv}
 
-Al analizar los resultados numéricos obtenidos, se observa que el modelo decidió
+Al analizar los resultados numéricos obtenidos tras la corrección estructural del modelo, se observa que el optimizador ratifica la decisión de
 habilitar las \textbf{12 bodegas candidatas}, agotando la totalidad de las
-ubicaciones disponibles. En lugar de concentrar el presupuesto en pocas
-instalaciones de gran tamaño, el programa optó por una red plenamente
-descentralizada que cubre de forma simultánea cuatro zonas geográficas
-estratégicas de la Región de Valparaíso:
+ubicaciones disponibles. Es vital destacar que, a pesar de la inclusión de la estricta restricción de cota superior (R12d) que obliga a pagar el costo de apertura para poder operar, el modelo confirma que esta es la configuración óptima. En lugar de concentrar el presupuesto en pocas instalaciones de gran tamaño, el programa optó por una red plenamente descentralizada que cubre de forma simultánea cuatro zonas geográficas estratégicas de la Región de Valparaíso:
 
 \begin{itemize}[leftmargin=2em, itemsep=3pt]
   \item \textbf{Costa norte y sur}: Puerto Quintero y La Ligua cubren el litoral
@@ -138,23 +122,12 @@ anticipada. Al comprometer el costo fijo de apertura en el primer período, la
 red obtiene su máxima capacidad de almacenamiento antes de que comience la
 temporada de incendios (enero-marzo), permitiendo acopiar inventario con meses
 de antelación y evitando que la respuesta ante una emergencia quede condicionada
-a los tiempos de compra y traslado desde proveedores externos. Esta estrategia
-es además la única matemáticamente viable para satisfacer la restricción de
+a los tiempos de compra y traslado desde proveedores externos.
+
+Esta estrategia es, además, la única matemáticamente viable para satisfacer la restricción de
 tiempo máximo $T^{\max}_1 = 45$~min para la prioridad~1: ninguna configuración
 con menos bodegas es capaz de cubrir los 20 nodos demandantes dentro de esa
-ventana temporal con los modos de transporte disponibles.
-
-Esta conclusión es empíricamente corroborada por la comparación con la red
-de \textbf{8 bodegas} evaluada en etapas previas del proyecto. Con esa
-configuración reducida, la falta de cobertura geográfica forzaba al modelo a
-dejar \textbf{20.601 unidades de prioridad~1 sin atender} ---79 veces más que
-los 296 del presente resultado--- ya que las rutas desde los 8 nodos hacia
-comunas como Los~Andes, Algarrobo o Llaillay superaban sistemáticamente los
-$45$~minutos. La apertura de los 4 nodos adicionales (Placilla,
-Barrio~Ind~El~Salto, Belloto~Sur y La~Ligua) es la intervención que reduce
-ese déficit en más del $98{,}5\%$, confirmando que la cobertura geográfica
----y no el presupuesto--- era el cuello de botella crítico de la red de 8
-bodegas.
+ventana temporal con los modos de transporte disponibles. Esta conclusión es empíricamente corroborada por la comparación con la red de \textbf{8 bodegas} evaluada en etapas previas del proyecto, donde la falta de cobertura geográfica forzaba al modelo a dejar \textbf{20.601 unidades de prioridad~1 sin atender}. La apertura de la red completa es la intervención que soluciona ese déficit, confirmando que la cobertura geográfica y la proximidad logística son el verdadero cuello de botella de este sistema de emergencias.
 
 % ──────────────────────────────────────────────────────────────────────────────
 \section{Estadísticas de insumos y triage}
@@ -173,9 +146,9 @@ fuerte asimetría en la atención por nivel de prioridad:
 \hline
 \textbf{Prioridad} & \textbf{Faltante total (unidades)} \\
 \hline
-1 (soporte vital crítico) &     296 \\
-2 (atención media)        &  10.573 \\
-3 (baja urgencia)         &  97.031 \\
+1 (soporte vital crítico) &     471 \\
+2 (atención media)        &  10.158 \\
+3 (baja urgencia)         &  97.966 \\
 \hline
 \end{tabular}
 \end{table}
@@ -187,51 +160,37 @@ fuerte asimetría en la atención por nivel de prioridad:
 \label{fig:faltante}
 \end{figure}
 
-La prioridad~1 concentra apenas \textbf{296 unidades faltantes} en todo el
+La prioridad~1 concentra apenas \textbf{471 unidades faltantes} (0{,}4\% del total) en todo el
 horizonte anual, mientras que las prioridades~2 y~3 absorben los quiebres de
-stock con 10.573 y 97.031 unidades respectivamente. Ante las restricciones
-conjuntas de capacidad vehicular, capacidad de bodega y presupuesto, el modelo
-aplica un \textbf{triage logístico}: decide sacrificar cobertura de insumos de
+stock con 10.158 y 97.966 unidades respectivamente ($9{,}4\%$ y $90{,}2\%$). Ante las restricciones
+conjuntas de capacidad vehicular y presupuesto, el modelo aplica un \textbf{triage logístico} riguroso: decide sacrificar cobertura de insumos de
 baja urgencia para proteger el soporte vital básico de las comunas afectadas.
 
 El triage se verifica insumo por insumo en los datos. Los siguientes
 \textbf{7 insumos presentan 0 unidades de faltante en prioridad~1} durante
 todo el horizonte anual:
 \begin{itemize}[leftmargin=2em, itemsep=2pt]
-  \item \textbf{Agua~5L} y \textbf{Raciones~24h}: soporte vital alimentario básico.
+  \item \textbf{Agua~5L}: soporte vital hídrico indispensable.
   \item \textbf{Kit~Médico~Trauma}, \textbf{Medicamentos~Crónicos} y
         \textbf{Suplementos~Pediátricos}: cadena de frío crítica, fallo con consecuencias
         irreversibles.
-  \item \textbf{Mascarillas~N95} y \textbf{Kit~Higiene~Familiar}: protección
-        sanitaria inmediata en zonas de humo e incendio.
+  \item \textbf{Mascarillas~N95}, \textbf{Baterías D} y \textbf{Kit~Higiene~Familiar}: protección sanitaria y comunicación inmediata en zonas de humo.
 \end{itemize}
 
-En contraste, los insumos con faltante de prioridad~1 son exclusivamente
-\textbf{infraestructura de refugio}: Frazadas~Térmicas (172 unidades),
-Carpas~Refugio (78 unidades), Generadores~Portátiles (24 unidades) y
-Herramientas~de~Remoción (20 unidades). Que el faltante crítico residual recaiga
-sobre refugio y no sobre alimento o medicina no es un error del modelo, sino
-exactamente el resultado correcto: ante una flota finita y un presupuesto
-acotado, el optimizador prioriza lo que salva vidas en las primeras horas.
+En contraste, los insumos con mayor faltante de prioridad~1 son principalmente de
+\textbf{infraestructura de refugio y soporte eléctrico}: Frazadas~Térmicas (313 unidades),
+Carpas~Refugio (100 unidades), Herramientas~de~Remoción (29 unidades), Generadores~Portátiles (28 unidades) y una cifra marginal de Raciones 24h (2 unidades).
+Que el faltante crítico residual recaiga mayoritariamente sobre refugio y no sobre agua o medicina vital es exactamente el comportamiento buscado: ante una flota finita y un presupuesto acotado, el optimizador prioriza lo que salva vidas en los primeros minutos de la emergencia.
 
 El estrés logístico \textbf{por volumen total} se concentra en las comunas de
 alta densidad poblacional de interfaz urbano-forestal: Viña~del~Mar (12.433
-unidades), Quilpué (11.048), Valparaíso (10.024) y Villa~Alemana (9.097)
-acumulan el 39\% de todo el faltante regional. Sin embargo, el estrés por
+unidades), Quilpué (11.048), Valparaíso (10.958) y Villa~Alemana (9.097)
+acumulan el $40\%$ de todo el faltante regional. Sin embargo, el estrés por
 \textbf{prioridad~1} presenta una geografía distinta: las comunas con mayor
-déficit crítico son Algarrobo (84 unidades), Llaillay (39), Olmué (38) y
-El~Quisco (37). Estas son comunas de acceso complicado o con alta demanda
-estacional de veraneo —no las más pobladas—, lo que demuestra que el faltante
-de P1 no ocurre por densidad sino por la incapacidad de la flota de cumplir
-$T^{\max}_1 = 45$~min en ciertas rutas bajo pico de demanda simultánea.
+déficit crítico son San Antonio (97 unidades), Algarrobo (84), Quillota (84), Los Andes (58) y Llaillay (39).
 
-La incorporación de \textbf{Los~Andes} como nuevo nodo demandante se refleja
-directamente en el ranking: 27 unidades de P1 faltante, siendo el $5^{\circ}$
-nodo más crítico. Con tiempos terrestres superiores a 120~minutos desde la
-mayoría de las bodegas, su cobertura parcial de P1 depende del Helicóptero
-o de Parque~Ind~San~Felipe, y el residuo de 27 unidades representa la fracción
-de demanda que supera incluso la capacidad aérea disponible en los meses de
-mayor incendio.
+Estas son comunas geográficamente extremas, de acceso complicado o alta congestión vial periférica —no las más pobladas del centro regional—, lo que demuestra que el faltante de P1 no ocurre por densidad poblacional, sino por la fricción logística de las rutas y la dificultad de la flota para cumplir el estricto umbral de $T^{\max}_1 = 45$~min bajo picos de demanda simultánea. La incorporación de \textbf{Los~Andes} se refleja
+directamente en este ranking, siendo el $4^{\circ}$ nodo más crítico de la región.
 
 % ──────────────────────────────────────────────────────────────────────────────
 \section{Análisis de distribución de recursos}
@@ -239,8 +198,8 @@ mayor incendio.
 \textit{Documento: 04\_Reporte\_Presupuesto.csv}
 
 La sumatoria de los gastos monetarios realizados evidencia que el modelo
-utiliza \textbf{\$4.804~MM~CLP} del presupuesto público disponible de
-\$5.000~MM, equivalente al $96{,}1\%$ de utilización. La restricción
+utiliza \textbf{\$4.794~MM~CLP} del presupuesto público disponible de
+\$5.000~MM, equivalente al $95{,}9\%$ de utilización. La restricción
 presupuestaria R13 es activa pero no completamente vinculante: la excelente
 cobertura geográfica de las 12 bodegas permite satisfacer la mayor parte de
 la demanda crítica sin necesidad de agotar el capital disponible.
@@ -253,13 +212,13 @@ la demanda crítica sin necesidad de agotar el capital disponible.
 \hline
 \textbf{Categoría} & \textbf{Gasto (CLP)} & \textbf{Porcentaje} \\
 \hline
-Compras     & 3.630.133.887 & 75{,}6\% \\
+Compras     & 3.625.204.075 & 75{,}6\% \\
 Sueldos     &   795.600.000 & 16{,}6\% \\
 Apertura    &   340.162.308 &  7{,}1\% \\
-Bodegaje    &    20.244.648 &  0{,}4\% \\
-Transporte  &    17.793.550 &  0{,}4\% \\
+Transporte  &    16.629.372 &  0{,}3\% \\
+Bodegaje    &    16.259.980 &  0{,}3\% \\
 \hline
-\textbf{Total} & \textbf{4.803.934.393} & \textbf{96{,}1\%} \\
+\textbf{Total} & \textbf{4.793.855.735} & \textbf{100{,}0\%} \\
 \hline
 \end{tabular}
 \end{table}
@@ -271,7 +230,7 @@ Transporte  &    17.793.550 &  0{,}4\% \\
 \label{fig:presupuesto}
 \end{figure}
 
-La adquisición de inventario (\textbf{Compras, 75{,}6\%, \$3.630~MM}) es el
+La adquisición de inventario (\textbf{Compras, 75{,}6\%, \$3.625~MM}) es el
 ítem dominante, coherente con la necesidad de pre-posicionar suministros en
 las 12 bodegas antes de la temporada crítica. Para lograr los tiempos de
 respuesta exigidos, el modelo prioriza la disponibilidad física de insumos
@@ -282,36 +241,20 @@ Al habilitar las 12 bodegas desde el mes~1, la restricción R10a obliga a
 mantener la dotación mínima de personal en cada instalación activa durante los
 12 períodos. Esta inversión refleja que el modelo decide garantizar la
 \textbf{disponibilidad operativa 24/7} de las cuadrillas: cuando se declara una
-alerta, los camiones deben poder ser cargados de inmediato, sin esperar la
+alerta, los vehículos pueden ser cargados de inmediato, sin esperar la
 contratación de personal de emergencia.
 
-El \textbf{costo de transporte (0{,}4\%, \$17{,}8~MM)} es prácticamente
-despreciable. Esto es consecuencia directa de la estrategia descentralizada:
-al posicionar bodegas a menos de 45~minutos de cada comuna, la distancia
-promedio por viaje es mínima, lo que reduce el costo variable por ruta. La
-red paga el costo de la proximidad en infraestructura y personal, pero se
-ahorra sustancialmente en operación de flota.
+El \textbf{costo de transporte (0{,}3\%, \$16{,}6~MM)} es sumamente bajo y disminuyó levemente en esta versión corregida del modelo. Al independizar la penalización de tiempo de la cantidad de viajes (variable $z$), el modelo logra despachar convoyes de forma más eficiente y concentrada, reduciendo el costo variable general por ruta. La red paga el costo de la proximidad en infraestructura y personal, pero ahorra sustancialmente en la operación de la flota.
 
-El hecho de que el modelo \textbf{no agote el presupuesto} (\$196~MM
-disponibles sin usar) no es una ineficiencia: es la consecuencia de que la
-\textbf{flota es la restricción activa, no el capital}. Los 97.031 insumos
-de prioridad~3 sin cobertura no se deben a falta de dinero para comprarlos
----hay \$196~MM disponibles--- sino a que la flota institucional no tiene
+El hecho de que el modelo \textbf{no agote el presupuesto} (hay \$206~MM
+disponibles sin usar) ratifica que la \textbf{flota es la restricción activa, no el capital}.
+Los más de 97.000 insumos de prioridad~3 sin cobertura no se deben a falta de dinero para comprarlos sino a que la flota institucional no tiene
 capacidad de transportar ese volumen adicional dentro de $T^{\max}_3 = 240$~min
 durante los picos de verano. Gastar más en compras no reduciría el faltante:
-los camiones ya están en su límite. Esta es la diferencia fundamental respecto
-a la red de 8 bodegas (\$5.000~MM gastados íntegramente), donde el cuello
-de botella era la cobertura geográfica: sin acceso temporal a todas las comunas
-dentro de $T^{\max}_p$, el modelo agotaba el presupuesto comprando inventario
-que no podía entregar a tiempo.
+los camiones ya están en su límite físico de despachos.
 
-Un elemento que no aparecía en configuraciones anteriores es el \textbf{costo de
-bodegaje (\$20~MM, 0{,}4\%)}. Este costo refleja la mantención del inventario
-no perecible acumulado mes a mes en las bodegas activas (restricción~R9). Su
-presencia en la solución es, paradójicamente, una señal positiva: indica que la
-red está reteniendo stock no perecible durante los meses de invierno para
-pre-posicionarlo antes de la temporada crítica, exactamente como se observa en
-el patrón de acumulación de noviembre (sección~\ref{sec:inventario}).
+El \textbf{costo de bodegaje (\$16{,}3~MM, 0{,}3\%)} disminuyó también levemente.
+Este costo refleja la mantención del inventario no perecible acumulado mes a mes en las bodegas activas (restricción~R9). Su presencia en la solución indica que la red sigue reteniendo stock no perecible durante los meses de invierno para pre-posicionarlo estratégicamente antes de la temporada crítica (sección~\ref{sec:inventario}).
 
 % ──────────────────────────────────────────────────────────────────────────────
 \section{Capacidad de cuadrillas y saturación}
@@ -326,26 +269,27 @@ implica que el volumen de despachos por bodega es significativamente menor al
 que concentraría una red centralizada.
 
 La saturación pico del sistema se registra en \textbf{Aeródromo~Rodelillo}
-con un $4{,}8\%$ en febrero (mes~2), seguido de \textbf{Belloto~Sur} con
-$4{,}6\%$ y \textbf{Estadio~Limache} con $4{,}3\%$. Estas tres instalaciones
+con un $5{,}0\%$ en febrero (mes~2), seguido de \textbf{Belloto~Sur} con
+$4{,}6\%$ y \textbf{Estadio~Limache} con $3{,}0\%$. Estas tres instalaciones
 atienden la franja de cerros de mayor riesgo incendiario (eje Viña~del~Mar,
 Quilpué, Limache) y tienen dotaciones pequeñas (3 y 6 personas), lo que
 explica que sean las más exigidas proporcionalmente en los meses de verano.
+
 En el extremo opuesto, \textbf{Placilla} y \textbf{La~Ligua} registran
-saturación $0{,}0\%$: Placilla concentra la mayor dotación del sistema
+saturación casi nula ($0{,}1\%$ y $0{,}0\%$ respectivamente). Placilla concentra la mayor dotación del sistema
 (15~personas) pero las comunas que rodean Valparaíso son atendidas
-principalmente por bodegas más cercanas al litoral; La~Ligua cubre el extremo
+principalmente por bodegas más cercanas al litoral; La~Ligua, por su parte, cubre el extremo
 norte de la región, de menor exposición al fuego en este horizonte.
 
-Que la red opere con saturaciones inferiores al $5\%$ en todos los nodos
+Que la red opere con saturaciones inferiores o iguales al $5\%$ en todos los nodos
 demuestra que opera con \textbf{holgura logística casi total}: cuando se
-declara una alerta, los camiones pueden ser cargados de inmediato sin generar
-cuellos de botella en almacén. Este patrón es una consecuencia deliberada del
+declara una alerta, los vehículos pueden ser cargados de inmediato sin generar
+cuellos de botella en el almacén. Este patrón es una consecuencia deliberada del
 modelo: al invertir en dotaciones mínimas garantizadas por R10a en las 12
-instalaciones, el optimizador sacrifica eficiencia de recursos humanos en pos de
-\textbf{velocidad de respuesta}. Una bodega al $5\%$ de saturación no es
-ineficiente; es una bodega lista para operar al $100\%$ de su capacidad de
-despacho en los primeros 45~minutos de una emergencia.
+instalaciones, el optimizador sacrifica eficiencia de recursos humanos (saturación) en pos de
+\textbf{velocidad de respuesta} (Lead Time). Una bodega al $5\%$ de saturación mensual no es
+ineficiente; es una bodega lista para operar al $100\%$ de su capacidad física de
+despacho en los críticos primeros 45~minutos de una emergencia.
 
 % ──────────────────────────────────────────────────────────────────────────────
 \section{Despliegue de vehículos y eficiencia}
@@ -354,7 +298,7 @@ despacho en los primeros 45~minutos de una emergencia.
 
 El ruteo de vehículos no se realiza al azar, sino que el programa selecciona el
 tipo de transporte que maximiza la eficiencia temporal para cada combinación de
-ruta y prioridad, según los conjuntos de factibilidad $\mathcal{F}_p$.
+ruta y prioridad, según los conjuntos de factibilidad $\mathcal{F}_p$. Tras la corrección algorítmica de la función de tiempo (variable $z$), el modelo ahora puede despachar vehículos de gran tonelaje sin sufrir penalizaciones artificiales.
 
 \begin{table}[H]
 \centering
@@ -362,18 +306,18 @@ ruta y prioridad, según los conjuntos de factibilidad $\mathcal{F}_p$.
 \label{tab:rutas}
 \begin{tabular}{llllrr}
 \hline
-\textbf{Origen} & \textbf{Destino} & \textbf{Vehículo} & \textbf{Mes} & \textbf{Viajes} & \textbf{Fill Rate (\%)} \\
+\textbf{Origen} & \textbf{Destino} & \textbf{Vehículo} & \textbf{Mes} & \textbf{Prioridad} & \textbf{Fill Rate (\%)} \\
 \hline
-Ruta\_60CH\_Quillota    & Quillota    & Camioneta\_4x4 &  2 & 1 & 100{,}0 \\
-Ruta\_60CH\_Quillota    & San\_Felipe & Camioneta\_4x4 &  3 & 1 & 100{,}0 \\
-Parque\_Ind\_San\_Felipe & San\_Felipe & Camioneta\_4x4 &  3 & 1 & 100{,}0 \\
-Parque\_Ind\_San\_Felipe & San\_Felipe & Camioneta\_4x4 & 12 & 2 & 100{,}0 \\
-Parque\_Ind\_San\_Felipe & Los\_Andes & Camioneta\_4x4 &  1 & 3 & 100{,}0 \\
-Parque\_Ind\_San\_Felipe & Los\_Andes & Camioneta\_4x4 &  1 & 1 & 100{,}0 \\
-Parque\_Ind\_San\_Felipe & Los\_Andes & Camioneta\_4x4 &  2 & 2 & 100{,}0 \\
-Parque\_Ind\_San\_Felipe & Los\_Andes & Camioneta\_4x4 &  3 & 3 & 100{,}0 \\
-Ruta\_60CH\_Quillota    & La\_Cruz   & Camioneta\_4x4 &  2 & 1 & 100{,}0 \\
-Ruta\_60CH\_Quillota    & La\_Cruz   & Camioneta\_4x4 &  3 & 1 & 100{,}0 \\
+Barrio\_Ind\_El\_Salto   & Viña\_del\_Mar & Camion\_Pesado &  2 & 1 & 100{,}0 \\
+Barrio\_Ind\_El\_Salto   & Viña\_del\_Mar & Camion\_Pesado &  2 & 2 & 100{,}0 \\
+Estadio\_Limache         & Limache        & Camion\_3\_4   &  2 & 2 & 100{,}0 \\
+Pto\_San\_Antonio        & San\_Antonio   & Camion\_3\_4   &  1 & 1 & 100{,}0 \\
+Pto\_San\_Antonio        & San\_Antonio   & Camion\_3\_4   &  1 & 2 & 100{,}0 \\
+Pto\_San\_Antonio        & San\_Antonio   & Camion\_3\_4   &  2 & 1 & 100{,}0 \\
+Pto\_San\_Antonio        & San\_Antonio   & Camion\_3\_4   &  2 & 2 & 100{,}0 \\
+Ruta\_60CH\_Quillota     & Quillota       & Camion\_3\_4   &  1 & 2 & 100{,}0 \\
+Ruta\_60CH\_Quillota     & Quillota       & Camion\_3\_4   &  2 & 1 & 100{,}0 \\
+Ruta\_60CH\_Quillota     & Quillota       & Camion\_3\_4   &  2 & 2 & 100{,}0 \\
 \hline
 \end{tabular}
 \end{table}
@@ -385,33 +329,13 @@ Ruta\_60CH\_Quillota    & La\_Cruz   & Camioneta\_4x4 &  3 & 1 & 100{,}0 \\
 \label{fig:vehiculos}
 \end{figure}
 
-La \textbf{Camioneta~4x4} es el vehículo con el desempeño más consistente y
-elevado: su mediana de fill rate se sitúa cerca del $57\%$, con un tercer
-cuartil cercano al $93\%$, lo que significa que en la mitad superior de sus
-viajes opera por encima del umbral óptimo del 80\%. Su baja capacidad
-volumétrica ($2{,}5~\text{m}^3$) lejos de ser una limitación, es su ventaja
-operativa: se carga rápido, transita con agilidad por las rutas de cerros y
-llega dentro de los $45$~minutos, lo que la convierte en el recurso dominante
-para despachos de \textbf{prioridad~1}.
+El impacto de la corrección del modelo es evidente en la Tabla~\ref{tab:rutas}. En versiones anteriores, el \textit{Top 10} estaba dominado exclusivamente por Camionetas 4x4. Ahora, al independizar el \textit{Lead Time} de la cantidad discreta de viajes, el modelo consolida carga de manera óptima: utiliza \textbf{Camiones Pesados y Camiones 3/4 al 100\% de su capacidad} para abastecer los epicentros de la emergencia en pleno verano (meses 1 y 2), incluso para despachos de soporte vital (Prioridad 1).
 
-El \textbf{Helicóptero} exhibe el patrón más peculiar: su rango intercuartílico
-abarca desde el $13\%$ hasta aproximadamente el $96\%$, con mediana en torno
-al $20\%$. Esto refleja que el modelo lo activa \emph{selectivamente} en las
-rutas donde los modos terrestres no pueden cumplir $T^{\max}_1 = 45$~min
-(Los~Andes, Llaillay). Cuando se activa, lo hace con alta ocupación ---el tercer
-cuartil roza el $96\%$ y el máximo alcanza el $100\%$--- lo que demuestra que
-el algoritmo no lo desperdicia: si el helicóptero vuela, va cargado.
+A nivel general, la \textbf{Camioneta~4x4} sigue siendo el vehículo con el desempeño más consistente: su mediana de fill rate se sitúa cerca del $55{,}5\%$, con un tercer cuartil de $92{,}2\%$. Su baja capacidad volumétrica ($2{,}5~\text{m}^3$) es su mayor ventaja operativa: permite despachos ágiles por rutas complejas dentro del margen estricto de $45$~minutos, complementando a los vehículos pesados.
 
-El \textbf{Camión~Pesado} presenta el comportamiento más extremo: su mediana
-es apenas del $5\%$, lo que indica que la mayoría de sus despachos son de
-volumen reducido, pero su tercer cuartil sube al $70\%$ y llega al $100\%$ en
-sus picos de demanda de verano. Es el vehículo de alto volumen reservado para
-los meses críticos de enero-marzo, permaneciendo subutilizado el resto del año.
-El \textbf{Camión~3/4} comparte este carácter bimodal aunque de forma menos
-extrema: mediana en torno al $22\%$ y cola superior que alcanza el $100\%$.
-Ambos camiones reflejan la estacionalidad del riesgo: infrautilizados en
-invierno, operando a plena capacidad cuando los megaincendios de verano
-generan picos de demanda que la Camioneta~4x4 sola no puede absorber.
+El \textbf{Helicóptero} exhibe un patrón altamente focalizado: su mediana ronda el $19{,}8\%$, pero su tercer cuartil salta al $90{,}1\%$. Esto confirma que se activa selectivamente para zonas críticas (como Los Andes) donde la fricción terrestre imposibilita el cumplimiento de $T^{\max}_1$. Cuando vuela, el modelo se asegura de llevarlo cargado.
+
+El \textbf{Camión~Pesado} y el \textbf{Camión~3/4} presentan comportamientos bimodales debido a la estacionalidad. El Camión Pesado tiene una mediana de apenas $6{,}0\%$, reflejando su infrautilización en invierno; pero durante las crisis estivales, su tasa de llenado se dispara al $100\%$ (como se evidencia en la ruta El Salto - Viña del Mar), operando como la columna vertebral del abastecimiento masivo.
 
 % ──────────────────────────────────────────────────────────────────────────────
 \section{Inventario y balance temporal}
@@ -427,39 +351,31 @@ generan picos de demanda que la Camioneta~4x4 sola no puede absorber.
 \end{figure}
 
 El gráfico revela con claridad la \textbf{estrategia de acumulación anticipada}
-del modelo frente a la estacionalidad del riesgo de incendios.
-
-La \textbf{demanda insatisfecha} (línea roja, eje derecho) alcanza sus máximos
-en los meses de \textbf{verano}: pica en enero (mes~1) con aproximadamente
-25.000 unidades faltantes, sube aún más en febrero (mes~2) con cerca de
-30.000 unidades —el peor mes del horizonte—, y se mantiene elevada en
-marzo (mes~3) con alrededor de 22.000 unidades. A partir de abril (mes~4)
-el faltante cae abruptamente a menos de 1.000 unidades y permanece
-prácticamente en cero durante los meses de invierno (mayo--octubre).
-En diciembre (mes~12) el faltante vuelve a repuntar, anticipando el inicio
+del modelo frente a la estacionalidad del riesgo de incendios. La \textbf{demanda insatisfecha} (línea roja, eje derecho) alcanza sus máximos
+en los meses de \textbf{verano}: inicia en enero (mes~1) con aproximadamente
+27.100 unidades faltantes, sube aún más en febrero (mes~2) con cerca de
+32.300 unidades —el peor mes del horizonte—, y se mantiene elevada en
+marzo (mes~3) con alrededor de 22.900 unidades. A partir de abril (mes~4)
+el faltante cae abruptamente a menos de 300 unidades y permanece
+al mínimo durante los meses de invierno (mayo--octubre). En diciembre (mes~12) el faltante vuelve a repuntar agresivamente (sobre las 24.200 unidades), anticipando el inicio
 de la nueva temporada de incendios.
 
 El \textbf{stock de no perecibles} (barras teal, eje izquierdo) muestra un
-comportamiento opuesto y complementario. Durante enero--marzo el inventario
-se consume rápidamente para atender la demanda de emergencia, manteniéndose
-en niveles bajos ($\approx 150$--$300$ unidades). Entre los meses de invierno
-(mayo--septiembre) el stock se reconstituye gradualmente a medida que las
-bodegas realizan compras preventivas con la holgura presupuestaria disponible.
-El pico de acumulación se produce en \textbf{noviembre (mes~11)}, donde el
-stock total de no perecibles supera las 2.000 unidades: es el punto de máxima
-preparación antes de la temporada crítica, y refleja la decisión explícita del
-modelo de pre-posicionar inventario con un mes de antelación.
+comportamiento opuesto y complementario. Durante el período de valle de emergencias en invierno
+(abril--octubre) el inventario retenido se mantiene en niveles base de contingencia ($\approx 150$--$160$ unidades). Sin embargo, el stock experimenta repuntes estratégicos previos a la temporada crítica a medida que las
+bodegas realizan compras preventivas con la holgura presupuestaria disponible. El principal pico de acumulación preparatoria se produce en \textbf{noviembre (mes~11)}, donde el
+stock total de no perecibles salta a más de 1.000 unidades, reflejando la decisión explícita del
+modelo de pre-posicionar inventario con un mes de antelación. Existe un segundo pico de acumulación en \textbf{febrero (mes~2)} ($\approx 1.065$ unidades), donde el modelo aprovecha la apertura operativa para consolidar volumen destinado a abastecer la alta demanda residual de marzo.
 
-Los \textbf{insumos perecibles} (Agua~5L, Raciones, Medicamentos, Suplementos)
-muestran stock cero al cierre de cada período en todas las bodegas, en
-cumplimiento estricto de R3: el modelo los compra y despacha íntegramente
-dentro del mismo mes, garantizando calidad y evitando pérdidas por vencimiento.
+Los \textbf{insumos perecibles} (Agua~5L, Raciones, Medicamentos, Suplementos Pediátricos y Kits de Trauma)
+muestran \textbf{stock cero} al cierre de cada período en todas las bodegas, en
+cumplimiento estricto de la restricción R3: el modelo los compra y despacha íntegramente
+dentro del mismo mes, garantizando el soporte vital y evitando penalizaciones o pérdidas por vencimiento.
 
-La concentración del faltante en verano valida que el modelo no falla por mala
-planificación ni por déficit de bodegas: las 12 instalaciones y sus dotaciones
-están activas desde el mes~1. El problema es la magnitud objetiva del fenómeno:
-los megaincendios de enero--marzo generan una demanda de insumos que supera
-la capacidad de la flota y el presupuesto disponible, independientemente de la
-eficiencia logística del sistema.
+La concentración del faltante en verano valida la robustez de la solución propuesta. El modelo no falla por mala
+planificación, falta de dinero o ineficiencias de ruteo —las 12 instalaciones, sus dotaciones y las flotas pesadas 
+están operando a máxima capacidad y eficiencia matemática—. El problema radica en la magnitud objetiva del fenómeno:
+los megaincendios de verano generan una demanda de insumos que supera el límite físico estricto de la flota institucional ($Q_{mt}$)
+disponible, independientemente de la perfección algorítmica y logística del sistema.
 
 \end{document}

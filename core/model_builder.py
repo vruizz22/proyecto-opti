@@ -7,6 +7,12 @@ Corrections code:
   - R12c: incluida explícitamente para consistencia con el .tex.
   - R14: compras condicionadas a apertura.
   - R8: implícita — variables n/x solo existen para (i,j,m) en R' (Apt=1).
+
+Adición reciente:
+  - z_{ijm t p} BIN: indica si la ruta (i->j,m,t,p) se utilizó (≥1 viaje).
+    El término de tiempo de viaje en la función objetivo ahora usa z en
+    lugar de multiplicar (T_{ijm}+O_m) por n, para reflejar que los
+    vehículos llegan en paralelo.
 """
 from __future__ import annotations
 
@@ -41,7 +47,7 @@ def build_model(
     model.setParam("OutputFlag", 1)
 
     mv = create_vars(model, sets)
-    w, y, s, c, x, n, e, f = mv.w, mv.y, mv.s, mv.c, mv.x, mv.n, mv.e, mv.f
+    w, y, s, c, x, n, z, e, f = mv.w, mv.y, mv.s, mv.c, mv.x, mv.n, mv.z, mv.e, mv.f
 
     I, J, K, M, T, P = sets.I, sets.J, sets.K, sets.M, sets.T, sets.P
     Kv, Kn = sets.Kv, sets.Kn
@@ -70,10 +76,10 @@ def build_model(
     d_h = params.d
     h = params.h
 
-    # ── Función objetivo (4 términos, exactamente como en main.tex) ──────
-    # Término 1: W_p*(T_{ijm}+O_m)*n_{ijmtp}  — tiempo de viaje ponderado
+    # ── Función objetivo (4 términos, ajustada para z) ──────
+    # Término 1 (TIEMPO): W_p*(T_{ijm}+O_m)*z_{ijmtp}  — ahora usa z binaria
     obj_t1 = quicksum(
-        W[p] * (T_tr[(i, j, m)] + O_op[m]) * n[i, j, m, t, p]
+        W[p] * (T_tr[(i, j, m)] + O_op[m]) * z[i, j, m, t, p]
         for (i, j, m, t, p) in sets.trip_keys
     )
     # Término 2: W_p*(α_k+β_k)*x_{ijkmtp}  — tiempo de manipulación ponderado
@@ -81,7 +87,7 @@ def build_model(
         W[p] * (alpha[k] + beta[k]) * x[i, j, k, m, t, p]
         for (i, j, k, m, t, p) in sets.flow_keys
     )
-    # Término 3: h*G_{ijm}*n_{ijmtp}  — costo operativo convertido a min
+    # Término 3: h*G_{ijm}*n_{ijmtp}  — costo operativo convertido a min (multiplica por n)
     obj_t3 = quicksum(
         h * G_cost[(i, j, m)] * n[i, j, m, t, p]
         for (i, j, m, t, p) in sets.trip_keys
@@ -242,6 +248,14 @@ def build_model(
                 big_m14 = C[i] / e_min
                 model.addConstr(c[i, k, t] <= big_m14 * y[i, t],
                                 name=f"R14_{i}_{k}_{t}")
+
+    # ── R15: Vinculación viajes ↔ uso de ruta (nuevo)
+    # Si se realiza al menos un viaje (n > 0) entonces z = 1; modela que el
+    # término de tiempo depende solo del uso de la ruta (paralelismo)
+    for (i, j, m, t, p) in sets.trip_keys:
+        big_m15 = Q.get((m, t), 0)
+        model.addConstr(n[i, j, m, t, p] <= big_m15 * z[i, j, m, t, p],
+                        name=f"R15_{i}_{j}_{m}_{t}_{p}")
 
     model.update()
     return model, mv

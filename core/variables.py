@@ -42,7 +42,11 @@ class ModelVars:
     # filtrada).
     n: Any
 
-    # e_{it} ∈ Z≥0: dotación de personal en la bodega i durante el período t [personas].
+    # z_{ijmtp} ∈ {0,1}: 1 si se utiliza la ruta (i→j con modo m) en (t,p).
+    # Indica que al menos un viaje ocurre en esa combinación (conexión R15).
+    z: Any
+
+    # e_{it} ∈ Z≥0: dotación de personal en el bodega i durante el período t [personas].
     # Acotada por R10a (piso L_i·y_{it}) y R10b (techo E^max_i·y_{it}).
     e: Any
 
@@ -64,7 +68,9 @@ def create_vars(model: gp.Model, sets: Sets) -> ModelVars:
     c = model.addVars(ikt_keys, lb=0.0, name="c")
     x = model.addVars(sets.flow_keys, lb=0.0, name="x")
     n = model.addVars(sets.trip_keys, lb=0, vtype=GRB.INTEGER, name="n")
+    # z: indicador de uso de ruta (binaria). Corresponde a keys en trip_keys.
+    z = model.addVars(sets.trip_keys, vtype=GRB.BINARY, name="z")
     e = model.addVars(it_keys, lb=0, vtype=GRB.INTEGER, name="e")
     f = model.addVars(sets.short_keys, lb=0.0, name="f")
 
-    return ModelVars(w=w, y=y, s=s, c=c, x=x, n=n, e=e, f=f)
+    return ModelVars(w=w, y=y, s=s, c=c, x=x, n=n, z=z, e=e, f=f)
